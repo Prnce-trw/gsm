@@ -24,25 +24,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
+                    <?php 
                     $sql = "SELECT * FROM tb_head_preorder";
                     $results = mysqli_query($conn, $sql);
-                    $row = array();
-                    while ($row = mysqli_fetch_row($results)) { 
-                        $rows[] = $row;
-                    }
-                    foreach ($rows as $key => $item)
-                    {
-                    ?>
+                    foreach ($results as $key => $value) : { ?>
                     <tr>
                         <td><?php echo $key+1; ?></td>
-                        <td><?php echo $item[$key+2]; ?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?php echo $value['head_pre_docnumber']; ?></td>
+                        <td><?php echo date("d/m/Y", strtotime($value['created_at'])); ?></td>
+                        <td><?php echo $value['head_pre_status']; ?></td>
                         <td></td>
                     </tr>
-                    <?php } ?>
+                    <?php } endforeach ?>
                 </tbody>
             </table>
         </div>
