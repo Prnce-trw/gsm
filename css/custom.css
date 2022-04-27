@@ -82,6 +82,12 @@ section {
     padding: 10px;
 }
 
+.col-70 {
+    float: left;
+    width: 70%;
+    padding: 10px;
+}
+
 .col-60 {
     float: left;
     width: 60%;
@@ -100,10 +106,26 @@ section {
     padding: 10px;
 }
 
+.col-30 {
+    float: left;
+    width: 30%;
+    padding: 10px;
+}
+
 .col-20 {
     float: left;
     width: 20%;
     padding: 10px;
+}
+
+.row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    /* display: flex; */
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
 }
   
   /* Clear floats after the columns */
@@ -164,9 +186,10 @@ section {
 }
 
 .label-titile {
-    background-color: var(--blue); 
-    padding: 4px 15px 4px 15px; 
-    color: #fff; 
+    vertical-align: middle;
+    background-color: var(--blue);
+    padding: 4px 15px 4px 15px;
+    color: #fff;
     border-radius: 5px;
 }
 
@@ -223,4 +246,9 @@ textarea {
 
 .form-input-checkbox > input{
     cursor: pointer;
+}
+
+.don_pc_no {
+    margin-top: 0px;
+    margin-left: 5px;
 }
