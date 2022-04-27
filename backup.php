@@ -49,26 +49,25 @@
                 for ($x=0; $x < count($brand); $x++) {
             ?>
             <tr>
-                <td width="80" height="80" >
-                    <div class="div-inside" style="border-bottom: 1px solid #dcdcdc"><?=$brand[$x]?></div>
+                <td width="80" height="80">
+                    <div class="div-inside" style="border-bottom: 1px solid #000"><?=$brand[$x]?></div>
                     <div class="div-inside" style="background-color: #fff4e6;">
-                        <label for="advance_<?php echo $x;?>" class="form-input-checkbox">
-                            <input type="checkbox" name="" value="<?php echo $x;?>" id="advance_<?php echo $x;?>" onclick="cylinder_adcance(<?php echo $x;?>)">
-                            ฝากเติม</label>
+                        <input type="checkbox" name="" value="<?php echo $x;?>" id="advance_<?php echo $x;?>" onclick="cylinder_adcance(<?php echo $x;?>)">
+                        <label for="advance_<?php echo $x;?>">ฝากเติม</label>
                     </div>
                 </td>
                 <?php //for(1) 
                     for ($i=0; $i < count($package); $i++) { ?>
                     <td width="80" height="80">
-                        <div class="div-inside" style="border-bottom: 1px solid #dcdcdc">
-                            <select name="pickitem" class="pickitem" id="">
+                        <div class="div-inside" style="border-bottom: 1px solid #000">
+                            <select name="pickitem" id="">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
                         <div class="div-inside" style="background-color: #fff4e6;">
-                            <input type="number" class="input_advance_<?php echo $x;?>" min="0">
+                            <input type="number" class="input_advance_<?php echo $x;?>" min="0" style="width: 50px; display: none;">
                         </div>
                     </td>
                 <?php }// end for(1) ?>
@@ -83,10 +82,6 @@
                 <td>รายการ</td>
             </tr>
         </table>
-        <div class="row">
-            <h4>หมายเหตุ</h4>
-            <textarea name="" id="" cols="30" rows="10" style="width: 100%;"></textarea>
-        </div>
         <div class="row" style="margin-top: 30px;">
             <div class="col-12" style="text-align: right;">
                 <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
@@ -105,33 +100,12 @@
 
         $('select').change(function(){
             var sum = 0;
-            $('.pickitem').each(function() {
-                sum += parseInt($(this).val());
+            $('select :selected').each(function() {
+                sum += Number($(this).val());
+                console.log(sum);
             });
-            $("#total").text(sum);
+            $("#total").text(Number(sum));
         });
-
-        $("input[class^='input_advance_']").on('input',function() {
-            $("#total").text(getAllSum());
-        });
-        $('select').change(function(){
-            $("#total").text(getAllSum());
-        });
-
-        function getAllSum() {
-            var result = 0;
-            $('.pickitem :selected').each(function() {
-                result += parseInt($(this).val());
-            });
-            $("input[class^='input_advance_']").each(function() {
-                if(isNaN($(this).val()) || $(this).val() === "") {
-                    result+=0;
-                } else {
-                    result+=parseInt($(this).val());
-                }
-            })
-            return result
-        }
 
         function cylinder_adcance(id) {
             if ($('#advance_'+id).is(":checked")) {
@@ -152,23 +126,7 @@
                 confirmButtonText: 'ยืนยัน',
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    if ($('#total').text() != "0") {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'บันทึกข้อมูลสำเร็จ',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: 'warning',
-                            text: 'กรูณากรอกตรวจสอบข้อมูลก่อนยืนยัน',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }
+                
             })
         }
     </script>
