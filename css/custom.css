@@ -112,6 +112,12 @@ section {
     padding: 10px;
 }
 
+.col-25 {
+    float: left;
+    width: 25%;
+    padding: 10px;
+}
+
 .col-20 {
     float: left;
     width: 20%;
@@ -133,6 +139,10 @@ section {
     content: "";
     display: table;
     clear: both;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .btn {
@@ -290,41 +300,31 @@ textarea {
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+.modalContainer {
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
 }
-
-/* Modal Content */
+  
 .modal-content {
     background-color: #fefefe;
-    margin: auto;
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-  }
+    width: 20%;
+}
   
-  /* The Close Button */
-  .close {
-    color: #aaaaaa;
+.close {
+    color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
     cursor: pointer;
-  }
-  
+}

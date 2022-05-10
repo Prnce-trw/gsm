@@ -67,7 +67,7 @@
                     </td>
                 <?php }// end for(1) ?>
                 <td>
-                    <button type="button" class="open_modal" data-modal="<?=$i?>">เพิ่ม</button>
+                    <button type="button" class="open_modal" data-modal="<?=$x?>">เพิ่ม</button>
                 </td>
             </tr>
                                 
@@ -89,6 +89,28 @@
                 <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
             </div>
         </div>
+        <div class="modalContainer">
+            <div class="modal-content fade">
+                <span class="close">&times;</span>
+                <div class="row">
+                    <div class="col-30">ขนาดถัง</div>
+                    <div class="col-70">จำนวน</div>
+                </div>
+                <div class="row">
+                    <?php for ($i=0; $i < count($package); $i++) { ?>
+                    <div class="col-30 text-center">
+                        <?=$package[$i]?>
+                    </div>
+                    <div class="col-70">
+                        <input type="number" name="" class="form-control">
+                    </div>
+                    <?php } ?>
+                </div>
+                <div class="row text-right">
+                    <button type="button" onclick="$('.modalContainer').hide()">ยืนยัน</button>
+                </div>
+            </div>
+        </div>
     </section>
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/sweetalert2.all.min.js"></script>
@@ -97,6 +119,15 @@
         $(document).ready(function() {
             $('.js-example-basic-single').select2({
                 placeholder: "เลือกโรงบรรจุ...",
+            });
+
+            $(".open_modal").on("click", function() {
+                var modal_id = $(this).attr('data-modal');
+                $(".modalContainer").show();
+            });
+
+            $(".close").on("click", function() {
+                $(".modalContainer").hide();
             });
         });
 
@@ -167,10 +198,6 @@
                     }
                 }
             })
-        }
-
-        function open_modal (id) {
-            $("#modal").show();
         }
     </script>
 </body>
