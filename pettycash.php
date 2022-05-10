@@ -11,15 +11,17 @@
 <body>
     <section>
         <div class="container">
+            <?php $branch = [1,2,3,4,5];?>
             <h4>เงินสดย่อย</h4>
             <div class="row">
-                <div class="col-30">
+                <input type="hidden" name="" id="branch" value="<?php echo count($branch);?>">
+                <div class="col-40">
                     <div class="row">
                         <label for="don_pc_no" class="label-titile">เลขที่เอกสาร</label>
                         <h4 class="don_pc_no">PC00001</h4>
                     </div>
                 </div>
-                <div class="col-70">
+                <div class="col-60">
                     <div class="row">
                         <label for="don_pc_no" class="label-titile">ประเภทวงเงิน</label>
                         <input type="radio" name="pc_type" id="normal" checked>
@@ -28,33 +30,44 @@
                             <label class="form-check-label" for="advance">วงเงินพิเศษ</label>
                     </div>
                 </div>
-                <div class="col-30">
+                <div class="col-40">
                     <div class="row">
                         <label for="don_pc_no" class="label-titile">วันที่เริ่มใช้</label>
-                        <input type="date" name="" id="">
+                        <input type="date" name="" class="form-control" style="margin-left: 8px;">
                     </div>
                 </div>
-                <div class="col-70">
+                <div class="col-60">
                     <div class="row">
                         <label for="don_pc_no" class="label-titile">วันที่สิ้นสุด</label>
-                        <input type="date" name="" id="">
+                        <input type="date" name="" class="form-control" style="margin-left: 8px;">
                     </div>
                 </div>
-                <div class="col-100">
+                <div class="col-40">
+                    <div class="row">
+                        <label for="don_pc_no" class="label-titile">จำนวนวงเงิน</label>
+                        <input type="number" name="" id="limit" class="form-control" style="margin-left: 8px;" placeholder="จำนวนวงเงิน...">
+                    </div>
+                </div>
+                <div class="col-60">
                     <div class="row">
                         <label for="don_pc_no" class="label-titile">การเติมวงเงิน</label>
-                        <input type="radio" name="pc_topup_type" id="auto" checked>
+                        <input type="radio" name="pc_topup_type" class="pc_topup_type" id="auto" checked>
                             <label class="form-check-label" for="auto">อัตโนมัติ</label>
-                        <input type="radio" name="pc_topup_type" id="manual" > 
+                        <input type="radio" name="pc_topup_type" class="pc_topup_type" id="manual" > 
                             <label class="form-check-label" for="manual">กำหนดเอง</label>
                     </div>
                 </div>
+                <div class="col-100" style="text-align: center;">
+                    <button class="btn btn-warning" type="button" onclick="pc_calculate()">ปรับใช้</button>
+                </div>
             </div>
+            <hr>
+            <br>
         </div>
         <table>
             <thead>
                 <tr>
-                    <th>ลำดับ</th>
+                    <th height="30">ลำดับ</th>
                     <th>ชื่อสาขา</th>
                     <th>วงเงินเต็มจำนวน</th>
                     <th>ยอดคงเหลือ</th>
@@ -62,18 +75,37 @@
                 </tr>
             </thead>
             <tbody>
+                <?php foreach ($branch as $key => $value) { ?>
                 <tr>
-                    <td>1</td>
-                    <td>สาขาที่ 1</td>
+                    <td height="30" ><?=$value?></td>
+                    <td>สาขาที่ <?=$value?></td>
                     <td>10000</td>
                     <td>10000</td>
-                    <td>10000</td>
+                    <td><input type="number" name="" class="form-control"></td>
                 </tr>
+                <?php } ?>
             </tbody>
         </table>
     </section>
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
+
+    <script>
+        function pc_calculate () {
+            var branch = $('#branch').val();
+            var pc_limit = $('#limit').val();
+            if (pc_limit != '') {
+                alert(jQuery.type(pc_limit));
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'กรุณากรอกจำนวนวงเงิน',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+    </script>
 </body>
 </html>

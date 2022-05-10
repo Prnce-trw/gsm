@@ -44,41 +44,38 @@
                 <?php
                     }// end for(1)
                 ?>
+                <th width="80" height="30">ฝากเติม</th>
             </tr>
             <?php
                 for ($x=0; $x < count($brand); $x++) {
             ?>
             <tr>
-                <td width="80" height="80" >
-                    <div class="div-inside" style="border-bottom: 1px solid #dcdcdc"><?=$brand[$x]?></div>
-                    <div class="div-inside" style="background-color: #fff4e6;">
-                        <label for="advance_<?php echo $x;?>" class="form-input-checkbox">
-                            <input type="checkbox" name="" value="<?php echo $x;?>" id="advance_<?php echo $x;?>" onclick="cylinder_adcance(<?php echo $x;?>)">
-                            ฝากเติม</label>
-                    </div>
+                <td width="80" height="50" >
+                    <div class="div-inside"><?=$brand[$x]?></div>
+                    
                 </td>
                 <?php //for(1) 
                     for ($i=0; $i < count($package); $i++) { ?>
-                    <td width="80" height="80">
-                        <div class="div-inside" style="border-bottom: 1px solid #dcdcdc">
+                    <td width="80" height="50">
+                        <div class="div-inside">
                             <select name="pickitem" class="pickitem" id="">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="div-inside" style="background-color: #fff4e6;">
-                            <input type="number" class="input_advance_<?php echo $x;?>" min="0">
-                        </div>
                     </td>
                 <?php }// end for(1) ?>
+                <td>
+                    <button type="button" class="open_modal" data-modal="<?=$i?>">เพิ่ม</button>
+                </td>
             </tr>
                                 
             <?php
             }//end for(0)
             ?>
             <tr>
-                <td colspan="<?=count($package)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
                 <td><div id="total">0</div></td>
                 <td>รายการ</td>
             </tr>
@@ -170,6 +167,10 @@
                     }
                 }
             })
+        }
+
+        function open_modal (id) {
+            $("#modal").show();
         }
     </script>
 </body>
