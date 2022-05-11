@@ -24,8 +24,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td height="40">1</td>
+                    <?php for ($i=0; $i < 5; $i++) { ?>
+                    <tr id="POID_<?=$i?>">
+                        <td height="40"><?=$i?></td>
                         <td>ใบส่งแก๊ส</td>
                         <td>1</td>
                         <td>กำลังจัดส่ง</td>
@@ -33,20 +34,21 @@
                         <td>
                             <div class="row">
                                 <div class="col-25">
-                                    <button type="button">ดูข้อมูล</button>
+                                    <a href="info/info_po.php?id=<?=$i?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
-                                    <button type="button">แก้ไข</button>
+                                    <a href="edit/edit_po.php?id=<?=$i?>">แก้ไข</a>
                                 </div>
                                 <div class="col-25">
                                     <button type="button">พิมพ์</button>
                                 </div>
                                 <div class="col-25">
-                                    <button type="button" onClick="btn_delete()">ลบ</button>
+                                    <button type="button" onClick="btn_delete(<?=$i?>)">ลบ</button>
                                 </div>
                             </div>
                         </td>
                     </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -56,7 +58,7 @@
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
     <script>
-        function btn_delete () {
+        function btn_delete (id) {
             Swal.fire({
                 title: 'คุณแน่ใจหรือไม่?',
                 text: "เอกสาร PO จะไม่สามารถกู้คืนได้!",
@@ -74,6 +76,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    $('#POID_'+id).remove();
                 }
             })
         }
