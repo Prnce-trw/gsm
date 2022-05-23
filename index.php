@@ -11,6 +11,8 @@
 </head>
 <body>
     <section id="purchase">
+        <form action="function.php" method="POST" id="FormPreOrderCylinder">
+            <input type="hidden" name="parameter" value="PreOrderCylinder">
         <div class="container">
             <h4>จัดซื้อ</h4>
             <div class="row">
@@ -25,13 +27,12 @@
                 </div>
             </div>
         </div>
-        <div class="table-cover"></div>
-            <table border="1" cellspacing="1" cellpadding="1">
-            <?php 
-                $brand = ['PTT','WP','Siam','Unit','PT','Other'];
-                $package = [4,7,8,11.5,13.5,15,48];
-                //for(0)
-            ?>
+        <table border="1" cellspacing="1" cellpadding="1">
+        <?php 
+            $brand = ['PTT','WP','Siam','Unit','PT','Other'];
+            $package = [4,7,8,11.5,13.5,15,48];
+            //for(0)
+        ?>
             <tr>
                 <th width="80" height="30">
                     ยี่ห้อ\ขนาด
@@ -44,15 +45,12 @@
                 <?php
                     }// end for(1)
                 ?>
-                <th width="80" height="30">ฝากเติม</th>
+                <th width="150" height="30">ฝากเติม</th>
             </tr>
-            <?php
-                for ($x=0; $x < count($brand); $x++) {
-            ?>
+            <?php for ($x=0; $x < count($brand); $x++) { ?>
             <tr>
                 <td width="80" height="50" >
                     <div class="div-inside"><?=$brand[$x]?></div>
-                    
                 </td>
                 <?php //for(1) 
                     for ($i=0; $i < count($package); $i++) { ?>
@@ -67,138 +65,40 @@
                     </td>
                 <?php }// end for(1) ?>
                 <td>
-                    <button type="button" class="open_modal" data-modal="<?=$x?>">เพิ่ม</button>
+                    <div class="row">
+                        <div class="col-50" style="border-right: 1px solid #e8e8e8;">
+                            <button type="button" name="add" id="add" data-toggle="modal" data-modal="<?=$brand[$x]?>" data-modal-open="add_data_modal" class="btn btn-warning open_modal">Add</button>
+                        </div>
+                        <div class="col-50">
+                            <div id="result_adv_<?=$brand[$x]?>"></div>
+                        </div>
+                    </div>
                 </td>
             </tr>
                                 
-            <?php
-            }//end for(0)
-            ?>
+            <?php }//end for(0) ?>
             <tr>
                 <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
                 <td><div id="total">0</div></td>
                 <td>รายการ</td>
             </tr>
         </table>
-        <div class="row">
+        <div class="container">
             <h4>หมายเหตุ</h4>
             <textarea name="" id="" cols="30" rows="10" style="width: 100%;"></textarea>
-        </div>
-        <div class="row" style="margin-top: 30px;">
-            <div class="col-12" style="text-align: right;">
-                <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
-            </div>
-        </div>
-        <div class="modalContainer">
-            <div class="modal-content fade">
-                <span class="close">&times;</span>
-                <div class="row">
-                    <div class="col-30">ขนาดถัง</div>
-                    <div class="col-70">จำนวน</div>
-                </div>
-                <div class="row">
-                    <?php for ($i=0; $i < count($package); $i++) { ?>
-                    <div class="col-30 text-center">
-                        <?=$package[$i]?>
-                    </div>
-                    <div class="col-70">
-                        <input type="number" name="" class="form-control">
-                    </div>
-                    <?php } ?>
-                </div>
-                <div class="row text-right">
-                    <button type="button" onclick="$('.modalContainer').hide()">ยืนยัน</button>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-12" style="text-align: right;">
+                    <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
                 </div>
             </div>
         </div>
+
+        <div id="resultModal"></div>
+        </form>
     </section>
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2({
-                placeholder: "เลือกโรงบรรจุ...",
-            });
-
-            $(".open_modal").on("click", function() {
-                var modal_id = $(this).attr('data-modal');
-                $(".modalContainer").show();
-            });
-
-            $(".close").on("click", function() {
-                $(".modalContainer").hide();
-            });
-        });
-
-        $('select').change(function(){
-            var sum = 0;
-            $('.pickitem').each(function() {
-                sum += parseInt($(this).val());
-            });
-            $("#total").text(sum);
-        });
-
-        $("input[class^='input_advance_']").on('input',function() {
-            $("#total").text(getAllSum());
-        });
-        $('select').change(function(){
-            $("#total").text(getAllSum());
-        });
-
-        function getAllSum() {
-            var result = 0;
-            $('.pickitem :selected').each(function() {
-                result += parseInt($(this).val());
-            });
-            $("input[class^='input_advance_']").each(function() {
-                if(isNaN($(this).val()) || $(this).val() === "") {
-                    result+=0;
-                } else {
-                    result+=parseInt($(this).val());
-                }
-            })
-            return result
-        }
-
-        function cylinder_adcance(id) {
-            if ($('#advance_'+id).is(":checked")) {
-                $('.input_advance_'+id).show(300);
-            } else {
-                $('.input_advance_'+id).hide(300);
-            }
-        }
-
-        function btn_submit_preselect () {
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "เอกสาร PO จะไม่สามารถแก้ไขได้! กรุณาตรวจสอบความถูกต้องก่อนยืนยัน",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'ยืนยัน',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if ($('#total').text() != "0") {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'บันทึกข้อมูลสำเร็จ',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: 'warning',
-                            text: 'กรูณากรอกตรวจสอบข้อมูลก่อนยืนยัน',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }
-            })
-        }
-    </script>
+    <script src="js/JQcustom.js"></script>
 </body>
 </html>

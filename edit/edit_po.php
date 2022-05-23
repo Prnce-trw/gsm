@@ -94,13 +94,13 @@
                 <td>รายการ</td>
             </tr>
         </table>
-        <div class="row">
+        <div class="container">
             <h4>หมายเหตุ</h4>
             <textarea name="" id="" cols="30" rows="10" style="width: 100%;"></textarea>
-        </div>
-        <div class="row" style="margin-top: 30px;">
-            <div class="col-12" style="text-align: right;">
-                <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-12" style="text-align: right;">
+                    <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
+                </div>
             </div>
         </div>
         <div class="modalContainer">

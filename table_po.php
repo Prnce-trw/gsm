@@ -12,6 +12,7 @@
     <section id="purchase">
         <div class="container">
             <h4>จัดซื้อ</h4>
+            <div class="function_bar">555</div>
             <table border="1" cellspacing="1" cellpadding="1">
                 <thead>
                     <tr>
@@ -24,31 +25,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php for ($i=0; $i < 5; $i++) { ?>
-                    <tr id="POID_<?=$i?>">
-                        <td height="40"><?=$i?></td>
-                        <td>ใบส่งแก๊ส</td>
+
+                    <?php 
+                    include_once('conn.php');
+                    $fetchdata = new DB_con();
+                    $sql = $fetchdata->fetchdata();
+                    $index = 1;
+                    while ($row = mysqli_fetch_array($sql)) { ?>
+                    <tr id="POID_<?=$row['head_po_id']?>">
+                        <td height="40"><?php echo $index?></td>
+                        <td><?=$row['head_po_docnumber']?></td>
                         <td>1</td>
                         <td>กำลังจัดส่ง</td>
                         <td>05/05/2022</td>
                         <td>
                             <div class="row">
                                 <div class="col-25">
-                                    <a href="info/info_po.php?id=<?=$i?>">ดูข้อมูล</a>
+                                    <a href="info/info_po.php?id=<?=$row['head_po_id']?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
-                                    <a href="edit/edit_po.php?id=<?=$i?>">แก้ไข</a>
+                                    <a href="edit/edit_po.php?id=<?=$row['head_po_id']?>">แก้ไข</a>
                                 </div>
                                 <div class="col-25">
                                     <button type="button">พิมพ์</button>
                                 </div>
                                 <div class="col-25">
-                                    <button type="button" onClick="btn_delete(<?=$i?>)">ลบ</button>
+                                    <button type="button" onClick="btn_delete(<?=$row['head_po_id']?>)">ลบ</button>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                    <?php } ?>
+                    <?php $index++; } ?>
                 </tbody>
             </table>
         </div>
