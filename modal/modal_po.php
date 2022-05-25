@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <input type="text" name="" id="" class="modal_brand" value="<?php echo $_GET['modal_id'];?>">
-                <a class="modal-close" data-modal-close="add_data_modal" onclick="modal_close()" href="#">x</a>
+                <a class="modal-close" data-modal-close="add_data_modal" data-id="<?php echo $_GET['modal_id'];?>" onclick="modal_close()" href="#">x</a>
             </div>
             <div class="modal-body">
                 <table>
@@ -18,7 +18,7 @@
                         <tr>
                             <?php for ($i=0; $i < count($package); $i++) { ?>
                             <td>
-                                <select name="" id="" class="pickitem_advance" data-cylindersize="<?=$package[$i]?>">
+                                <select name="" id="" class="pickitem_advance" data-id="<?php echo $_GET['modal_id'];?>" data-cylindersize="<?=$package[$i]?>">
                                     <?php for ($n=0; $n <= 20; $n++) { ?>
                                     <option value="<?=$n?>"><?=$n?></option>
                                     <?php } ?>

@@ -11,7 +11,7 @@
 </head>
 <body>
     <section id="purchase">
-        <form action="function.php" method="POST" id="FormPreOrderCylinder">
+        <form action="controller.php" method="POST" id="FormPreOrderCylinder">
             <input type="hidden" name="parameter" value="PreOrderCylinder">
         <div class="container">
             <h4>จัดซื้อ</h4>
@@ -42,9 +42,7 @@
                     for ($i=0; $i < count($package); $i++) { 
                 ?>
                 <th width="80" height="30"><?=$package[$i]?></th>
-                <?php
-                    }// end for(1)
-                ?>
+                <?php }// end for(1) ?>
                 <th width="150" height="30">ฝากเติม</th>
             </tr>
             <?php for ($x=0; $x < count($brand); $x++) { ?>
@@ -56,7 +54,7 @@
                     for ($i=0; $i < count($package); $i++) { ?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="pickitem" class="pickitem" id="">
+                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
@@ -82,10 +80,20 @@
                 <td><div id="total">0</div></td>
                 <td>รายการ</td>
             </tr>
+            <tr>
+                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">ขนาด 4</td>
+                <td></div></td>
+                <td>กิโลกลัม</td>
+            </tr>
+            <tr>
+                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
+                <td></td>
+                <td>กิโลกลัม</td>
+            </tr>
         </table>
         <div class="container">
             <h4>หมายเหตุ</h4>
-            <textarea name="" id="" cols="30" rows="10" style="width: 100%;"></textarea>
+            <textarea name="comment" id="" cols="30" rows="10" style="width: 100%;"></textarea>
             <div class="row" style="margin-top: 30px;">
                 <div class="col-12" style="text-align: right;">
                     <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
@@ -94,6 +102,7 @@
         </div>
 
         <div id="resultModal"></div>
+        <div id="result_inputItem"></div>
         </form>
     </section>
     <script src="js/jquery-3.6.0.min.js"></script>

@@ -13,8 +13,15 @@ $(document).ready(function() {
                 data: {modal_id: modal_id},
                 dataType: "HTML",
                 success: function (response) {
-                    $('#resultModal').html(response);
-                    $('#add_data_Modal').css("display", "block");
+                    let isExist = $('#resultModal').find('div#temp_'+modal_id).length;
+                    if(isExist > 0) {
+                        $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+                    } else {
+                        $('#resultModal').append("<div id='temp_"+modal_id+"'>"+" </div>")
+                        $('#temp_'+modal_id).html(response);
+                        $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+                    }
+
                 }
             });
         });
@@ -22,14 +29,12 @@ $(document).ready(function() {
 });
 
 $(document).on('input', '.pickitem_advance', function () {
-    var brand = $('.modal_brand').val();
+    var brand = $(this).data('id');
     var amount = $(this).val();
     var cylinder_size = $(this).attr('data-cylindersize');
-    var cylinder_size_r = cylinder_size.replace(/\./g, "");
+    var cylinder_size_r = cylinder_size.replace(/\./g, ""); // remove dot
     var appendcylinder = $('#'+brand+'_'+cylinder_size_r).attr('data-appendcylinder');
     $("#total").text(getAllSum());
-
-    // console.log(appendcylinder, cylinder_size);
     if (appendcylinder == null && appendcylinder != 0) {
         $('#result_adv_'+brand).append('<input type="hidden" id="'+brand+'_'+cylinder_size_r+'" class="appendcylinder '+brand+'_'+cylinder_size_r+'" data-appendcylinder="'+brand+'_'+cylinder_size_r+'" value="'+amount+'">');
         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+cylinder_size_r+'">'+cylinder_size+' kg. [<span class="'+brand+'_'+cylinder_size_r+'">'+amount+'</span>] <br></span>');
@@ -44,8 +49,14 @@ $(document).on('input', '.pickitem_advance', function () {
     }
 })
 
-function modal_close() {
-    $('#add_data_Modal').css("display", "none");
+$(document).on('click','.modal-close', function() {
+    let modal_id = $(this).data('id')
+    $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
+})
+
+function modal_close(modal_id) {
+    console.log($(this).data('id'));
+    $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
 }
 
 $('select').change(function(){
@@ -56,28 +67,21 @@ $('select').change(function(){
     $("#total").text(sum);
 });
 
-// $(".pickitem_advance").on('input',function() {
-//     var brand = $('.modal_brand').val();
-//     $("#total").text(getAllSum());
-//     var amount = $(this).val();
-//     var cylinder_size = $(this).attr('data-cylindersize');
-//     var cylinder_size_r = cylinder_size.replace(/\./g, "");
-//     var appendcylinder = $('#'+brand+'_'+cylinder_size_r).attr('data-appendcylinder');
-    
-//     console.log(appendcylinder, cylinder_size);
-//     if (appendcylinder == null && appendcylinder != 0) {
-//         $('#result_adv_'+brand).append('<input type="hidden" id="'+brand+'_'+cylinder_size_r+'" class="appendcylinder '+brand+'_'+cylinder_size_r+'" data-appendcylinder="'+brand+'_'+cylinder_size_r+'" value="'+amount+'">');
-//         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+cylinder_size_r+'">'+cylinder_size+' kg. [<span class="'+brand+'_'+cylinder_size_r+'">'+amount+'</span>] <br></span>');
-//     } else {
-//         $('.'+brand+'_'+cylinder_size_r).val(amount);
-//         if (amount != 0) {
-//             $('.'+brand+'_'+cylinder_size_r).text(amount);
-//         } else {
-//             $('#appendtext'+brand+'_'+cylinder_size_r).remove();
-//             $('.'+brand+'_'+cylinder_size_r).remove();
-//         }
-//     }
-// });
+$('.pickitem').change(function () {
+    var brand = $(this).data('brand');
+    var size = $(this).data('size');
+    var amount = $(this).val();
+    var appendItem = $('#'+brand+'_'+size).attr('data-info');
+    if (appendItem == null) {
+        $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'">');
+    } else {
+        if (amount != 0) {
+            $('#'+brand+'_'+size).val(amount);
+        } else {
+            $('#'+brand+'_'+size).remove();
+        }
+    }
+})
 
 $('select').change(function(){
     $("#total").text(getAllSum());
@@ -134,6 +138,39 @@ function btn_submit_preselect () {
                     timer: 1500
                 })
             }
+        }
+    })
+}
+
+function btn_delete (id) {
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "เอกสาร PO จะไม่สามารถกู้คืนได้!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: "controller.php",
+                data: {POID: id, parameter: "deletePO"},
+                dataType: "JSON",
+                success: function (response) {
+                    if (response == 'Y') {
+                        $('#POID_'+id).remove();
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'บันทึกข้อมูลสำเร็จ',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                }
+            });
         }
     })
 }

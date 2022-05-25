@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .show {
+            display: block;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button id="showBlackButton">show black</button>
+    <button id="showWhiteButton">show white</button>
+    <button id="showAll">show all</button>
+
+    <table class="someclass" border="1" cellpadding="0" cellspacing="0" summary="bla bla bla">
+        <caption>bla bla bla</caption>
+        <thead>
+          <tr id="black">
+            <th width="50px">Header Text</th>
+            <th width="50px">Header Text</th>
+            <th width="50px">Header Text</th>
+            <th width="50px">Header Text</th>
+            <th width="50px">Header Text</th>
+            <th width="50px">Header Text</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="white">
+            <td width="50px">111</td>
+            <td width="50px">111</td>
+            <td width="50px">111</td>
+            <td width="50px">111</td>
+            <td width="50px">111</td>
+            <td width="50px">111</td>
+        </tr>
+          <tr id="black" style="display: none;">
+            <td width="50px">5555</td>
+            <td width="50px">5555</td>
+            <td width="50px">5555</td>
+            <td width="50px">5555</td>
+            <td width="50px">5555</td>
+            <td width="50px">5555</td>
+        </tr>
+        </tbody>
+
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>
+        var rows = $('table.someclass tr');
+        var black = rows.filter('#black');
+        var white = rows.filter('#white');
+
+        $('#showBlackButton').click(function() {
+            black.addClass('hide');
+            white.addClass('show');
+        });
+        
+        $('#showWhiteButton').click(function() {
+            white.addClass('hide');
+            black.addClass('show');
+        });
+    </script>
+</body>
+</html>

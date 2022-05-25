@@ -12,7 +12,7 @@
     <section id="purchase">
         <div class="container">
             <h4>จัดซื้อ</h4>
-            <div class="function_bar">555</div>
+            <!-- <div class="function_bar">555</div> -->
             <table border="1" cellspacing="1" cellpadding="1">
                 <thead>
                     <tr>
@@ -25,23 +25,22 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     <?php 
                     include_once('conn.php');
                     $fetchdata = new DB_con();
-                    $sql = $fetchdata->fetchdata();
+                    $sql = $fetchdata->fetchdataPO();
                     $index = 1;
                     while ($row = mysqli_fetch_array($sql)) { ?>
                     <tr id="POID_<?=$row['head_po_id']?>">
                         <td height="40"><?php echo $index?></td>
                         <td><?=$row['head_po_docnumber']?></td>
-                        <td>1</td>
+                        <td><?=$row['head_po_round']?></td>
                         <td>กำลังจัดส่ง</td>
                         <td>05/05/2022</td>
                         <td>
                             <div class="row">
                                 <div class="col-25">
-                                    <a href="info/info_po.php?id=<?=$row['head_po_id']?>">ดูข้อมูล</a>
+                                    <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
                                     <a href="edit/edit_po.php?id=<?=$row['head_po_id']?>">แก้ไข</a>
@@ -64,29 +63,6 @@
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
-    <script>
-        function btn_delete (id) {
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "เอกสาร PO จะไม่สามารถกู้คืนได้!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'ยืนยัน',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        text: 'บันทึกข้อมูลสำเร็จ',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    $('#POID_'+id).remove();
-                }
-            })
-        }
-    </script>
+    <script src="js/JQcustom.js"></script>
 </body>
 </html>
