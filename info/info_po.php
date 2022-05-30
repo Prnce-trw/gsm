@@ -13,8 +13,7 @@
 <body>
     <section id="purchase">
         <div class="container">
-            <?php 
-            include_once('../conn.php');
+            <?php include_once('../conn.php');
             $fetchdata = new DB_con();
             $sql = $fetchdata->infoPO($_GET['id']);
             $row = mysqli_fetch_array($sql) ?>
@@ -64,7 +63,7 @@
                 for ($x=0; $x < count($brand); $x++) {
             ?>
             <tr>
-                <td width="80" height="50" >
+                <td height="50" >
                     <div class="div-inside"><?=$brand[$x]?></div>
                 </td>
                 <?php //for(1) 
@@ -74,8 +73,17 @@
                             <?php include_once('../conn.php');
                             $fetchdataPO = new DB_con();
                             $sqlPO = $fetchdataPO->CylinderPO($_GET['id']);
-                            $rows = mysqli_fetch_array($sqlPO);
-                            echo $rows['po_itemOut_CyBrand'];?>
+                            $rows = mysqli_fetch_array($sqlPO); 
+                            if ($brand[$x] == $rows['po_itemOut_CyBrand'] && $package[$i] == $rows['po_itemOut_CySize'] && $rows['po_itemOut_type'] == "N") {
+                                echo $rows['po_itemOut_CyAmount'];
+                            } else {
+                                echo 0;
+                            } ?> / 
+                            <select name="" id="">
+                            <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
+                            <?php } ?>
+                            </select>
                         </div>
                     </td>
                 <?php } // end for(1) ?>
@@ -85,12 +93,17 @@
                 </td>
             </tr>
                                 
-            <?php
-            }//end for(0)
-            ?>
+            <?php }//end for(0) ?>
             <tr>
                 <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
-                <td><div id="total">0</div></td>
+                <td>
+                    <?php 
+                    $fetchdataPO = new DB_con();
+                    $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
+                    $rowPO = mysqli_fetch_array($sqlPO); 
+                    echo $rowPO[0];?> /
+                    <span id="total">0</span>
+                </td>
                 <td>รายการ</td>
             </tr>
         </table>

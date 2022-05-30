@@ -9,7 +9,7 @@ $(document).ready(function() {
             var modal_id = $(this).attr('data-modal');
             $.ajax({
                 type: "GET",
-                url: "modal/modal_po.php",
+                url: "../modal/modal_po.php",
                 data: {modal_id: modal_id},
                 dataType: "HTML",
                 success: function (response) {

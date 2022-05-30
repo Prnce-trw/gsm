@@ -13,14 +13,23 @@
 <body>
     <section id="purchase">
         <div class="container">
-            <h4>จัดซื้อ</h4>
+            <?php include_once('../conn.php');
+            $fetchdata = new DB_con();
+            $sql = $fetchdata->infoPO($_GET['id']);
+            $row = mysqli_fetch_array($sql) ?>
+            <div class="row">
+                <div class="col-50">
+                    <label class="label-titile">เอกสารอ้างอิง</label> 
+                    <input type="text" class="form-control">
+                </div>
+            </div>
             <div class="row">
                 <div class="col-50">
                     <label for="filling" class="label-titile">โรงบรรจุ</label>
                     <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
                         <option selected disabled>เลือกโรงบรรจุ...</option>
                         <?php for ($i=0; $i < 10; $i++) { ?>
-                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                            <option value="<?php echo $i; ?>" <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -30,12 +39,27 @@
             </div>
             <div class="row">
                 <div class="col-50">
-                    <label class="label-titile">รอบ</label> 
-                    <input type="text" class="form-control" placeholder="รอบการส่งแก๊ส">
+                    <label class="label-titile">รอบ</label>
+                    <select name="" id="" class="js-example-basic-single" style="width: 150px;">
+                        <option selected disabled>เลือกรอบขนส่ง...</option>
+                        <?php for ($i=1; $i <= 5; $i++) { ?>
+                            <option value="<?php echo $i; ?>" <?php echo $row['head_po_round'] == $i ? 'selected':'' ?>><?php echo $i; ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="col-50">
                     <label class="label-titile">วันที่</label> 
-                    <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี">
+                    <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['created_at'])?>">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-50">
+                    <label class="label-titile">เวลาเข้า</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="col-50">
+                    <label class="label-titile">เวลาออก</label>
+                    <input type="text" class="form-control">
                 </div>
             </div>
         </div>
@@ -48,174 +72,121 @@
             ?>
             <tr>
                 <th width="80" height="30">
-                    ยี่ห้อ\ขนาด
+                    ขนาด/ยี่ห้อ
                 </th>
-                <?php
-                    //for(1)
-                    for ($i=0; $i < count($package); $i++) { 
+                <?php //for(1)
+                    for ($i=0; $i < count($brand); $i++) { 
                 ?>
-                <th width="80" height="30"><?=$package[$i]?></th>
-                <?php
-                    }// end for(1)
-                ?>
-                <th width="80" height="30">ฝากเติม</th>
-            </tr>
-            <?php
-                for ($x=0; $x < count($brand); $x++) {
-            ?>
-            <tr>
-                <td width="80" height="50" >
-                    <div class="div-inside"><?=$brand[$x]?></div>
-                    
-                </td>
-                <?php //for(1) 
-                    for ($i=0; $i < count($package); $i++) { ?>
-                    <td width="80" height="50">
-                        <div class="div-inside">
-                            <select name="pickitem" class="pickitem" id="">
-                                <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                    <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </td>
+                <th width="80" height="30"><?=$brand[$i]?></th>
                 <?php }// end for(1) ?>
-                <td>
-                    <button type="button" class="open_modal" data-modal="<?=$x?>">เพิ่ม</button>
-                </td>
+                <th width="80" height="30">Total</th>
+                <th width="80" height="30">Unit</th>
+                <th width="80" height="30">Amount</th>
             </tr>
-                                
             <?php
-            }//end for(0)
+                for ($x=0; $x < count($package); $x++) {
             ?>
             <tr>
-                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                <td width="80" height="30" >
+                    <div class="div-inside"><?=$package[$x]?></div>
+                </td>
+                <?php for ($n=0; $n < count($brand); $n++) { ?>
+                    <td>
+                        <?php include_once('../conn.php');
+                        $fetchdataPO = new DB_con();
+                        $sqlPO = $fetchdataPO->CylinderPO($_GET['id']);
+                        while ($rows = mysqli_fetch_array($sqlPO)) {
+                            if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "N") {
+                                echo $rows['po_itemOut_CyAmount']." / ";
+                            } } ?>
+                        <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
+                            <?php for ($y=0; $y <=20 ; $y++) { ?>
+                                <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                <?php } ?>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>               
+            <?php } 
+            $fetchdataPO = new DB_con();
+            $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
+            $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
+            $rowPO = mysqli_fetch_array($sqlPO); 
+            $rowPOSize = mysqli_fetch_array($sqlPOSize); 
+            //end for(0) ?>
+            <tr>
+                <td colspan="<?=count($brand)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
                 <td><div id="total">0</div></td>
                 <td>รายการ</td>
             </tr>
         </table>
+        <!-- Advance -->
+       
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="<?=count($package)+1?>">ฝากเติม</th>
+                </tr>
+                <tr>
+                    <th width="80" height="30"> ยี่ห้อ\ขนาด </th>
+                    <?php for ($i=0; $i < count($package); $i++) { ?>
+                        <th width="80" height="30"><?=$package[$i]?></th>
+                    <?php } ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    for ($x=0; $x < count($brand); $x++) {
+                ?>
+                <tr>
+                    <td width="80" height="50" >
+                        <div class="div-inside"><?=$brand[$x]?></div>
+                    </td>
+                    <?php //for(1) 
+                        for ($i=0; $i < count($package); $i++) { ?>
+                        <td width="80" height="50">
+                            <div class="div-inside">
+                                <?php 
+                                $fetchdataPO = new DB_con();
+                                $sqlPO = $fetchdataPO->CylinderPO($_GET['id']);
+                                while ($rows = mysqli_fetch_array($sqlPO)) {
+                                    if ($brand[$x] == $rows['po_itemOut_CyBrand'] && $package[$i] == $rows['po_itemOut_CySize'] && $rows['po_itemOut_type'] == "Adv") {
+                                        echo $rows['po_itemOut_CyAmount']." / ";
+                                    } }?>  
+                                <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
+                                    <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                        <option value="<?php echo $n; ?>"><?php echo $n; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </td>
+                    <?php }// end for(1) ?>
+                </tr>               
+                <?php } ?>
+            </tbody>
+        </table>
         <div class="container">
             <h4>หมายเหตุ</h4>
-            <textarea name="" id="" cols="30" rows="10" style="width: 100%;"></textarea>
+            <textarea name="" id="" cols="30" rows="10" style="width: 100%;"><?=$row['head_po_comment']?></textarea>
             <div class="row" style="margin-top: 30px;">
                 <div class="col-12" style="text-align: right;">
                     <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
                 </div>
             </div>
         </div>
-        <div class="modalContainer">
-            <div class="modal-content fade">
-                <span class="close">&times;</span>
-                <div class="row">
-                    <div class="col-30">ขนาดถัง</div>
-                    <div class="col-70">จำนวน</div>
-                </div>
-                <div class="row">
-                    <?php for ($i=0; $i < count($package); $i++) { ?>
-                    <div class="col-30 text-center">
-                        <?=$package[$i]?>
-                    </div>
-                    <div class="col-70">
-                        <input type="number" name="" class="form-control">
-                    </div>
-                    <?php } ?>
-                </div>
-                <div class="row text-right">
-                    <button type="button" onclick="$('.modalContainer').hide()">ยืนยัน</button>
-                </div>
-            </div>
-        </div>
+        <div id="resultModal"></div>
+        <div id="result_inputItem"></div>
     </section>
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script src="../js/sweetalert2.all.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/JQcustom.js"></script>
     <script>
         $( ".datepicker" ).datepicker({ dateFormat: 'dd/mm/yy' });
-
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2({
-                placeholder: "เลือกโรงบรรจุ...",
-            });
-
-            $(".open_modal").on("click", function() {
-                var modal_id = $(this).attr('data-modal');
-                $(".modalContainer").show();
-            });
-
-            $(".close").on("click", function() {
-                $(".modalContainer").hide();
-            });
-        });
-
-        $('select').change(function(){
-            var sum = 0;
-            $('.pickitem').each(function() {
-                sum += parseInt($(this).val());
-            });
-            $("#total").text(sum);
-        });
-
-        $("input[class^='input_advance_']").on('input',function() {
-            $("#total").text(getAllSum());
-        });
-        $('select').change(function(){
-            $("#total").text(getAllSum());
-        });
-
-        function getAllSum() {
-            var result = 0;
-            $('.pickitem :selected').each(function() {
-                result += parseInt($(this).val());
-            });
-            $("input[class^='input_advance_']").each(function() {
-                if(isNaN($(this).val()) || $(this).val() === "") {
-                    result+=0;
-                } else {
-                    result+=parseInt($(this).val());
-                }
-            })
-            return result
-        }
-
-        function cylinder_adcance(id) {
-            if ($('#advance_'+id).is(":checked")) {
-                $('.input_advance_'+id).show(300);
-            } else {
-                $('.input_advance_'+id).hide(300);
-            }
-        }
-
-        function btn_submit_preselect () {
-            Swal.fire({
-                title: 'คุณแน่ใจหรือไม่?',
-                text: "เอกสาร PO จะไม่สามารถแก้ไขได้! กรุณาตรวจสอบความถูกต้องก่อนยืนยัน",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'ยืนยัน',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if ($('#total').text() != "0") {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'บันทึกข้อมูลสำเร็จ',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    } else {
-                        Swal.fire({
-                            icon: 'warning',
-                            text: 'กรูณากรอกตรวจสอบข้อมูลก่อนยืนยัน',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                    }
-                }
-            })
-        }
     </script>
 </body>
 </html>

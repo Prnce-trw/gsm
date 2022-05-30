@@ -49,5 +49,17 @@
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
             return $result;
         }
+
+        public function CylinderPOSum($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT sum(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
+            return $result;
+        }
+
+        public function CylinderWeight($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT sum(po_itemOut_CySize) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
+            return $result;
+        }
     }
 ?>

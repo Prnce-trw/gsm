@@ -43,7 +43,7 @@
                                     <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
-                                    <a href="edit/edit_po.php?id=<?=$row['head_po_id']?>">แก้ไข</a>
+                                    <a href="edit/edit_po.php?id=<?=$row['head_po_docnumber']?>">แก้ไข</a>
                                 </div>
                                 <div class="col-25">
                                     <button type="button">พิมพ์</button>
