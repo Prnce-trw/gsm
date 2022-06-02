@@ -16,11 +16,13 @@
             <?php include_once('../conn.php');
             $fetchdata = new DB_con();
             $sql = $fetchdata->infoPO($_GET['id']);
-            $row = mysqli_fetch_array($sql) ?>
+            $row = mysqli_fetch_array($sql);
+            $itemPO = $fetchdata->CylinderPO($_GET['id']);
+            ?>
             <div class="row">
                 <div class="col-50">
                     <label class="label-titile">เอกสารอ้างอิง</label> 
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" name="RefDO" placeholder="หมายเลขเอกสารอ้างอิง...">
                 </div>
             </div>
             <div class="row">
@@ -55,46 +57,38 @@
             <div class="row">
                 <div class="col-50">
                     <label class="label-titile">เวลาเข้า</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" name="tineIn" placeholder="เวลาเข้า...">
                 </div>
                 <div class="col-50">
                     <label class="label-titile">เวลาออก</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" name="timeOut" placeholder="เวลาออก...">
                 </div>
             </div>
         </div>
-        <div class="table-cover"></div>
-            <table border="1" cellspacing="1" cellpadding="1">
+        <table border="1" cellspacing="1" cellpadding="1">
             <?php 
                 $brand = ['PTT','WP','Siam','Unit','PT','Other'];
                 $package = [4,7,8,11.5,13.5,15,48];
                 //for(0)
             ?>
             <tr>
-                <th width="80" height="30">
-                    ขนาด/ยี่ห้อ
-                </th>
+                <th width="80" height="30">ขนาด/ยี่ห้อ</th>
                 <?php //for(1)
-                    for ($i=0; $i < count($brand); $i++) { 
-                ?>
+                    for ($i=0; $i < count($brand); $i++) { ?>
                 <th width="80" height="30"><?=$brand[$i]?></th>
                 <?php }// end for(1) ?>
                 <th width="80" height="30">Total</th>
                 <th width="80" height="30">Unit</th>
                 <th width="80" height="30">Amount</th>
             </tr>
-            <?php
-                for ($x=0; $x < count($package); $x++) {
-            ?>
+            <?php for ($x=0; $x < count($package); $x++) { ?>
             <tr>
                 <td width="80" height="30" >
                     <div class="div-inside"><?=$package[$x]?></div>
                 </td>
                 <?php for ($n=0; $n < count($brand); $n++) { ?>
                     <td>
-                        <?php include_once('../conn.php');
-                        $fetchdataPO = new DB_con();
-                        $sqlPO = $fetchdataPO->CylinderPO($_GET['id']);
+                        <?php $sqlPO = $fetchdata->CylinderPO($_GET['id']);
                         while ($rows = mysqli_fetch_array($sqlPO)) {
                             if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "N") {
                                 echo $rows['po_itemOut_CyAmount']." / ";
@@ -124,48 +118,61 @@
             </tr>
         </table>
         <!-- Advance -->
-       
-        <table>
+        <table border="1" cellspacing="1" cellpadding="1">
             <thead>
+                <?php   $brand = ['PTT','WP','Siam','Unit','PT','Other'];
+                        $package = [4,7,8,11.5,13.5,15,48]; ?>
                 <tr>
-                    <th colspan="<?=count($package)+1?>">ฝากเติม</th>
+                    <th colspan="<?=count($brand)+4?>">ฝากเติม</th>
                 </tr>
                 <tr>
-                    <th width="80" height="30"> ยี่ห้อ\ขนาด </th>
-                    <?php for ($i=0; $i < count($package); $i++) { ?>
-                        <th width="80" height="30"><?=$package[$i]?></th>
-                    <?php } ?>
+                    <th width="80" height="30">
+                        ขนาด/ยี่ห้อ
+                    </th>
+                    <?php //for(1)
+                        for ($i=0; $i < count($brand); $i++) { ?>
+                    <th width="80" height="30"><?=$brand[$i]?></th>
+                    <?php }// end for(1) ?>
+                    <th width="80" height="30">Total</th>
+                    <th width="80" height="30">Unit</th>
+                    <th width="80" height="30">Amount</th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    for ($x=0; $x < count($brand); $x++) {
-                ?>
+                <?php for ($x=0; $x < count($package); $x++) { ?>
                 <tr>
-                    <td width="80" height="50" >
-                        <div class="div-inside"><?=$brand[$x]?></div>
+                    <td width="80" height="30" >
+                        <div class="div-inside"><?=$package[$x]?></div>
                     </td>
-                    <?php //for(1) 
-                        for ($i=0; $i < count($package); $i++) { ?>
-                        <td width="80" height="50">
-                            <div class="div-inside">
-                                <?php 
-                                $fetchdataPO = new DB_con();
-                                $sqlPO = $fetchdataPO->CylinderPO($_GET['id']);
-                                while ($rows = mysqli_fetch_array($sqlPO)) {
-                                    if ($brand[$x] == $rows['po_itemOut_CyBrand'] && $package[$i] == $rows['po_itemOut_CySize'] && $rows['po_itemOut_type'] == "Adv") {
-                                        echo $rows['po_itemOut_CyAmount']." / ";
-                                    } }?>  
-                                <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
-                                    <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                        <option value="<?php echo $n; ?>"><?php echo $n; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
+                    <?php for ($n=0; $n < count($brand); $n++) { ?>
+                        <td>
+                            <?php $sqlPO = $fetchdata->CylinderPO($_GET['id']);
+                            while ($rows = mysqli_fetch_array($sqlPO)) {
+                                if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "Adv") {
+                                    echo $rows['po_itemOut_CyAmount']." / ";
+                                } } ?>
+                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
+                                <?php for ($y=0; $y <=20 ; $y++) { ?>
+                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                                <?php } ?>
+                            </select>
                         </td>
-                    <?php }// end for(1) ?>
-                </tr>               
-                <?php } ?>
+                    <?php } ?>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <?php } 
+                $fetchdataPO = new DB_con();
+                $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
+                $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
+                $rowPO = mysqli_fetch_array($sqlPO);
+                $rowPOSize = mysqli_fetch_array($sqlPOSize); ?>
+                <tr>
+                    <td colspan="<?=count($brand)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                    <td><div id="total">0</div></td>
+                    <td>รายการ</td>
+                </tr>
             </tbody>
         </table>
         <div class="container">

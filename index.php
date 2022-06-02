@@ -54,7 +54,7 @@
                     for ($i=0; $i < count($package); $i++) { ?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>">
+                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>" data-Cytype="N">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>

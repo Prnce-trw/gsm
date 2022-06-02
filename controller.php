@@ -2,19 +2,26 @@
     include_once('conn.php');
     // include('function.php');
     if ($_POST['parameter'] == 'PreOrderCylinder') {
-        foreach ($_POST['pickitem'] as $key => $value) {
-            $item = explode('/', $value);
-            print_r($item[0]) ;
-        }
         try {
             $insertdata = new DB_con();
-            $DocumentNo     = $insertdata->RunningNo("PO", );
+            $DocumentNo     = $insertdata->RunningNo("PO");
             $filling        = $_POST['gas_filling'];
             $comment        = $_POST['comment'];
             $sql = $insertdata->insertPO($DocumentNo, $filling, $comment);
-    
-            echo "<script>alert('Success')</script>";
-            echo "<script>window.location.href='table_po.php'</script>";
+            
+            foreach ($_POST['pickitem'] as $key => $value) {
+                $item = explode('/', $value);
+                $itemType           = 'N';
+                $sqlItem = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+            }
+            
+            if ($sql && $sqlItem) {
+                echo "<script>alert('Success')</script>";
+                echo "<script>window.location.href='table_po.php'</script>";
+            } else {
+                echo "<script>alert('False')</script>";
+                echo "<script>window.location.href='table_po.php'</script>";
+            }
         } catch (\Exception $e) {
             echo "<script>alert('Failed: "+$e->getMessage()+"')</script>";
             echo "<script>window.location.href='table_po.php'</script>";
