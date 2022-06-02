@@ -16,7 +16,7 @@
 
         public function insertPO($DocumentNo, $gas_filling, $comment)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', 'Y')");
             return $result;
         }
 
@@ -29,7 +29,10 @@
         public function RunningNo($prefix)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_prefix_header WHERE prefixH_name='$prefix'");
-            return $result;
+            $objResult = mysqli_fetch_array($result);
+            $Seq = substr("0000".$objResult["prefixH_seq"],-5,5);
+            $strSQL = mysqli_query($this->dbcon, "UPDATE tb_prefix_header SET prefixH_seq= prefixH_seq+1");
+            return $prefix.$Seq;
         }
 
         public function deletePO($POID)
@@ -59,6 +62,18 @@
         public function CylinderWeight($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT sum(po_itemOut_CySize) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
+            return $result;
+        }
+
+        public function insertItem($DocumentNo, $brand, $size, $amount, $cytype)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itemout(po_itemOut_docNo, po_itemOut_CyBrand, po_itemOut_CySize, po_itemOut_CyAmount, po_itemOut_type) VALUES('$DocumentNo', '$brand', '$size', '$amount', '$cytype')");
+            return $result;
+        }
+
+        public function FunctionName($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
             return $result;
         }
     }

@@ -9,7 +9,7 @@ $(document).ready(function() {
             var modal_id = $(this).attr('data-modal');
             $.ajax({
                 type: "GET",
-                url: "../modal/modal_po.php",
+                url: "modal/modal_po.php",
                 data: {modal_id: modal_id},
                 dataType: "HTML",
                 success: function (response) {
@@ -65,15 +65,16 @@ $('select').change(function(){
         sum += parseInt($(this).val());
     });
     $("#total").text(sum);
-});
+}); 
 
-$('.pickitem').change(function () {
+$(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
     var size = $(this).data('size');
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
+    var cytype = $(this).attr('data-Cytype');
     if (appendItem == null) {
-        $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'">');
+        $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
     } else {
         if (amount != 0) {
             $('#'+brand+'_'+size).val(amount);
@@ -81,7 +82,7 @@ $('.pickitem').change(function () {
             $('#'+brand+'_'+size).remove();
         }
     }
-})
+});
 
 $('select').change(function(){
     $("#total").text(getAllSum());
@@ -122,7 +123,7 @@ function btn_submit_preselect () {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            if ($('#total').text() != "0") {
+            if ($('#total').text() != "0" && $('#gas_filling').val() != null) {
                 Swal.fire({
                     icon: 'success',
                     text: 'บันทึกข้อมูลสำเร็จ',
@@ -133,7 +134,7 @@ function btn_submit_preselect () {
             } else {
                 Swal.fire({
                     icon: 'warning',
-                    text: 'กรูณากรอกตรวจสอบข้อมูลก่อนยืนยัน',
+                    text: AlertText(1),
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -173,4 +174,8 @@ function btn_delete (id) {
             });
         }
     })
+}
+
+function AlertText(param) {
+    return 'test';
 }
