@@ -31,7 +31,7 @@
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_prefix_header WHERE prefixH_name='$prefix'");
             $objResult = mysqli_fetch_array($result);
             $Seq = substr("0000".$objResult["prefixH_seq"],-5,5);
-            $strSQL = mysqli_query($this->dbcon, "UPDATE tb_prefix_header SET prefixH_seq= prefixH_seq+1");
+            $strSQL = mysqli_query($this->dbcon, "UPDATE tb_prefix_header SET prefixH_seq= prefixH_seq+1 WHERE prefixH_name='$prefix'");
             return $prefix.$Seq;
         }
 
@@ -43,7 +43,7 @@
 
         public function infoPO($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
@@ -71,9 +71,23 @@
             return $result;
         }
 
-        public function FunctionName($POID)
+        public function insertPOReceipt($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID'");
+            $sql = mysqli_query($this->dbcon, "SELECT * FROM tb_head_po_receipt WHERE head_pr_docnumber_po = '$POID'");
+            $valid = mysqli_fetch_array($sql);
+            if ($valid['head_pr_docnumber_po'] == null) {
+                $insertdata     = new DB_con();
+                $DocumentNo     = $insertdata->RunningNo("RP");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po) VALUES('$DocumentNo', '$POID')");
+            } else {
+                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
+            } 
+            return $result;
+        }
+
+        public function insertItemEntrance($DocumentNo, $brand, $size, $amount, $cytype)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_docNo, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$DocumentNo', '$brand', '$size', '$amount', '$cytype')");
             return $result;
         }
     }

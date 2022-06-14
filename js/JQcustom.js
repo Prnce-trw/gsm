@@ -37,7 +37,7 @@ $(document).on('input', '.pickitem_advance', function () {
     $("#total").text(getAllSum());
     if (appendcylinder == null && appendcylinder != 0) {
         $('#result_adv_'+brand).append('<input type="hidden" id="'+brand+'_'+cylinder_size_r+'" class="appendcylinder '+brand+'_'+cylinder_size_r+'" data-appendcylinder="'+brand+'_'+cylinder_size_r+'" value="'+amount+'">');
-        $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+cylinder_size_r+'">'+cylinder_size+' kg. [<span class="'+brand+'_'+cylinder_size_r+'">'+amount+'</span>] <br></span>');
+        $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+cylinder_size_r+'">'+cylinder_size+' kg. [<span class="'+brand+'_'+cylinder_size_r+'">'+amount+'</span>] </br></span>');
     } else {
         $('.'+brand+'_'+cylinder_size_r).val(amount);
         if (amount != 0) {
@@ -74,10 +74,10 @@ $(document).on('change', '.pickitem', function () {
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
     if (appendItem == null) {
-        $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+        $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
     } else {
         if (amount != 0) {
-            $('#'+brand+'_'+size).val(amount);
+            $('#'+brand+'_'+size).val(brand+'/'+size+'/'+amount+'/'+cytype);
         } else {
             $('#'+brand+'_'+size).remove();
         }

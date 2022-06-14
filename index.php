@@ -83,12 +83,12 @@
             <tr>
                 <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">ขนาด 4</td>
                 <td></div></td>
-                <td>กิโลกลัม</td>
+                <td>กิโลกรัม</td>
             </tr>
             <tr>
                 <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
                 <td></td>
-                <td>กิโลกลัม</td>
+                <td>กิโลกรัม</td>
             </tr>
         </table>
         <div class="container">
