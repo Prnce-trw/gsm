@@ -16,12 +16,17 @@
             <table border="1" cellspacing="1" cellpadding="1">
                 <thead>
                     <tr>
-                        <th width="50" height="40">ลำดับ</th>
-                        <th>หัวข้อ</th>
-                        <th>รอบ</th>
-                        <th>สถานะ</th>
-                        <th width="80">เวลาการจัดส่ง</th>
-                        <th width="350">การจัดการ</th>
+                        <th width="50" height="40" rowspan="2">ลำดับ</th>
+                        <th colspan="2">การจัดการ</th>
+                        <th rowspan="2">หัวข้อ</th>
+                        <th rowspan="2">รอบ</th>
+                        <th rowspan="2">สถานะ</th>
+                        <th rowspan="2" width="80">เวลาการจัดส่ง</th>
+                        <th rowspan="2" width="350">การจัดการ</th>
+                    </tr>
+                    <tr>
+                        <th>ลงรับ</th>
+                        <th>แก้ไข</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +38,16 @@
                     while ($row = mysqli_fetch_array($sql)) { ?>
                     <tr id="POID_<?=$row['head_po_id']?>">
                         <td height="40"><?php echo $index?></td>
+                        <td>
+                            <?php if ($row['head_pr_docnumber'] == null) { ?>
+                                <a href="preorderreceipt.php?id=<?=$row['head_po_docnumber']?>">รับถังเข้า</a>
+                            <?php } ?> 
+                        </td>
+                        <td>
+                            <?php if ($row['head_pr_docnumber'] != null) { ?>
+                                <a href="edit/edit_po.php?id=<?=$row['head_po_docnumber']?>">แก้ไขเอกสาร</a>
+                            <?php } ?>
+                        </td>
                         <td><?=$row['head_po_docnumber']?></td>
                         <td><?=$row['head_po_round']?></td>
                         <td>กำลังจัดส่ง</td>
@@ -43,14 +58,11 @@
                                     <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
-                                    <a href="edit/edit_po.php?id=<?=$row['head_po_docnumber']?>">แก้ไข</a>
-                                </div>
-                                <div class="col-25">
                                     <button type="button">พิมพ์</button>
                                 </div>
                                 <div class="col-25">
                                     <button type="button" onClick="btn_delete(<?=$row['head_po_id']?>)">ลบ</button>
-                                </div>
+                                </div> 
                             </div>
                         </td>
                     </tr>

@@ -47,12 +47,12 @@
             $insertdata     = new DB_con();
             $RefDO          = $_POST['RefDO'];
             $POID           = $_POST['POID'];
-            $sql            = $insertdata->insertPOReceipt($POID);
+            $sql            = $insertdata->insertPOReceipt($POID, $RefDO);
 
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
-                $sqlItem            = $insertdata->insertItemEntrance($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+                $sqlItem            = $insertdata->insertItemEntrance($RefDO, $item[0], $item[1], $item[2], $item[3]);
             }
             
             echo "<script>alert('Success')</script>";

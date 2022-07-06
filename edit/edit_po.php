@@ -16,13 +16,13 @@
     <section id="purchase">
         <form action="../controller.php" method="POST">
             <div class="container">
-                <?php include_once('../conn.php');
+                <?php
+                include_once('../conn.php');
                 $fetchdata = new DB_con();
-                $sql = $fetchdata->infoPO($_GET['id']);
+                $sql = $fetchdata->editPO($_GET['id']);
                 $row = mysqli_fetch_array($sql);
-                $itemPO = $fetchdata->CylinderPO($_GET['id']); ?>
-                <input type="hidden" name="parameter" id="" value="PreOrderReCeipt">
-                <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
+                $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
+                ?>
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">เอกสารอ้างอิง</label>
@@ -35,7 +35,6 @@
                         <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
                             <option selected disabled>เลือกโรงบรรจุ...</option>
                             <?php for ($i=0; $i < 10; $i++) { ?>
-                            <option value="<?php echo $i; ?>"
                                 <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
                             </option>
                             <?php } ?>
@@ -72,110 +71,73 @@
                     </div>
                 </div>
             </div>
-            <table border="1" cellspacing="1" cellpadding="1">
-                <?php 
-                    $brand = ['PTT','WP','Siam','Unit','PT','Other'];
-                    $package = [4,7,8,11.5,13.5,15,48];
-                    //for(0) ?>
-                <tr>
-                    <th width="80" height="30">ขนาด/ยี่ห้อ</th>
-                    <?php //for(1)
-                        for ($i=0; $i < count($brand); $i++) { ?>
-                    <th width="80" height="30"><?=$brand[$i]?></th>
-                    <?php }// end for(1) ?>
-                    <th width="80" height="30">Total</th>
-                    <th width="80" height="30">Unit</th>
-                    <th width="80" height="30">Amount</th>
-                </tr>
-                <?php for ($x=0; $x < count($package); $x++) { ?>
-                <tr>
-                    <td width="80" height="30">
-                        <div class="div-inside"><?=$package[$x]?></div>
-                    </td>
-                    <?php for ($n=0; $n < count($brand); $n++) { ?>
-                    <td>
-                        <?php $sqlPO = $fetchdata->CylinderPO($_GET['id']);
-                            while ($rows = mysqli_fetch_array($sqlPO)) {
-                                if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "N") {
-                                    echo $rows['po_itemOut_CyAmount']." / ";
-                                } } ?>
-                        <select name="" class="pickitem" id="" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="N">
-                            <?php for ($y=0; $y <=20 ; $y++) { ?>
-                            <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
-                            <?php } ?>
-                        </select>
-                    </td>
-                    <?php } ?>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <?php }
-                $fetchdataPO = new DB_con();
-                $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
-                $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
-                $rowPO = mysqli_fetch_array($sqlPO);
-                $rowPOSize = mysqli_fetch_array($sqlPOSize);
-                //end for(0) ?>
-                <tr>
-                    <td colspan="<?=count($brand)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
-                    <td><div id="total">0</div></td>
-                    <td>รายการ</td>
-                </tr>
-            </table>
-            <!-- Advance -->
-            <table border="1" cellspacing="1" cellpadding="1">
+            <table >
                 <thead>
-                    <?php   $brand = ['PTT','WP','Siam','Unit','PT','Other'];
-                            $package = [4,7,8,11.5,13.5,15,48]; ?>
-                    <tr><th colspan="<?=count($brand)+4?>">ฝากเติม</th></tr>
                     <tr>
-                        <th width="80" height="30">ขนาด/ยี่ห้อ</th>
-                        <?php //for(1)
-                            for ($i=0; $i < count($brand); $i++) { ?>
-                            <th width="80" height="30"><?=$brand[$i]?></th>
-                        <?php }// end for(1) ?>
-                        <th width="80" height="30">Total</th>
-                        <th width="80" height="30">Unit</th>
-                        <th width="80" height="30">Amount</th>
+                        <th>ลำดับ</th>
+                        <th>รายการสินค้า</th>
+                        <th>จำนวน</th>
+                        <th>น้ำหนัก</th>
+                        <th>ราคา/หน่วย</th>
+                        <th>รับจริง</th>
+                        <th>จำนวนเงิน</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php for ($x=0; $x < count($package); $x++) { ?>
-                    <tr>
-                        <td width="80" height="30"><div class="div-inside"><?=$package[$x]?></div></td>
-                        <?php for ($n=0; $n < count($brand); $n++) { ?>
+                <tbody id="edit_PO">
+                    <?php 
+                    $index = 1;
+                    while ($rows = mysqli_fetch_array($itemPO)) { 
+                    $size_r = explode(".",$rows['po_itemOut_CySize']);
+                    ?>
+                    <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>">
                         <td>
-                            <?php $sqlPO = $fetchdata->CylinderPO($_GET['id']);
-                                while ($rows = mysqli_fetch_array($sqlPO)) {
-                                    if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "Adv") {
-                                        echo $rows['po_itemOut_CyAmount']." / ";
-                                    } } ?>
-                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="Adv">
-                                <?php for ($y=0; $y <=20 ; $y++) { ?>
-                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
-                                <?php } ?>
-                            </select>
+                            <?=$index;?>
+                            <input type="hidden" name="pickitem[]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" 
+                            data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
-                        <?php } ?>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <?php }
-                    $fetchdataPO = new DB_con();
-                    $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
-                    $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
-                    $rowPO = mysqli_fetch_array($sqlPO);
-                    $rowPOSize = mysqli_fetch_array($sqlPOSize); ?>
-                    <tr>
-                        <td colspan="<?=count($brand)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td><td>
-                            <div id="total">0</div>
+                        <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
+                        <td>
+                            <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>">
+                                <span class="minus changeAmount">-</span>
+	                            <input class="input_amount" type="number" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
+                                <span class="plus changeAmount">+</span>
+                            </div>
                         </td>
-                        <td>รายการ</td>
+                        <td>
+                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
+                        </td>
+                        <td>1</td>
+                        <td>
+                            <?php
+                            $fetchdataitem = new DB_con();
+                            $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
+                            $test = mysqli_fetch_array($itemEn); ?>
+                            <div class="number">
+                                <span class="minus">-</span>
+	                            <input class="input_amount" type="number" value="<?php echo $test == null ? 0 : $test['po_itemEnt_CySize']; ?>" id="input_amount_" data-brand="">
+                                <span class="plus">+</span>
+                            </div>
+                        </td>
+                        <td>1</td>
                     </tr>
+                    <?php $index++;} ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนทั้งหมด</td>
+                        <td></td>
+                        <td class="text-left" style="padding-left: 10px;">ถัง</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">ราคาทั้งหมด</td>
+                        <td></td>
+                        <td class="text-left" style="padding-left: 10px;">บาท</td>
+                    </tr>
+                </tfoot>
             </table>
+            <div class="container">
+                <button class="btn btn-primary" style="margin-top: 10px;" onClick="addAdvance('<?=$_GET['id']?>')" type="button">เพิ่มถัง</button>
+            </div>
             <div class="container">
                 <h4>หมายเหตุ</h4>
                 <textarea name="" id="" cols="30" rows="10" style="width: 100%;"><?=$row['head_po_comment']?></textarea>
@@ -186,7 +148,7 @@
                 </div>
             </div>
             <div id="resultModal"></div>
-            <div id="result_inputItem"></div>
+            <div id="result_editinputItem"></div>
         </form>
     </section>
     <script src="../js/jquery-3.6.0.min.js"></script>

@@ -3,7 +3,7 @@
     <div class="modal-inner">
         <div class="modal-content">
             <div class="modal-header">
-                <input type="hidden" name="" id="" class="modal_brand" value="<?php echo $_GET['modal_id'];?>">
+                <input type="hidden" name="" id="temp_" class="modal_brand" value="<?php echo $_GET['modal_id'];?>">
                 <a class="modal-close" data-modal-close="add_data_modal" data-id="<?php echo $_GET['modal_id'];?>" onclick="modal_close()" href="#">x</a>
             </div>
             <div class="modal-body">

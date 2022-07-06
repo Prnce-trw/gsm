@@ -22,7 +22,7 @@
 
         public function fetchdataPO()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder WHERE active_status='Y'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE active_status='Y'");
             return $result;
         }
 
@@ -71,23 +71,53 @@
             return $result;
         }
 
-        public function insertPOReceipt($POID)
+        public function insertPOReceipt($POID, $RefDO)
         {
             $sql = mysqli_query($this->dbcon, "SELECT * FROM tb_head_po_receipt WHERE head_pr_docnumber_po = '$POID'");
             $valid = mysqli_fetch_array($sql);
             if ($valid['head_pr_docnumber_po'] == null) {
                 $insertdata     = new DB_con();
-                $DocumentNo     = $insertdata->RunningNo("RP");
-                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po) VALUES('$DocumentNo', '$POID')");
+                $DocumentNo     = $insertdata->RunningNo("PR");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref) VALUES('$DocumentNo', '$POID', '$RefDO')");
             } else {
                 $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
             } 
             return $result;
         }
 
-        public function insertItemEntrance($DocumentNo, $brand, $size, $amount, $cytype)
+        public function insertItemEntrance($RefDO, $brand, $size, $amount, $cytype)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_docNo, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$DocumentNo', '$brand', '$size', '$amount', '$cytype')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$RefDO', '$brand', '$size', '$amount', '$cytype')");
+            return $result;
+        }
+
+        public function CylinderCountSize($POID, $size, $type)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT SUM(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' AND po_itemOut_CySize = '$size' AND po_itemOut_type = '$type'");
+            return $result;
+        }
+
+        public function findAdv($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT COUNT(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' AND po_itemOut_type = 'Adv'");
+            return $result;
+        }
+
+        public function editPO($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
+            return $result;
+        }
+
+        public function editCylinderPO($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' ORDER BY po_itemOut_CyBrand");
+            return $result;
+        }
+
+        public function fetchitemEntrance($refPO, $brand, $size, $type)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT po_itemEnt_CySize FROM tb_po_itementrance WHERE po_itemEnt_RefDO = '$refPO' AND po_itemEnt_CyBrand = '$brand' AND po_itemEnt_CySize = '$size' AND po_itemEnt_type = '$type'");
             return $result;
         }
     }

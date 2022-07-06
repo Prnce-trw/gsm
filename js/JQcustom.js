@@ -21,10 +21,46 @@ $(document).ready(function() {
                         $('#temp_'+modal_id).html(response);
                         $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
                     }
-
                 }
             });
         });
+    });
+
+    $(document).on('click', '.plus', function (e) {
+        e.preventDefault();
+        var $input = $(this).parent().find('input');
+        var currentVal = parseInt($input.val());
+        if (!isNaN(currentVal)) {
+            $input.val(currentVal + 1)
+        } else {
+            $input.val(1);
+        }
+    });
+
+    $(document).on('click', '.minus', function (e) {
+        e.preventDefault();
+        var $input = $(this).parent().find('input');
+        var currentVal = parseInt($input.val());
+        if (!isNaN(currentVal) && currentVal > 1) {
+            $input.val(currentVal - 1)
+            var amount_now = currentVal -1;
+            if (amount_now != 0) {
+                $input.val(amount_now);
+            }
+        } else {
+            $input.val(0);
+        }
+    });
+
+    $(document).on('click', '.changeAmount', function (e) {
+        e.preventDefault();
+        var brand = $(this).parent().data('brand');
+        var size = $(this).parent().data('size');
+        // var size_r = size.replace(/\./g, ""); // remove dot
+        var $input = $(this).parent().find('input');
+        var currentVal = parseInt($input.val());
+        // alert(size);
+        $('#resultWeite_'+brand+'_'+size).text(currentVal*size);
     });
 });
 
@@ -69,22 +105,27 @@ $('select').change(function(){
 
 $(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
-    var size = $(this).data('size');
+    var size = $(this).attr('data-size');
+    // var size_r = size.replace(/\./g, ""); // remove dot
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
+    
     if (appendItem == null) {
         $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+        $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size+'">'+size+' Kg. [<span class="'+brand+'_'+size+'">'+amount+'</span>] </br></span>');
     } else {
         if (amount != 0) {
             $('#'+brand+'_'+size).val(brand+'/'+size+'/'+amount+'/'+cytype);
+            $('#appendtext'+brand+'_'+size).html(size + ' Kg. [<span class="'+brand+'_'+size+'">'+amount+'</span>]');
         } else {
             $('#'+brand+'_'+size).remove();
+            $('#appendtext'+brand+'_'+size).remove();
         }
     }
 });
 
-$('select').change(function(){
+$('select').change(function() {
     $("#total").text(getAllSum());
 });
 
@@ -100,6 +141,19 @@ function getAllSum() {
             result+=parseInt($(this).val());
         }
     })
+    return result
+}
+
+$('.itemgroup').change(function(){
+    var size = $(this).data('sizenumber');
+    $("#total_"+size).text(getAllSumSize(size));
+});
+
+function getAllSumSize(size) {
+    var result = 0;
+    $('.itemSize_'+size+' :selected').each(function() {
+        result += parseInt($(this).val());
+    });
     return result
 }
 
@@ -179,3 +233,58 @@ function btn_delete (id) {
 function AlertText(param) {
     return 'test';
 }
+
+function addAdvance(modal_id) {
+    $.ajax({
+        type: "GET",
+        url: "../modal/mocal_edit.php",
+        data: {modal_id: modal_id},
+        dataType: "HTML",
+        success: function (response) {
+            let isExist = $('#resultModal').find('div#temp_'+modal_id).length;
+            if(isExist > 0) {
+                $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+            } else {
+                $('#resultModal').append("<div id='temp_"+modal_id+"'>"+" </div>")
+                $('#temp_'+modal_id).html(response);
+                $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+            }
+        }
+    });
+}
+
+$(document).on('change', '.pickitem_edit_PO', function () {
+    var brand = $(this).data('brand');
+    var size = $(this).attr('data-size');
+    var size_r = size.replace(/\./g, ""); // remove dot
+    var amount = $(this).val();
+    var appendItem = $('#'+brand+'_'+size_r).attr('data-info');
+    var cytype = $(this).attr('data-Cytype');
+    if (appendItem == null) {
+        $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+        $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+size_r+'">'+
+        '<td></td>'+
+        '<td style="text-align: left;">'+brand+'/ ขนาด '+size+' กก.</td>'+
+        '<td><div id="edit_amount'+brand+'_'+size_r+'">'+amount+'</div></td>'+
+        '<td><div id="edit_weight'+brand+'_'+size_r+'">'+size * amount+'</td>'+
+        '<td></td>'+
+        '<td>'+
+            '<div class="number">'+
+                '<span class="minus">-</span>'+
+                '<input class="input_amount" type="number" value="0" id="input_amount_" data-brand="">'+
+                '<span class="plus">+</span>'+
+            '</div>'+
+        '</td>'+
+        '<td></td>'+
+        '</tr>');
+    } else {
+        if (amount != 0) {
+            $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
+            $('#edit_amount'+brand+'_'+size_r).text(amount);
+            $('#edit_weight'+brand+'_'+size_r).text(size * amount);
+        } else {
+            $('#'+brand+'_'+size_r).remove();
+            $('#tdAppend_'+brand+'_'+size_r).remove();
+        }
+    }
+});
