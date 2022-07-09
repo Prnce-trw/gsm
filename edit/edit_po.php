@@ -22,6 +22,8 @@
                 $sql = $fetchdata->editPO($_GET['id']);
                 $row = mysqli_fetch_array($sql);
                 $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
+                $totalSum = $fetchdata->SumAmountItem($_GET['id']);
+                $totalItem = mysqli_fetch_array($totalSum);
                 ?>
                 <div class="row">
                     <div class="col-50">
@@ -35,7 +37,7 @@
                         <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
                             <option selected disabled>เลือกโรงบรรจุ...</option>
                             <?php for ($i=0; $i < 10; $i++) { ?>
-                                <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
+                                <option value="<?php echo $i; ?>" <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
                             </option>
                             <?php } ?>
                         </select>
@@ -57,17 +59,39 @@
                     </div>
                     <div class="col-50">
                         <label class="label-titile">วันที่</label>
-                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=$row['created_at']?>">
+                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=date("d/m/Y", strtotime($row['created_at']))?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">เวลาเข้า</label>
-                        <input type="text" class="form-control" name="tineIn" placeholder="เวลาเข้า...">
+                        <select name="hourIn" class="form-control">
+                            <option selected disabled>ชั่วโมง</option>
+                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeIn'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                            <?php } ?>
+                        </select> : 
+                        <select name="minuteIn" class="form-control">
+                            <option selected disabled>นาที</option>
+                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeIn'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="col-50">
                         <label class="label-titile">เวลาออก</label>
-                        <input type="text" class="form-control" name="timeOut" placeholder="เวลาออก...">
+                        <select name="hourOut" class="form-control">
+                            <option selected disabled>ชั่วโมง</option>
+                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeOut'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                            <?php } ?>
+                        </select> : 
+                        <select name="minuteOut" class="form-control">
+                            <option selected disabled>นาที</option>
+                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeOut'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -99,32 +123,43 @@
                         <td>
                             <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>">
                                 <span class="minus changeAmount">-</span>
-	                            <input class="input_amount" type="number" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
+	                            <input class="input_amount itemAmountOut" type="number" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
                                 <span class="plus changeAmount">+</span>
                             </div>
                         </td>
                         <td>
                             <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
-                        <td>1</td>
+                        <td></td>
                         <td>
                             <?php
                             $fetchdataitem = new DB_con();
                             $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
-                            $test = mysqli_fetch_array($itemEn); ?>
+                            $itemEnReal = mysqli_fetch_array($itemEn); ?>
                             <div class="number">
                                 <span class="minus">-</span>
-	                            <input class="input_amount" type="number" value="<?php echo $test == null ? 0 : $test['po_itemEnt_CySize']; ?>" id="input_amount_" data-brand="">
+	                            <input class="input_amount" type="text" value="<?php echo $itemEnReal == null ? 0 : $itemEnReal['po_itemEnt_CyAmount']; ?>" id="input_amount_" data-brand="">
                                 <span class="plus">+</span>
                             </div>
                         </td>
-                        <td>1</td>
+                        <td>
+                            <input type="number" name="" class="form-control" style="width: 80px;">
+                        </td>
                     </tr>
                     <?php $index++;} ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนทั้งหมด</td>
+                        <td>
+                            <span id="totalitem_PR">
+                                <?php echo ($totalItem != null ? $totalItem[0] : '');?>
+                            </span>
+                        </td>
+                        <td class="text-left" style="padding-left: 10px;">ถัง</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนรับจริงทั้งหมด</td>
                         <td></td>
                         <td class="text-left" style="padding-left: 10px;">ถัง</td>
                     </tr>
@@ -143,7 +178,7 @@
                 <textarea name="" id="" cols="30" rows="10" style="width: 100%;"><?=$row['head_po_comment']?></textarea>
                 <div class="row" style="margin-top: 30px;">
                     <div class="col-12" style="text-align: right;">
-                        <button type="submit" class="btn btn-success" onclick="">ยืนยัน</button>
+                        <button type="button" class="btn btn-success" onclick="">ยืนยัน</button>
                     </div>
                 </div>
             </div>
