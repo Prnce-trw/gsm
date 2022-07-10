@@ -95,12 +95,13 @@ function modal_close(modal_id) {
     $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
 }
 
-$('select').change(function(){
+$(document).on('change', 'select',function(){
     var sum = 0;
     $('.pickitem').each(function() {
         sum += parseInt($(this).val());
     });
-    $("#total").text(sum);
+    $(".total").text(sum);
+    $(".total").val(sum);
 }); 
 
 $(document).on('change', '.pickitem', function () {
@@ -188,7 +189,7 @@ function btn_submit_preselect () {
             } else {
                 Swal.fire({
                     icon: 'warning',
-                    text: AlertText(1),
+                    text: "กรุณากรอกข้อมูลให้ครบ",
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -228,10 +229,6 @@ function btn_delete (id) {
             });
         }
     })
-}
-
-function AlertText(param) {
-    return 'test';
 }
 
 function addAdvance(modal_id) {

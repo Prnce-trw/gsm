@@ -10,6 +10,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+    <?php
+    include_once('conn.php');
+    $fetchdata = new DB_con();
+    $dataBrand = $fetchdata->fetchdataBrand();
+    $dataSize = $fetchdata->fetchdataSize();
+    ?>
     <section id="purchase">
         <form action="controller.php" method="POST" id="FormPreOrderCylinder">
             <input type="hidden" name="parameter" value="PreOrderCylinder">
@@ -28,33 +34,28 @@
             </div>
         </div>
         <table border="1" cellspacing="1" cellpadding="1">
-        <?php 
+        <?php
             $brand = ['PTT','WP','Siam','Unit','PT','Other'];
-            $package = [4,7,8,11.5,13.5,15,48];
-            //for(0)
         ?>
             <tr>
                 <th width="80" height="30">
                     ยี่ห้อ\ขนาด
                 </th>
-                <?php
-                    //for(1)
-                    for ($i=0; $i < count($package); $i++) { 
-                ?>
-                <th width="80" height="30"><?=$package[$i]?></th>
+                <?php foreach ($dataSize as $key => $value) { ?>
+                <th width="80" height="30"><?=$value['weightSize_id']?></th>
                 <?php }// end for(1) ?>
                 <th width="150" height="30">ฝากเติม</th>
             </tr>
-            <?php for ($x=0; $x < count($brand); $x++) { ?>
+            <?php foreach ($dataBrand as $index => $item) {?>
             <tr>
                 <td width="80" height="50" >
-                    <div class="div-inside"><?=$brand[$x]?></div>
+                    <div class="div-inside"><?=$item['ms_product_name']?></div>
                 </td>
                 <?php //for(1) 
-                    for ($i=0; $i < count($package); $i++) { ?>
+                    for ($i=0; $i < $dataSize->num_rows; $i++) { ?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$x]?>" data-size="<?=$package[$i]?>" data-Cytype="N">
+                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$key?>" data-Cytype="N">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
@@ -65,10 +66,10 @@
                 <td>
                     <div class="row">
                         <div class="col-50" style="border-right: 1px solid #e8e8e8;">
-                            <button type="button" name="add" id="add" data-toggle="modal" data-modal="<?=$brand[$x]?>" data-modal-open="add_data_modal" class="btn btn-warning open_modal">Add</button>
+                            <button type="button" name="add" id="add" data-toggle="modal" data-modal="<?=$item['ms_product_id']?>" data-modal-open="add_data_modal" class="btn btn-warning open_modal">Add</button>
                         </div>
                         <div class="col-50">
-                            <div id="result_adv_<?=$brand[$x]?>"></div>
+                            <div id="result_adv_<?=$item['ms_product_id']?>"></div>
                         </div>
                     </div>
                 </td>
@@ -76,17 +77,20 @@
                                 
             <?php }//end for(0) ?>
             <tr>
-                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
-                <td><div id="total">0</div></td>
+                <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                <td>
+                    <div class="total">0</div>
+                    <input type="hidden" name="total" class="total" value="0">
+                </td>
                 <td>รายการ</td>
             </tr>
             <tr>
-                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">ขนาด 4</td>
+                <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">ขนาด 4</td>
                 <td></div></td>
                 <td>กิโลกรัม</td>
             </tr>
             <tr>
-                <td colspan="<?=count($package)?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
+                <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
                 <td></td>
                 <td>กิโลกรัม</td>
             </tr>
