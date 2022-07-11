@@ -1,5 +1,5 @@
 <?php
-    $pdo = include_once('conn.php');
+    include_once('conn.php');
     // include('function.php');
     if ($_POST['parameter'] == 'PreOrderCylinder') {
         try {
@@ -7,12 +7,24 @@
             $DocumentNo     = $insertdata->RunningNo("PO");
             $filling        = $_POST['gas_filling'];
             $comment        = $_POST['comment'];
-            $sql = $insertdata->insertPO($DocumentNo, $filling, $comment);
+            // $sql = $insertdata->insertPO($DocumentNo, $filling, $comment);
+
+            
+            
+            // var_dump($fetchData['n_id']+1);
+            // // print_r($fetchData);
+            // echo $cerrent_year.''.$fetchData['n_id']+1;
+            
             
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
-                $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+                // $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+
+                $cerrent_year   = date("Y");
+                $Total          = $_POST['total'];
+                $datan_id       = $insertdata->Curmovement($cerrent_year, $DocumentNo, $Total, $item[0], $item[1], $item[2]);
+                exit(0);
             }
             
             if ($sql && $sqlItem) {
