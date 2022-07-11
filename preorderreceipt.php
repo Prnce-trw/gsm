@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">รอบ</label>
-                        <select name="" id="" class="js-example-basic-single" style="width: 150px;">
+                        <select name="round" id="" class="js-example-basic-single" style="width: 150px;">
                             <option selected disabled>เลือกรอบขนส่ง...</option>
                             <?php for ($i=1; $i <= 5; $i++) { ?>
                             <option value="<?php echo $i; ?>" <?php echo $row['head_po_round'] == $i ? 'selected':'' ?>>
@@ -58,17 +58,39 @@
                     </div>
                     <div class="col-50">
                         <label class="label-titile">วันที่</label>
-                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=$row['created_at']?>">
+                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=date("d/m/Y", strtotime($row['created_at']))?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">เวลาเข้า</label>
-                        <input type="text" class="form-control" name="tineIn" placeholder="เวลาเข้า...">
+                        <select name="hourIn" class="form-control">
+                            <option selected disabled>ชั่วโมง</option>
+                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>"><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                            <?php } ?>
+                        </select> : 
+                        <select name="minuteIn" class="form-control">
+                            <option selected disabled>นาที</option>
+                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>"><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                     <div class="col-50">
                         <label class="label-titile">เวลาออก</label>
-                        <input type="text" class="form-control" name="timeOut" placeholder="เวลาออก...">
+                        <select name="hourOut" class="form-control">
+                            <option selected disabled>ชั่วโมง</option>
+                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>"><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                            <?php } ?>
+                        </select> : 
+                        <select name="minuteOut" class="form-control">
+                            <option selected disabled>นาที</option>
+                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>"><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -99,7 +121,7 @@
                                 if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "N") {
                                     echo $rows['po_itemOut_CyAmount']." / ";
                                 } } ?>
-                        <select name="" class="pickitem itemgroup itemSize_<?=$x?>" id="" data-sizenumber="<?=$x?>" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="N">
+                        <select name="pickitem" class="pickitem_pr itemgroup itemSize_<?=$x?>" id="" data-sizenumber="<?=$x?>" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="N">
                             <?php for ($y=0; $y <=20 ; $y++) { ?>
                             <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
                             <?php } ?>
@@ -107,14 +129,14 @@
                     </td>
                     <?php } ?>
                     <td>
-                        <div id="total_<?=$x?>"></div>
+                        <div id="total_<?=$x?>_N"></div>
                     </td>
+                    <td></td>
                     <td>
-                        <?php $sqlCountSize = $fetchdata->CylinderCountSize($_GET['id'], $package[$x], 'N'); 
+                    <?php $sqlCountSize = $fetchdata->CylinderCountSize($_GET['id'], $package[$x], 'N'); 
                         $count = mysqli_fetch_array($sqlCountSize);
                         echo $count[0];?>
                     </td>
-                    <td></td>
                 </tr>
                 <?php }
                 $fetchdataPO = new DB_con();
@@ -125,7 +147,7 @@
                 //end for(0) ?>
                 <tr>
                     <td colspan="<?=count($brand)+1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
-                    <td><div id="total">0</div></td>
+                    <td><div id="total_N">0</div></td>
                     <td colspan="2">รายการ</td>
                 </tr>
             </table>
@@ -160,16 +182,22 @@
                                     if ($package[$x] == $rows['po_itemOut_CySize'] && $brand[$n] == $rows['po_itemOut_CyBrand'] && $rows['po_itemOut_type'] == "Adv") {
                                         echo $rows['po_itemOut_CyAmount']." / ";
                                     } } ?>
-                            <select name="" class="pickitem" id="" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="Adv">
+                            <select name="pickitem" class="pickitem_pr itemgroup itemSize_<?=$x?>" id="" data-sizenumber="<?=$x?>" data-brand="<?=$brand[$n]?>" data-size="<?=$package[$x]?>" data-Cytype="Adv">
                                 <?php for ($y=0; $y <=20 ; $y++) { ?>
-                                    <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                                <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
                                 <?php } ?>
                             </select>
                         </td>
                         <?php } ?>
+                        <td>
+                            <div id="total_<?=$x?>_Adv"></div>
+                        </td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                        <?php $sqlCountSize = $fetchdata->CylinderCountSize($_GET['id'], $package[$x], 'Adv'); 
+                            $count = mysqli_fetch_array($sqlCountSize);
+                            echo $count[0];?>
+                        </td>
                     </tr>
                     <?php }
                     $fetchdataPO = new DB_con();
@@ -178,10 +206,9 @@
                     $rowPO = mysqli_fetch_array($sqlPO);
                     $rowPOSize = mysqli_fetch_array($sqlPOSize); ?>
                     <tr>
-                        <td colspan="<?=count($brand)-1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td><td>
-                            <div id="total">0</div>
-                        </td>
-                        <td>รายการ</td>
+                        <td colspan="<?=count($brand)+1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                        <td><div id="total_Adv">0</div></td>
+                        <td colspan="2">รายการ</td>
                     </tr>
                 </tbody>
             </table>
@@ -195,8 +222,7 @@
                     </div>
                 </div>
             </div>
-            <div id="resultModal"></div>
-            <div id="result_inputItem"></div>
+            <div id="result_inputItemPR"></div>
         </form>
     </section>
     <script src="js/jquery-3.6.0.min.js"></script>

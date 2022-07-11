@@ -56,13 +56,21 @@ $(document).ready(function() {
         e.preventDefault();
         var brand = $(this).parent().data('brand');
         var size = $(this).parent().data('size');
-        // var size_r = size.replace(/\./g, ""); // remove dot
+        var size_r = size.toString().replace(/\./g, ""); // remove dot
         var $input = $(this).parent().find('input');
         var currentVal = parseInt($input.val());
-        // alert(size);
-        $('#resultWeite_'+brand+'_'+size).text(currentVal*size);
+        if (!isNaN(currentVal)) {
+            $('#resultWeite_'+brand+'_'+size_r).text(currentVal*size);
+        } else {
+            $('#resultWeite_'+brand+'_'+size_r).text(0);
+        }
+        
     });
 });
+
+function calTotal() {
+    alert()
+}
 
 $(document).on('input', '.pickitem_advance', function () {
     var brand = $(this).data('id');
@@ -95,7 +103,7 @@ function modal_close(modal_id) {
     $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
 }
 
-$(document).on('change', 'select',function(){
+$(document).on('change', 'select', function(){
     var sum = 0;
     $('.pickitem').each(function() {
         sum += parseInt($(this).val());
@@ -107,21 +115,27 @@ $(document).on('change', 'select',function(){
 $(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
-    // var size_r = size.replace(/\./g, ""); // remove dot
+    var size_r = size.replace(/\./g, ""); // remove dot
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    
+    // alert(size_r +'\n'+ jQuery.type(parseInt(size_r)));
     if (appendItem == null) {
-        $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size+'" data-info="'+brand+'_'+size+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
-        $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size+'">'+size+' Kg. [<span class="'+brand+'_'+size+'">'+amount+'</span>] </br></span>');
+        $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+        if (cytype == 'Adv') {
+            $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size_r+'">'+size+' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>] </br></span>');
+        }
     } else {
         if (amount != 0) {
-            $('#'+brand+'_'+size).val(brand+'/'+size+'/'+amount+'/'+cytype);
-            $('#appendtext'+brand+'_'+size).html(size + ' Kg. [<span class="'+brand+'_'+size+'">'+amount+'</span>]');
+            $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
+            if (cytype == 'Adv') {
+                $('#appendtext'+brand+'_'+size_r).html(size + ' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>]');
+            }
         } else {
-            $('#'+brand+'_'+size).remove();
-            $('#appendtext'+brand+'_'+size).remove();
+            $('#'+brand+'_'+size_r).remove();
+            if (cytype == 'Adv') {
+                $('#appendtext'+brand+'_'+size_r).remove();
+            }
         }
     }
 });
@@ -135,19 +149,31 @@ function getAllSum() {
     $('.pickitem :selected').each(function() {
         result += parseInt($(this).val());
     });
+
+    $('.pickitem_pr :selected').each(function() {
+        result += parseInt($(this).val());
+    });
     $(".pickitem_advance").each(function() {
         if(isNaN($(this).val()) || $(this).val() === "") {
             result+=0;
         } else {
             result+=parseInt($(this).val());
         }
+    });
+    $(".itemAmountOut").each(function() {
+        if(isNaN($(this).val()) || $(this).val() === "") {
+            result+=0;
+        } else {
+            result+=parseInt($(this).val());
+        }
     })
-    return result
+    return result;
 }
 
-$('.itemgroup').change(function(){
+$(document).on('change', '.itemgroup', function(){
     var size = $(this).data('sizenumber');
-    $("#total_"+size).text(getAllSumSize(size));
+    var Cytype = $(this).attr('data-Cytype');
+    $("#total_"+size+'_'+Cytype).text(getAllSumSize(size));
 });
 
 function getAllSumSize(size) {
@@ -283,5 +309,50 @@ $(document).on('change', '.pickitem_edit_PO', function () {
             $('#'+brand+'_'+size_r).remove();
             $('#tdAppend_'+brand+'_'+size_r).remove();
         }
+    }
+});
+
+$(document).on('change', '.pickitem_pr', function () {
+    var brand = $(this).data('brand');
+    var size = $(this).attr('data-size');
+    var size_r = size.replace(/\./g, ""); // remove dot
+    var amount = $(this).val();
+    var appendItem = $('#'+brand+'_'+size).attr('data-info');
+    var cytype = $(this).attr('data-Cytype');
+    $("#total_"+cytype).text(getAllSum());
+    if (appendItem == null) {
+        $('#result_inputItemPR').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+        if (cytype == 'Adv') {
+            $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size_r+'">'+size+' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>] </br></span>');
+        }
+    } else {
+        if (amount != 0) {
+            $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
+            if (cytype == 'Adv') {
+                $('#appendtext'+brand+'_'+size_r).html(size + ' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>]');
+            }
+        } else {
+            $('#'+brand+'_'+size_r).remove();
+            if (cytype == 'Adv') {
+                $('#appendtext'+brand+'_'+size_r).remove();
+            }
+        }
+    }
+});
+
+$(document).on('input', '.itemAmountOut', function () {
+    var brand = $(this).parent().data('brand');
+    var size = $(this).parent().data('size');
+    var $input = $(this).parent().find('input');
+    var size_r = size.toString().replace(/\./g, ""); // remove dot
+    var currentVal = parseInt($input.val());
+    var cur_total = $('#totalitem_PR').text();
+    // alert(cur_total + '\n' + currentVal);
+    if (!isNaN(currentVal)) {
+        $('#resultWeite_'+brand+'_'+size_r).text(currentVal*size);
+        $('#totalitem_PR').text(parseInt(currentVal)+parseInt(cur_total));
+    } else {
+        $('#resultWeite_'+brand+'_'+size_r).text(0);
+        $('#totalitem_PR').text(getAllSum());
     }
 });
