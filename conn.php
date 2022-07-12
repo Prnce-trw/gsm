@@ -28,30 +28,37 @@
 
         public function Curmovement($cerrent_year, $DocumentNo, $Total, $brand, $size, $qty)
         {
+            $itemCode = 'I00-01G-'.$brand.$size;
+
             // หา n_id
             $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(n_id) AS n_id FROM items_inventory_movement WHERE YEAR(transaction_date) = '$cerrent_year'");
             $fetchDataN_id      = mysqli_fetch_array($sqlN_id);
 
             // หา Balance ปัจจุบัน
-            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = 'I00-01G-PTT15' AND branchID = 'BRC1-1' AND store_area = '00'");
+            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00'");
             $fetchQTY           = mysqli_fetch_array($sqlSum);
 
             $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
             $n_id               = $fetchDataN_id['n_id']+1; // n_id+1
-            $tranID             = $cerrent_year.''.$n_id; // transaction(เอาเฉพาะปี) + n_id
-            $cur_bal            = $Curr_QTY_Balance - $Total; // Balance ปัจจุบัน
+            $curr_year          = date("y");
+            $tranID             = $curr_year.''.$n_id; // transaction(เอาเฉพาะปี) + n_id
+            // $cur_bal            = $Curr_QTY_Balance - $Total; // Balance ปัจจุบัน
 
             $Curr_item_bal      = $Curr_QTY_Balance - $qty;
-            echo 'I00-01G-'.$brand.$size;
-            exit(0);
+            // echo 'I00-01G-'.$brand.$size;
+            // var_dump($n_id);
+            // exit(0);
             
             // บันทึก inventory movement
-            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_type, transaction_qty, store_area_out, transaction_last_balance, transaction_new_balance) 
-            VALUES ('$n_id', '$tranID', 'I00-01G-PTT15', 'BRC1-1', CURRENT_TIMESTAMP, 'To-Refill', 'OUT', $Total, '00', '$Curr_QTY_Balance', $cur_bal)");
+            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_type, transaction_qty, store_area_out, transaction_last_balance, transaction_new_balance) VALUES ('$n_id', '$tranID', '$itemCode', 'BRC1-1', CURRENT_TIMESTAMP, 'To-Refill', 'OUT', $qty, '00', '$Curr_QTY_Balance', $Curr_item_bal);");
 
-            $resultUpdateStockBranch = mysqli_query($this->dbcom, "UPDATE items_inventory_branch SET qty_balance = '' WHERE itemsCode = 'I00-01G-PTT15' AND branchID = 'BRC1-1' AND store_area = '00'");
+            $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
 
-            // return $resultUpdateStockBranch;
+            $data = array(
+                'resultInventMoving' => $resultInventMoving, 
+                'resultUpdateStockBranch' => $resultUpdateStockBranch, 
+            );
+            return $data;
         }
 
         public function RunningNo($prefix)
@@ -61,6 +68,12 @@
             $Seq = substr("0000".$objResult["prefixH_seq"],-5,5);
             $strSQL = mysqli_query($this->dbcon, "UPDATE tb_prefix_header SET prefixH_seq= prefixH_seq+1 WHERE prefixH_name='$prefix'");
             return $prefix.$Seq;
+        }
+
+        public function aJaxCheckWeight($size)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize WHERE weightSize_id='$size'");
+            return $result;
         }
 
 

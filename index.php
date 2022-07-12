@@ -34,9 +34,6 @@
             </div>
         </div>
         <table border="1" cellspacing="1" cellpadding="1">
-        <?php
-            $brand = ['PTT','WP','Siam','Unit','PT','Other'];
-        ?>
             <tr>
                 <th width="80" height="30">
                     ยี่ห้อ\ขนาด
@@ -52,10 +49,10 @@
                     <div class="div-inside"><?=$item['ms_product_name']?></div>
                 </td>
                 <?php //for(1) 
-                    for ($i=0; $i < $dataSize->num_rows; $i++) { ?>
+                foreach ($dataSize as $key => $value) {?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$key?>" data-Cytype="N">
+                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['weightSize_id']?>" data-Cytype="N">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
@@ -74,7 +71,6 @@
                     </div>
                 </td>
             </tr>
-                                
             <?php }//end for(0) ?>
             <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>

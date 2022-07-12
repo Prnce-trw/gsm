@@ -12,19 +12,22 @@
             
             
             // var_dump($fetchData['n_id']+1);
-            // // print_r($fetchData);
-            // echo $cerrent_year.''.$fetchData['n_id']+1;
+            // print_r($_POST['pickitem']);
+            // echo $_POST;
             
-            
+            // exit(0);
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
-                $itemType           = 'N';
+                // $itemType           = 'N';
                 // $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
 
+                // print_r($key);
+                // echo $key;
+            
+                // exit(0);
                 $cerrent_year   = date("Y");
                 $Total          = $_POST['total'];
                 $datan_id       = $insertdata->Curmovement($cerrent_year, $DocumentNo, $Total, $item[0], $item[1], $item[2]);
-                exit(0);
             }
             
             if ($sql && $sqlItem) {
@@ -80,6 +83,12 @@
             echo "<script>window.location.href='table_po.php'</script>";
         }
         exit(0);
+    } elseif ($_POST['parameter'] == 'aJaxCheckSize') {
+        $size = $_POST['size'];
+        $selectdata         = new DB_con();
+        $resultSize = $selectdata->aJaxCheckWeight($size);
+        $data = array('resultSize' => $resultSize,);
+        echo json_encode($data);
     } else { 
         echo "<script>alert('ไม่พบหน้าที่ต้องการ')</script>";
         echo "<script>window.location.href='table_po.php'</script>";

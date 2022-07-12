@@ -1,4 +1,9 @@
-<?php $package = [4,7,8,11.5,13.5,15,48];?>
+<?php 
+include_once('../conn.php');
+$fetchdata = new DB_con();
+$dataBrand = $fetchdata->fetchdataBrand();
+$dataSize = $fetchdata->fetchdataSize();
+?>
 <div id="add_data_Modal" class="modal" data-modal="add_data_modal">
     <div class="modal-inner">
         <div class="modal-content">
@@ -11,14 +16,14 @@
                     <tbody>
                         <tr>
                             <td rowspan="2">ขนาด</td>
-                            <?php for ($i=0; $i < count($package); $i++) { ?>
-                                <td><?=$package[$i]?></td>
+                            <?php foreach ($dataSize as $key => $value) { ?>
+                                <td><?=$value['weightSize_id']?></td>
                             <?php } ?>
                         </tr>
                         <tr>
-                            <?php for ($i=0; $i < count($package); $i++) { ?>
+                            <?php foreach ($dataSize as $key => $value) { ?>
                             <td>
-                                <select name="" class="pickitem" id="" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-size="<?=$package[$i]?>">
+                                <select name="" class="pickitem" id="" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-size="<?=$value['weightSize_id']?>">
                                     <?php for ($n=0; $n <=20 ; $n++) { ?>
                                         <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                     <?php } ?>

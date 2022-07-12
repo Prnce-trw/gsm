@@ -119,25 +119,35 @@ $(document).on('change', '.pickitem', function () {
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    // alert(size_r +'\n'+ jQuery.type(parseInt(size_r)));
-    if (appendItem == null) {
-        $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
-        if (cytype == 'Adv') {
-            $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size_r+'">'+size+' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>] </br></span>');
+    // alert(appendItem == null);
+    $.ajax({
+        type: "POST",
+        url: "controller.php",
+        data: {parameter: "aJaxCheckSize", size: size, brand: brand, amount: amount, cytype: cytype},
+        dataType: "JSON",
+        success: function (response) {
+            response = JSON.parse(response);
+            console.log(response);
         }
-    } else {
-        if (amount != 0) {
-            $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
-            if (cytype == 'Adv') {
-                $('#appendtext'+brand+'_'+size_r).html(size + ' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>]');
-            }
-        } else {
-            $('#'+brand+'_'+size_r).remove();
-            if (cytype == 'Adv') {
-                $('#appendtext'+brand+'_'+size_r).remove();
-            }
-        }
-    }
+    });
+    // if (appendItem == null) {
+    //     $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
+    //     if (cytype == 'Adv') {
+    //         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size_r+'">'+size+' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>] </br></span>');
+    //     }
+    // } else {
+    //     if (amount != 0) {
+    //         $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
+    //         if (cytype == 'Adv') {
+    //             $('#appendtext'+brand+'_'+size_r).html(size + ' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>]');
+    //         }
+    //     } else {
+    //         $('#'+brand+'_'+size_r).remove();
+    //         if (cytype == 'Adv') {
+    //             $('#appendtext'+brand+'_'+size_r).remove();
+    //         }
+    //     }
+    // }
 });
 
 $('select').change(function() {
