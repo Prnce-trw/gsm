@@ -7,10 +7,8 @@
             $DocumentNo     = $insertdata->RunningNo("PO");
             $filling        = $_POST['gas_filling'];
             $comment        = $_POST['comment'];
-            // $sql = $insertdata->insertPO($DocumentNo, $filling, $comment);
+            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment);
 
-            
-            
             // var_dump($fetchData['n_id']+1);
             // print_r($_POST['pickitem']);
             // echo $_POST;
@@ -18,8 +16,8 @@
             // exit(0);
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
-                // $itemType           = 'N';
-                // $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+                $itemType           = 'N';
+                $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
 
                 // print_r($key);
                 // echo $key;
@@ -87,7 +85,15 @@
         $size = $_POST['size'];
         $selectdata         = new DB_con();
         $resultSize = $selectdata->aJaxCheckWeight($size);
-        $data = array('resultSize' => $resultSize,);
+        $weightSize = mysqli_fetch_array($resultSize);
+        // var_dump($weightSize["weightSize_id"]);
+        // print_r($weightSize["weightSize_id"]);
+        // echo $weightSize["weightSize_id"];
+        // exit(0);
+        $data = array(
+            'resultSize' => $weightSize['weightSize_id'],
+            'resultOrderBy' => $weightSize['order_by_no'],
+        );
         echo json_encode($data);
     } else { 
         echo "<script>alert('ไม่พบหน้าที่ต้องการ')</script>";

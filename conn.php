@@ -72,7 +72,7 @@
 
         public function aJaxCheckWeight($size)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize WHERE weightSize_id='$size'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize WHERE order_by_no='$size'");
             return $result;
         }
 
@@ -154,8 +154,7 @@
                 $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref,head_pr_fillstation, head_pr_timeIn, head_pr_timeOut) VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
             } else {
                 $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
-            } 
-            // exit(0);
+            }
             return $result;
         }
 

@@ -52,7 +52,7 @@
                 foreach ($dataSize as $key => $value) {?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['weightSize_id']?>" data-Cytype="N">
+                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>

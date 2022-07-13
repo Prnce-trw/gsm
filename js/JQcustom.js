@@ -115,19 +115,35 @@ $(document).on('change', 'select', function(){
 $(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
-    var size_r = size.replace(/\./g, ""); // remove dot
-    var amount = $(this).val();
-    var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    // alert(appendItem == null);
+    // var size_r = size.replace(/\./g, ""); // remove dot
+    var amount = $(this).val();
+    var appendItem = $('#'+brand+'_'+size+'_'+cytype).attr('data-info');
     $.ajax({
         type: "POST",
         url: "controller.php",
         data: {parameter: "aJaxCheckSize", size: size, brand: brand, amount: amount, cytype: cytype},
         dataType: "JSON",
         success: function (response) {
-            response = JSON.parse(response);
             console.log(response);
+            if (appendItem == null) {
+                $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
+                if (cytype == 'Adv') {
+                    $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize']+' Kg. [<span class="'+brand+'_'+response['resultOrderBy']+'">'+amount+'</span>] </br></span>');
+                }
+            } else {
+                if (amount != 0) {
+                    $('#'+brand+'_'+response['resultOrderBy']+'_'+cytype).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
+                    if (cytype == 'Adv') {
+                        $('#appendtext'+brand+'_'+response['resultOrderBy']).html(response['resultSize'] + ' Kg. [<span class="'+brand+'_'+response['resultOrderBy']+'">'+amount+'</span>]');
+                    }
+                } else {
+                    $('#'+brand+'_'+response['resultOrderBy']+'_'+cytype).remove();
+                    if (cytype == 'Adv') {
+                        $('#appendtext'+brand+'_'+response['resultOrderBy']).remove();
+                    }
+                }
+            }
         }
     });
     // if (appendItem == null) {
