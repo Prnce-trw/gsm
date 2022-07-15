@@ -76,6 +76,74 @@
             return $result;
         }
 
+        public function infoPO($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
+            return $result;
+        }
+
+        public function updateHeadPO($POID, $Fillstation, $Round)
+        {
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_fillstation = '$Fillstation', head_po_round = '$Round' WHERE head_po_docnumber = '$POID'");
+            return $result;
+        }
+
+        public function insertPOReceipt($POID, $RefDO, $timeIn, $timeOut, $Fillstation)
+        {
+            $sql = mysqli_query($this->dbcon, "SELECT * FROM tb_head_po_receipt WHERE head_pr_docnumber_po = '$POID'");
+            $valid = mysqli_fetch_array($sql);
+            if (!isset($valid['head_pr_docnumber_po'])) {
+                $insertdata     = new DB_con();
+                $DocumentNo     = $insertdata->RunningNo("PR");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref,head_pr_fillstation, head_pr_timeIn, head_pr_timeOut) VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
+            } else {
+                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
+            }
+            return $result;
+        }
+
+        public function CurmovementIn($cerrent_year, $RefDO, $Total, $brand, $size, $qty)
+        {
+            
+            $itemCode = 'I00-01G-'.$brand.$size;
+            
+            // หา n_id
+            $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(n_id) AS n_id FROM items_inventory_movement WHERE YEAR(transaction_date) = '$cerrent_year'");
+            $fetchDataN_id      = mysqli_fetch_array($sqlN_id);
+
+            // หา Balance ปัจจุบัน
+            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00'");
+            $fetchQTY           = mysqli_fetch_array($sqlSum);
+
+            $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
+            $n_id               = $fetchDataN_id['n_id']+1; // n_id+1
+            $curr_year          = date("y");
+            $tranID             = $curr_year.''.$n_id; // transaction(เอาเฉพาะปี) + n_id
+
+            $Curr_item_bal      = $Curr_QTY_Balance + $qty;
+            
+            
+
+            // บันทึก inventory movement
+            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_docRef, transaction_type, transaction_qty, store_area_in) 
+            VALUES ('$n_id', '$tranID', '$itemCode', 'BRC1-1', CURRENT_TIMESTAMP, 'From-Refill', $RefDO, 'IN', '$qty', '00');");
+            var_dump($resultInventMoving);
+            print_r($resultInventMoving);
+            exit(0);
+            $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
+            $data = array(
+                'resultInventMoving' => $resultInventMoving, 
+                'resultUpdateStockBranch' => $resultUpdateStockBranch, 
+            );
+            return $data;
+        }
+
+        public function insertItemEntrance($POID, $RefDO, $brand, $size, $amount, $cytype)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$cytype')");
+            return $result;
+        }
+
 
 
 
@@ -114,11 +182,7 @@
             return $result;
         }
 
-        public function infoPO($POID)
-        {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
-            return $result;
-        }
+        
 
         public function CylinderPO($POID)
         {
@@ -144,25 +208,9 @@
             return $result;
         }
 
-        public function insertPOReceipt($POID, $RefDO, $timeIn, $timeOut, $Fillstation)
-        {
-            $sql = mysqli_query($this->dbcon, "SELECT * FROM tb_head_po_receipt WHERE head_pr_docnumber_po = '$POID'");
-            $valid = mysqli_fetch_array($sql);
-            if (!isset($valid['head_pr_docnumber_po'])) {
-                $insertdata     = new DB_con();
-                $DocumentNo     = $insertdata->RunningNo("PR");
-                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref,head_pr_fillstation, head_pr_timeIn, head_pr_timeOut) VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
-            } else {
-                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
-            }
-            return $result;
-        }
+        
 
-        public function insertItemEntrance($POID, $RefDO, $brand, $size, $amount, $cytype)
-        {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$cytype')");
-            return $result;
-        }
+        
 
         public function CylinderCountSize($POID, $size, $type)
         {
@@ -194,11 +242,7 @@
             return $result;
         }
 
-        public function updateHeadPO($POID, $Fillstation, $Round)
-        {
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_fillstation = '$Fillstation', head_po_round = '$Round' WHERE head_po_docnumber = '$POID'");
-            return $result;
-        }
+        
 
         public function SumAmountItem($POID)
         {

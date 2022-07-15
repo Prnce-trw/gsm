@@ -146,24 +146,6 @@ $(document).on('change', '.pickitem', function () {
             }
         }
     });
-    // if (appendItem == null) {
-    //     $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
-    //     if (cytype == 'Adv') {
-    //         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+size_r+'">'+size+' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>] </br></span>');
-    //     }
-    // } else {
-    //     if (amount != 0) {
-    //         $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
-    //         if (cytype == 'Adv') {
-    //             $('#appendtext'+brand+'_'+size_r).html(size + ' Kg. [<span class="'+brand+'_'+size_r+'">'+amount+'</span>]');
-    //         }
-    //     } else {
-    //         $('#'+brand+'_'+size_r).remove();
-    //         if (cytype == 'Adv') {
-    //             $('#appendtext'+brand+'_'+size_r).remove();
-    //         }
-    //     }
-    // }
 });
 
 $('select').change(function() {
@@ -346,6 +328,7 @@ $(document).on('change', '.pickitem_pr', function () {
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
     $("#total_"+cytype).text(getAllSum());
+    $('.total').val(getAllSum());
     if (appendItem == null) {
         $('#result_inputItemPR').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
         if (cytype == 'Adv') {
