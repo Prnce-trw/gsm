@@ -5,26 +5,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/select2.min.css">
-    <link rel="stylesheet" href="../css/custom.css">
-    <link rel="stylesheet" href="../css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/select2.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     <title>GSM</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
     <section id="purchase">
-        <form action="../controller.php" method="POST">
+        <form action="controller.php" method="POST">
             <div class="container">
-                <?php
-                include_once('../conn.php');
+                <?php include_once('conn.php');
                 $fetchdata = new DB_con();
-                $sql = $fetchdata->editPO($_GET['id']);
+                $sql = $fetchdata->infoPO($_GET['id']);
                 $row = mysqli_fetch_array($sql);
-                $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
-                $totalSum = $fetchdata->SumAmountItem($_GET['id']);
-                $totalItem = mysqli_fetch_array($totalSum);
-                ?>
+                $itemPO = $fetchdata->CylinderPO($_GET['id']); ?>
+                <input type="hidden" name="parameter" id="" value="PreOrderReCeipt">
+                <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">เอกสารอ้างอิง</label>
@@ -37,7 +35,8 @@
                         <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
                             <option selected disabled>เลือกโรงบรรจุ...</option>
                             <?php for ($i=0; $i < 10; $i++) { ?>
-                                <option value="<?php echo $i; ?>" <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
+                            <option value="<?php echo $i; ?>"
+                                <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
                             </option>
                             <?php } ?>
                         </select>
@@ -49,7 +48,7 @@
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">รอบ</label>
-                        <select name="" id="" class="js-example-basic-single" style="width: 150px;">
+                        <select name="round" id="" class="js-example-basic-single" style="width: 150px;">
                             <option selected disabled>เลือกรอบขนส่ง...</option>
                             <?php for ($i=1; $i <= 5; $i++) { ?>
                             <option value="<?php echo $i; ?>" <?php echo $row['head_po_round'] == $i ? 'selected':'' ?>>
@@ -59,7 +58,7 @@
                     </div>
                     <div class="col-50">
                         <label class="label-titile">วันที่</label>
-                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=date("d/m/Y", strtotime($row['created_at']))?>">
+                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['created_at'] != null ? date("d/m/Y", strtotime($row['created_at'])) : '')?>">
                     </div>
                 </div>
                 <div class="row">
@@ -68,13 +67,13 @@
                         <select name="hourIn" class="form-control">
                             <option selected disabled>ชั่วโมง</option>
                             <?php for ($hh=7; $hh <= 22; $hh++) { ?>
-                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeIn'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>"><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
                             <?php } ?>
                         </select> : 
                         <select name="minuteIn" class="form-control">
                             <option selected disabled>นาที</option>
                             <?php for ($mm=00; $mm <= 60; $mm++) { ?>
-                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeIn'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>"><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -83,114 +82,163 @@
                         <select name="hourOut" class="form-control">
                             <option selected disabled>ชั่วโมง</option>
                             <?php for ($hh=7; $hh <= 22; $hh++) { ?>
-                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeOut'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>"><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
                             <?php } ?>
                         </select> : 
                         <select name="minuteOut" class="form-control">
                             <option selected disabled>นาที</option>
                             <?php for ($mm=00; $mm <= 60; $mm++) { ?>
-                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeOut'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>"><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
                             <?php } ?>
                         </select>
                     </div>
                 </div>
             </div>
-            <table >
-                <thead>
-                    <tr>
-                        <th>ลำดับ</th>
-                        <th>รายการสินค้า</th>
-                        <th>จำนวน</th>
-                        <th>น้ำหนัก</th>
-                        <th>ราคา/หน่วย</th>
-                        <th>รับจริง</th>
-                        <th>จำนวนเงิน</th>
-                    </tr>
-                </thead>
-                <tbody id="edit_PO">
-                    <?php 
-                    $index = 1;
-                    while ($rows = mysqli_fetch_array($itemPO)) { 
-                    $size_r = explode(".",$rows['po_itemOut_CySize']);
-                    ?>
-                    <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>">
-                        <td>
-                            <?=$index;?>
-                            <input type="hidden" name="pickitem[]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" 
-                            data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
-                        </td>
-                        <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
-                        <td>
-                            <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>">
-                                <span class="minus changeAmount">-</span>
-	                            <input class="input_amount itemAmountOut" type="number" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
-                                <span class="plus changeAmount">+</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
-                        </td>
-                        <td></td>
-                        <td>
-                            <?php
-                            $fetchdataitem = new DB_con();
-                            $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
-                            $itemEnReal = mysqli_fetch_array($itemEn); ?>
-                            <div class="number">
-                                <span class="minus">-</span>
-	                            <input class="input_amount" type="text" value="<?php echo $itemEnReal == null ? 0 : $itemEnReal['po_itemEnt_CyAmount']; ?>" id="input_amount_" data-brand="">
-                                <span class="plus">+</span>
-                            </div>
-                        </td>
-                        <td>
-                            <input type="number" name="" class="form-control" style="width: 80px;">
-                        </td>
-                    </tr>
-                    <?php $index++;} ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนทั้งหมด</td>
-                        <td>
-                            <span id="totalitem_PR">
-                                <?php echo ($totalItem != null ? $totalItem[0] : '');?>
-                            </span>
-                        </td>
-                        <td class="text-left" style="padding-left: 10px;">ถัง</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนรับจริงทั้งหมด</td>
-                        <td></td>
-                        <td class="text-left" style="padding-left: 10px;">ถัง</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">ราคาทั้งหมด</td>
-                        <td></td>
-                        <td class="text-left" style="padding-left: 10px;">บาท</td>
-                    </tr>
-                </tfoot>
+            <table border="1" cellspacing="1" cellpadding="1">
+                <?php 
+                    $brand = $fetchdata->fetchdataBrand();
+                    $package = $fetchdata->fetchdataSize();
+                    $sqlPO = $fetchdata->CylinderPO($_GET['id']);
+                    //for(0) ?>
+                <tr>
+                    <th width="80" height="30">ขนาด/ยี่ห้อ</th>
+                    <?php //for(1)
+                        foreach ($brand as $index => $item) { ?>
+                    <th width="80" height="30"><?=$item['ms_product_name']?></th>
+                    <?php }// end for(1) ?>
+                    <th width="80" height="30">Total</th>
+                    <th width="80" height="30">Unit</th>
+                    <th width="80" height="30">Amount</th>
+                </tr>
+                <?php foreach ($package as $key => $value) { ?>
+                <tr>
+                    <td width="80" height="30">
+                        <div class="div-inside"><?=$value['weightSize_id']?></div>
+                    </td>
+                    <?php foreach ($brand as $num => $item) { ?>
+                    <td>
+                        <?php foreach ($sqlPO as $index => $valueItem) { 
+                            if ($value['weightSize_id'] == $valueItem['po_itemOut_CySize'] && $item['ms_product_id'] == $valueItem['po_itemOut_CyBrand'] && $valueItem['po_itemOut_type'] == "N") {
+                                echo $valueItem['po_itemOut_CyAmount']." / ";
+                        } }?>
+                        <select name="pickitem" class="pickitem_pr itemgroup itemSize_<?=$key?>" id="" data-sizenumber="<?=$key?>" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['weightSize_id']?>" data-Cytype="N">
+                            <?php for ($y=0; $y <=20 ; $y++) { ?>
+                            <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <?php } ?>
+                    <td>
+                        <div id="total_<?=$key?>_N"></div>
+                        <?php $sqlCountSize = $fetchdata->CylinderCountSize($_GET['id'], $value['weightSize_id'], 'N'); 
+                            $count = mysqli_fetch_array($sqlCountSize);
+                            if ($count[0] != null) {
+                                echo ' / '.$count[0]; } ?>
+                    </td>
+                    <td></td>
+                    <td><input type="number" name="priceUnit[<?=$key?>]" id="" style="width: 80px;"></td>
+                </tr>
+                <?php }
+                $fetchdataPO = new DB_con();
+                $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
+                $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
+                $rowPO = mysqli_fetch_array($sqlPO);
+                $rowPOSize = mysqli_fetch_array($sqlPOSize);
+                //end for(0) ?>
+                <tr>
+                    <td colspan="<?=$brand->num_rows+1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                    <td>
+                        <div id="total_N">0</div>
+                        <input type="hidden" name="total" class="total">
+                    </td>
+                    <td colspan="2">รายการ</td>
+                </tr>
             </table>
-            <div class="container">
-                <button class="btn btn-primary" style="margin-top: 10px;" onClick="addAdvance('<?=$_GET['id']?>')" type="button">เพิ่มถัง</button>
-            </div>
+            <!-- Advance -->
+            <?php   $brand = ['PTT','WP','Siam','Unit','PT','Other'];
+                    $package = [4,7,8,11.5,13.5,15,48]; 
+                    $findAdv = $fetchdataPO->findAdv($_GET['id']);
+                    $itemAdv = mysqli_fetch_array($findAdv);
+                    if ($itemAdv[0] != 0) { ?>
+            <table border="1" cellspacing="1" cellpadding="1">
+                <?php 
+                    $brand = $fetchdata->fetchdataBrand();
+                    $package = $fetchdata->fetchdataSize();
+                    $sqlPO = $fetchdata->CylinderPO($_GET['id']);
+                    //for(0) ?>
+                <tr>
+                    <th width="80" height="30">ขนาด/ยี่ห้อ</th>
+                    <?php //for(1)
+                        foreach ($brand as $index => $item) { ?>
+                    <th width="80" height="30"><?=$item['ms_product_name']?></th>
+                    <?php }// end for(1) ?>
+                    <th width="80" height="30">Total</th>
+                    <th width="80" height="30">Unit</th>
+                    <th width="80" height="30">Amount</th>
+                </tr>
+                <?php foreach ($package as $key => $value) { ?>
+                <tr>
+                    <td width="80" height="30">
+                        <div class="div-inside"><?=$value['weightSize_id']?></div>
+                    </td>
+                    <?php foreach ($brand as $num => $item) { ?>
+                    <td>
+                        <?php foreach ($sqlPO as $index => $valueItem) { 
+                            if ($value['weightSize_id'] == $valueItem['po_itemOut_CySize'] && $item['ms_product_id'] == $valueItem['po_itemOut_CyBrand'] && $valueItem['po_itemOut_type'] == "Adv") {
+                                echo $valueItem['po_itemOut_CyAmount']." / ";
+                        } }?>
+                        <select name="pickitem" class="pickitem_pr itemgroup itemSize_<?=$key?>" id="" data-sizenumber="<?=$key?>" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['weightSize_id']?>" data-Cytype="Adv">
+                            <?php for ($y=0; $y <=20 ; $y++) { ?>
+                            <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <?php } ?>
+                    <td>
+                        <div id="total_<?=$key?>_Adv"></div>
+                        <?php $sqlCountSize = $fetchdata->CylinderCountSize($_GET['id'], $value['weightSize_id'], 'Adv'); 
+                            $count = mysqli_fetch_array($sqlCountSize);
+                            if ($count[0] != 0) {
+                                echo ' / '.$count[0]; } ?>
+                    </td>
+                    <td></td>
+                    <td>
+                    
+                    </td>
+                </tr>
+                <?php }
+                $fetchdataPO = new DB_con();
+                $sqlPO = $fetchdataPO->CylinderPOSum($_GET['id']);
+                $sqlPOSize = $fetchdataPO->CylinderWeight($_GET['id']);
+                $rowPO = mysqli_fetch_array($sqlPO);
+                $rowPOSize = mysqli_fetch_array($sqlPOSize);
+                //end for(0) ?>
+                <tr>
+                    <td colspan="<?=$brand->num_rows+1?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
+                    <td>
+                        <div id="total_Adv">0</div>
+                    </td>
+                    <td colspan="2">รายการ</td>
+                </tr>
+            </table>
+            <?php } ?>
             <div class="container">
                 <h4>หมายเหตุ</h4>
                 <textarea name="" id="" cols="30" rows="10" style="width: 100%;"><?=$row['head_po_comment']?></textarea>
                 <div class="row" style="margin-top: 30px;">
                     <div class="col-12" style="text-align: right;">
-                        <button type="button" class="btn btn-success" onclick="">ยืนยัน</button>
+                        <button type="submit" class="btn btn-success" onclick="">ยืนยัน</button>
                     </div>
                 </div>
             </div>
-            <div id="resultModal"></div>
-            <div id="result_editinputItem"></div>
+            <div id="result_inputItemPR"></div>
         </form>
     </section>
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="../js/sweetalert2.all.min.js"></script>
-    <script src="../js/select2.min.js"></script>
-    <script src="../js/jquery-ui.min.js"></script>
-    <script src="../js/JQcustom.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/sweetalert2.all.min.js"></script>
+    <script src="js/select2.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/JQcustom.js"></script>
     <script>
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     </script>

@@ -64,17 +64,18 @@
             $Round          = $_POST['round'];
             $timeIn         = $_POST['hourIn'].":".$_POST['minuteIn'].":00";
             $timeOut        = $_POST['hourOut'].":".$_POST['minuteOut'].":00";
-            // $sql            = $insertdata->insertPOReceipt($POID, $RefDO, $timeIn, $timeOut, $Fillstation);
-            // $sqlPO          = $insertdata->updateHeadPO($POID, $Fillstation, $Round);
+            $sql            = $insertdata->insertPOReceipt($POID, $RefDO, $timeIn, $timeOut, $Fillstation);
+            $sqlPO          = $insertdata->updateHeadPO($POID, $Fillstation, $Round);
 
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
-                // $sqlItem            = $insertdata->insertItemEntrance($POID, $RefDO, $item[0], $item[1], $item[2], $item[3]);
+                $sqlItem            = $insertdata->insertItemEntrance($POID, $RefDO, $item[0], $item[1], $item[2], $item[3]);
 
                 $cerrent_year   = date("Y");
                 $Total          = $_POST['total'];
-                $datan_id       = $insertdata->CurmovementIn($cerrent_year, $RefDO, $Total, $item[0], $item[1], $item[2]);
+                $price          = $_POST['priceUnit'][$key];
+                $datan_id       = $insertdata->CurmovementIn($cerrent_year, $RefDO, $Total, $item[0], $item[1], $item[2], $price);
             }
             
             // exit(0);

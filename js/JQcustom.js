@@ -56,21 +56,20 @@ $(document).ready(function() {
         e.preventDefault();
         var brand = $(this).parent().data('brand');
         var size = $(this).parent().data('size');
+        var cytype = $(this).parent().attr('data-Cytype');
         var size_r = size.toString().replace(/\./g, ""); // remove dot
         var $input = $(this).parent().find('input');
         var currentVal = parseInt($input.val());
         if (!isNaN(currentVal)) {
             $('#resultWeite_'+brand+'_'+size_r).text(currentVal*size);
+            $('#'+brand+'_'+size_r+'_'+cytype).val(brand+'/'+size+'/'+currentVal+'/'+cytype);
         } else {
             $('#resultWeite_'+brand+'_'+size_r).text(0);
+            $('#'+brand+brand+'_'+size_r+'_'+cytype).remove();
         }
         
     });
 });
-
-function calTotal() {
-    alert()
-}
 
 $(document).on('input', '.pickitem_advance', function () {
     var brand = $(this).data('id');
@@ -174,7 +173,7 @@ function getAllSum() {
         } else {
             result+=parseInt($(this).val());
         }
-    })
+    });
     return result;
 }
 
@@ -353,6 +352,7 @@ $(document).on('input', '.itemAmountOut', function () {
     var brand = $(this).parent().data('brand');
     var size = $(this).parent().data('size');
     var $input = $(this).parent().find('input');
+    var cytype = $(this).parent().attr('data-Cytype');
     var size_r = size.toString().replace(/\./g, ""); // remove dot
     var currentVal = parseInt($input.val());
     var cur_total = $('#totalitem_PR').text();
@@ -360,6 +360,7 @@ $(document).on('input', '.itemAmountOut', function () {
     if (!isNaN(currentVal)) {
         $('#resultWeite_'+brand+'_'+size_r).text(currentVal*size);
         $('#totalitem_PR').text(parseInt(currentVal)+parseInt(cur_total));
+        $('#'+brand+'_'+size_r+'_'+cytype).val(brand+'/'+size+'/'+currentVal+'/'+cytype);
     } else {
         $('#resultWeite_'+brand+'_'+size_r).text(0);
         $('#totalitem_PR').text(getAllSum());
