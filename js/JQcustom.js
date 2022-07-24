@@ -218,6 +218,7 @@ function btn_submit_preselect () {
                     showConfirmButton: false,
                     timer: 1500
                 });
+                $('#PreOrderCylinder').val('PreOrderCylinder');
                 $('#FormPreOrderCylinder').submit();
             } else {
                 Swal.fire({
@@ -229,6 +230,11 @@ function btn_submit_preselect () {
             }
         }
     })
+}
+
+function btn_submit_draft_preselect() {
+    $('#PreOrderCylinder').val('DraftPO');
+    $('#FormPreOrderCylinder').submit();
 }
 
 function btn_delete (id) {

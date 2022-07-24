@@ -1,6 +1,6 @@
 <?php
     include_once('conn.php');
-    // include('function.php');
+    include('function.php');
     if ($_POST['parameter'] == 'PreOrderCylinder') {
         try {
             $insertdata     = new DB_con();
@@ -9,26 +9,18 @@
             $comment        = $_POST['comment'];
             $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment);
 
-            // var_dump($fetchData['n_id']+1);
-            // print_r($_POST['pickitem']);
-            // echo $_POST;
-            
-            // exit(0);
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
                 $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
 
-                // print_r($key);
-                // echo $key;
-            
-                // exit(0);
+                
                 $cerrent_year   = date("Y");
                 $Total          = $_POST['total'];
                 $datan_id       = $insertdata->Curmovement($cerrent_year, $DocumentNo, $Total, $item[0], $item[1], $item[2]);
             }
             
-            if ($sql && $sqlItem) {
+            if ($sql && $sqlItem && $datan_id) {
                 echo "<script>alert('Success')</script>";
                 echo "<script>window.location.href='table_po.php'</script>";
             } else {
@@ -38,6 +30,25 @@
         } catch (\Exception $e) {
             echo "<script>alert('Failed: "+$e->getMessage()+"')</script>";
             echo "<script>window.location.href='table_po.php'</script>";
+        }
+    } else if($_POST['parameter'] == 'DraftPO') {
+        try {
+            $insertdata     = new DB_con();
+            $DocumentNo     = $insertdata->RunningNo("PO");
+            $filling        = $_POST['gas_filling'];
+            $comment        = $_POST['comment'];
+            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment);
+            foreach ($_POST['pickitem'] as $key => $value) {
+                $item               = explode('/', $value);
+                $itemType           = 'N';
+                $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+            }
+
+            echo "<script>alert('Success')</script>";
+            header("refresh: 2; url: table_po.php");
+        } catch (\Throwable $th) {
+            echo "<script>alert('Failed: "+$e->getMessage()+"')</script>";
+            header("refresh: 2; url: index.php");
         }
     } else if ($_POST['parameter'] == 'deletePO') {
         try {

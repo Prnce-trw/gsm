@@ -102,6 +102,11 @@
             return $result;
         }
 
+        public function DraftPO()
+        {
+            # code...
+        }
+
         public function CurmovementIn($cerrent_year, $RefDO, $Total, $brand, $size, $qty, $price)
         {
             
@@ -133,8 +138,8 @@
 
             $newItemCurr        = $ItemInven['ResultItem'] + $qty; // จำนวนในคลังทั้งหมด + จำนวนที่เข้ามาใหม่
 
-            // (มูลค่าในคลังทั้งหมด + มูลค่าใหม่ที่รับมา / จำนวนสิ้นค้าทั้งหมด) / จำนวน column ที่รวมกันทั้งหมด (สาเหตุที่ต้องหารเพราะ มี store หน้าร้านและหลังร้านซึ่งอยู่คนละ column กัน)
-            $NewAvgCost         = ($ResultmovAvgCostCur + $price / $newItemCurr) / $sqlSumItem->field_count;
+            // (มูลค่าในคลังทั้งหมด + มูลค่าใหม่ที่รับมา / จำนวนสิ้นค้าทั้งหมด) / จำนวน column ที่รวมกันทั้งหมด
+            $NewAvgCost         = $ResultmovAvgCostCur + $price / $newItemCurr;
 
             // var_dump($sqlSumItem->field_count);
             // echo $NewAvgCost;

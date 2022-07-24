@@ -18,7 +18,7 @@
     ?>
     <section id="purchase">
         <form action="controller.php" method="POST" id="FormPreOrderCylinder">
-            <input type="hidden" name="parameter" value="PreOrderCylinder">
+            <input type="text" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
         <div class="container">
             <h4>จัดซื้อ</h4>
             <div class="row">
@@ -96,6 +96,7 @@
             <textarea name="comment" id="" cols="30" rows="10" style="width: 100%;"></textarea>
             <div class="row" style="margin-top: 30px;">
                 <div class="col-12" style="text-align: right;">
+                    <button type="button" class="btn btn-success" onclick="btn_submit_draft_preselect()">บันทึกฉบับร่าง</button>
                     <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
                 </div>
             </div>

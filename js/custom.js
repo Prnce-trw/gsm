@@ -1,4 +1,31 @@
-jQuery(document).ready(function(){
+$(document).ready(function () {
+    $('.js-example-basic-single').select2({
+        placeholder: "เลือกโรงบรรจุ...",
+    });
+
+    $(function() {
+        //----- OPEN
+        $('[data-modal-open]').on('click', function(e)  {
+            var modal_id = $(this).attr('data-modal');
+            $.ajax({
+                type: "GET",
+                url: "modal/modal_po.php",
+                data: {modal_id: modal_id},
+                dataType: "HTML",
+                success: function (response) {
+                    let isExist = $('#resultModal').find('div#temp_'+modal_id).length;
+                    if(isExist > 0) {
+                        $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+                    } else {
+                        $('#resultModal').append("<div id='temp_"+modal_id+"'>"+" </div>")
+                        $('#temp_'+modal_id).html(response);
+                        $('#temp_'+modal_id+" #add_data_Modal").css("display", "block");
+                    }
+                }
+            });
+        });
+    });
+
     $(document).on('click', '.plus', function (e) {
         e.preventDefault();
         var $input = $(this).parent().find('input');
@@ -9,6 +36,7 @@ jQuery(document).ready(function(){
             $input.val(1);
         }
     });
+
     $(document).on('click', '.minus', function (e) {
         e.preventDefault();
         var $input = $(this).parent().find('input');
@@ -17,63 +45,28 @@ jQuery(document).ready(function(){
             $input.val(currentVal - 1)
             var amount_now = currentVal -1;
             if (amount_now != 0) {
-                SumAmount(-1);
+                $input.val(amount_now);
             }
         } else {
-            $input.val(1);
+            $input.val(0);
         }
+    });
+
+    $(document).on('click', '.changeAmount', function (e) {
+        e.preventDefault();
+        var brand = $(this).parent().data('brand');
+        var size = $(this).parent().data('size');
+        var cytype = $(this).parent().attr('data-Cytype');
+        var size_r = size.toString().replace(/\./g, ""); // remove dot
+        var $input = $(this).parent().find('input');
+        var currentVal = parseInt($input.val());
+        if (!isNaN(currentVal)) {
+            $('#resultWeite_'+brand+'_'+size_r).text(currentVal*size);
+            $('#'+brand+'_'+size_r+'_'+cytype).val(brand+'/'+size+'/'+currentVal+'/'+cytype);
+        } else {
+            $('#resultWeite_'+brand+'_'+size_r).text(0);
+            $('#'+brand+brand+'_'+size_r+'_'+cytype).remove();
+        }
+        
     });
 });
-
-function add_cylinder (brand_id) {
-    var amount = $('#input_amount_'+brand_id).val();
-    var type = $('#cylinder_type_'+brand_id).val();
-    var size = $('#cylinder_size_'+brand_id).val();
-    var parameter = "addPurchase";
-    // alert(amount +'\n' + type +'\n' + size + '\n' + jQuery.type(parseInt(amount)));
-    SumAmount(amount);
-    $.ajax({
-        type: "POST",
-        url: "helper.php",
-        data: {parameter:parameter, amount:amount, brand_id:brand_id, type:type},
-        dataType: "JSON",
-        success: function (response) {
-            $('#resultTable').append(response);
-        }
-    });
-}
-
-function minus() {
-    var $input = $(this).parent().find('input');
-    var count = parseInt($input.val()) - 1;
-    counts = count < 1 ? 1 : count;
-    $input.val(counts);
-    $input.change();
-    return false;
-}
-
-function plus() {
-    var $input = $(this).parent().find('input');
-    $input.val(parseInt($input.val()) + 1);
-    $input.change();
-    return false;
-}
-
-function btn_del_preselect (id) {
-    var amount = $('#input_preamount_'+id).val();
-    $('#preselect_id_'+id).remove();
-    $('#tr_preselect_'+id).remove();
-    SumAmount(-amount);
-}
-
-function SumAmount (amount) {
-    var total = $('#resultSum').val();
-    var result = parseInt(total) + parseInt(amount);
-    if (!result || result <= 0) {
-        $('#resultSum').val(0);
-        $('#totalSum').text(0);
-    } else {
-        $('#resultSum').val(result);
-        $('#totalSum').text(result);
-    }
-}
