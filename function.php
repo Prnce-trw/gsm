@@ -1,0 +1,20 @@
+<?php
+
+function POStatus($param)
+{
+    if ($param == 'Draft') {
+        return 'ฉบับร่าง';
+    } else if ($param == 'Confirm') {
+        return 'ตัวจริง';
+    } elseif ($param == 'Cancel') {
+        return 'ยกเลิก';
+    } else {
+        return 'ไม่พบสถานะ';
+    }
+}
+
+function multiexplode ($delimiters,$string) {
+    $ready = str_replace($delimiters, $delimiters[0], $string);
+    $launch = explode($delimiters[0], $ready);
+    return  $launch;
+}

@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/select2.min.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="../css/select2.min.css">
+    <link rel="stylesheet" href="../css/custom.css">
     <title>GSM</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -87,9 +87,9 @@
             </tbody>
         </table>
     </section>
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/sweetalert2.all.min.js"></script>
-    <script src="js/select2.min.js"></script>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script src="../js/sweetalert2.all.min.js"></script>
+    <script src="../js/select2.min.js"></script>
 
     <script>
         function pc_calculate () {

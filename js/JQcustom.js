@@ -126,7 +126,7 @@ $(document).on('change', '.pickitem', function () {
         success: function (response) {
             console.log(response);
             if (appendItem == null) {
-                $('#result_inputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
+                $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
                 if (cytype == 'Adv') {
                     $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize']+' Kg. [<span class="'+brand+'_'+response['resultOrderBy']+'">'+amount+'</span>] </br></span>');
                 }
@@ -218,7 +218,7 @@ function btn_submit_preselect () {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                $('#PreOrderCylinder').val('PreOrderCylinder');
+                $('#POStatus').val('Confirm');
                 $('#FormPreOrderCylinder').submit();
             } else {
                 Swal.fire({
@@ -233,7 +233,7 @@ function btn_submit_preselect () {
 }
 
 function btn_submit_draft_preselect() {
-    $('#PreOrderCylinder').val('DraftPO');
+    $('#POStatus').val('Draft');
     $('#FormPreOrderCylinder').submit();
 }
 
@@ -273,7 +273,7 @@ function btn_delete (id) {
 function addAdvance(modal_id) {
     $.ajax({
         type: "GET",
-        url: "../modal/mocal_edit.php",
+        url: "modal/modal_edit.php",
         data: {modal_id: modal_id},
         dataType: "HTML",
         success: function (response) {
@@ -292,37 +292,45 @@ function addAdvance(modal_id) {
 $(document).on('change', '.pickitem_edit_PO', function () {
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
-    var size_r = size.replace(/\./g, ""); // remove dot
     var amount = $(this).val();
-    var appendItem = $('#'+brand+'_'+size_r).attr('data-info');
+    var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    if (appendItem == null) {
-        $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+size_r+'" data-info="'+brand+'_'+size_r+'"  value="'+brand+'/'+size+'/'+amount+'/'+cytype+'">');
-        $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+size_r+'">'+
-        '<td></td>'+
-        '<td style="text-align: left;">'+brand+'/ ขนาด '+size+' กก.</td>'+
-        '<td><div id="edit_amount'+brand+'_'+size_r+'">'+amount+'</div></td>'+
-        '<td><div id="edit_weight'+brand+'_'+size_r+'">'+size * amount+'</td>'+
-        '<td></td>'+
-        '<td>'+
-            '<div class="number">'+
-                '<span class="minus">-</span>'+
-                '<input class="input_amount" type="number" value="0" id="input_amount_" data-brand="">'+
-                '<span class="plus">+</span>'+
-            '</div>'+
-        '</td>'+
-        '<td></td>'+
-        '</tr>');
-    } else {
-        if (amount != 0) {
-            $('#'+brand+'_'+size_r).val(brand+'/'+size+'/'+amount+'/'+cytype);
-            $('#edit_amount'+brand+'_'+size_r).text(amount);
-            $('#edit_weight'+brand+'_'+size_r).text(size * amount);
-        } else {
-            $('#'+brand+'_'+size_r).remove();
-            $('#tdAppend_'+brand+'_'+size_r).remove();
+
+    $.ajax({
+        type: "POST",
+        url: "controller/CustomController.php",
+        data: {parameter: 'aJaxModalCheckSize', size: size},
+        dataType: "json",
+        success: function (response) {
+            if (appendItem == null) {
+                $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
+                $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+response['resultOrderBy']+'">'+
+                '<td></td>'+
+                '<td style="text-align: left;">'+brand+'/ ขนาด '+response['resultSize']+' กก.</td>'+
+                '<td><div id="edit_amount'+brand+'_'+response['resultOrderBy']+'">'+amount+'</div></td>'+
+                '<td><div id="edit_weight'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize'] * amount+'</td>'+
+                '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+                '<td>'+
+                    '<div class="number">'+
+                        '<span class="minus">-</span>'+
+                        '<input class="input_amount" type="number" value="0" id="input_amount_" data-brand="">'+
+                        '<span class="plus">+</span>'+
+                    '</div>'+
+                '</td>'+
+                '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+                '</tr>');
+            } else {
+                if (amount != 0) {
+                    $('#'+brand+'_'+response['resultOrderBy']).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
+                    $('#edit_amount'+brand+'_'+response['resultOrderBy']).text(amount);
+                    $('#edit_weight'+brand+'_'+response['resultOrderBy']).text(response['resultSize'] * amount);
+                } else {
+                    $('#'+brand+'_'+response['resultOrderBy']).remove();
+                    $('#tdAppend_'+brand+'_'+response['resultOrderBy']).remove();
+                }
+            }
         }
-    }
+    });
 });
 
 $(document).on('change', '.pickitem_pr', function () {
@@ -371,4 +379,19 @@ $(document).on('input', '.itemAmountOut', function () {
         $('#resultWeite_'+brand+'_'+size_r).text(0);
         $('#totalitem_PR').text(getAllSum());
     }
+});
+
+function btnCanclePO() {
+    $('#POStatus').val('Cancel');
+}
+
+function btnConfirmPO() {
+    $('#POStatus').val('Confirm');
+}
+
+$(document).on('input', '.AmountPrice', function () {
+    var amountprince = $(this).val();
+    var brand = $(this).data('brand');
+    var size = $(this).data('size');
+    console.log(brand, size);
 });

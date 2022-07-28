@@ -17,8 +17,9 @@
     $dataSize = $fetchdata->fetchdataSize();
     ?>
     <section id="purchase">
-        <form action="controller.php" method="POST" id="FormPreOrderCylinder">
-            <input type="text" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
+        <form action="controller/POController.php" method="POST" id="FormPreOrderCylinder">
+            <input type="hidden" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
+            <input type="hidden" name="POStatus" value="Confirm" id="POStatus">
         <div class="container">
             <h4>จัดซื้อ</h4>
             <div class="row">
@@ -35,9 +36,7 @@
         </div>
         <table border="1" cellspacing="1" cellpadding="1">
             <tr>
-                <th width="80" height="30">
-                    ยี่ห้อ\ขนาด
-                </th>
+                <th width="80" height="30"> ยี่ห้อ\ขนาด </th>
                 <?php foreach ($dataSize as $key => $value) { ?>
                 <th width="80" height="30"><?=$value['weightSize_id']?></th>
                 <?php }// end for(1) ?>

@@ -5,29 +5,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/select2.min.css">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="../css/select2.min.css">
+    <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../css/jquery-ui.min.css">
     <title>GSM</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
     <section id="purchase">
-        <form action="controller.php" method="POST">
-            <input type="hidden" name="parameter" id="" value="PreOrderReCeipt">
+        <form action="controller/POController.php" method="POST">
+            <input type="hidden" name="parameter" id="" value="EditPO">
             <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
+            <input type="text" name="sub_parameter" value="PreOrder" id="sub_parameter">
             <div class="container">
                 <?php
-                include_once('conn.php');
-                include('function.php');
+                include_once('../conn.php');
                 $fetchdata = new DB_con();
                 $sql = $fetchdata->editPO($_GET['id']);
                 $row = mysqli_fetch_array($sql);
                 $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
                 $totalSum = $fetchdata->SumAmountItem($_GET['id']);
-                $totalItem = mysqli_fetch_array($totalSum);
-                ?>
+                $totalItem = mysqli_fetch_array($totalSum); ?>
                 <div class="row">
                     <div class="col-50">
                         <label class="label-titile">เอกสารอ้างอิง</label>
@@ -103,7 +102,7 @@
                     <tr>
                         <th>ลำดับ</th>
                         <th>รายการสินค้า</th>
-                        <th>จำนวนที่ออก</th>
+                        <th>จำนวน</th>
                         <th>น้ำหนัก</th>
                         <th>ราคา/หน่วย</th>
                         <th>รับจริง</th>
@@ -113,12 +112,12 @@
                 <tbody id="edit_PO">
                     <?php 
                     foreach ($itemPO as $key => $rows) {
-                    $size_r = multiexplode(array(",",".","|",":","("), $rows['po_itemOut_CySize']);
+                    $size_r = explode(".",$rows['po_itemOut_CySize']);
                     ?>
                     <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>">
                         <td>
                             <?=$key+1;?>
-                            <input type="hidden" name="pickitem[<?=$key;?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>_<?=$rows['po_itemOut_type']?>" 
+                            <input type="text" name="pickitem[<?=$key;?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>_<?=$rows['po_itemOut_type']?>" 
                             data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
                         <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
@@ -130,10 +129,10 @@
                             </div>
                         </td>
                         <td>
-                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=(float)$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
+                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
                         <td>
-                            <input type="number" name="" id="" class="form-control" style="width: 80px;" value="">
+                            <input type="number" name="" class="form-control" style="width: 80px;">
                         </td>
                         <td>
                             <?php
@@ -147,7 +146,7 @@
                             </div>
                         </td>
                         <td>
-                            <input type="number" name="priceUnit[<?=$key;?>]" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;">
+                            <input type="number" name="priceUnit[<?=$key;?>]" class="form-control" style="width: 80px;">
                         </td>
                     </tr>
                     <?php } ?>
@@ -159,7 +158,7 @@
                             <span id="totalitem_PR">
                                 <?php echo ($totalItem != null ? $totalItem[0] : '');?>
                             </span>
-                            <input type="text" name="total" class="total form-control" value="<?php echo ($totalItem != null ? $totalItem[0] : '');?>" style="width: 80px;">
+                            <input type="hidden" name="total" class="total" value="<?php echo ($totalItem != null ? $totalItem[0] : '');?>">
                         </td>
                         <td class="text-left" style="padding-left: 10px;">ถัง</td>
                     </tr>
@@ -183,7 +182,8 @@
                 <textarea name="" id="" cols="30" rows="10" style="width: 100%;"><?=$row['head_po_comment']?></textarea>
                 <div class="row" style="margin-top: 30px;">
                     <div class="col-12" style="text-align: right;">
-                        <button type="submit" class="btn btn-success" onclick="">ยืนยัน</button>
+                        <button type="button" class="btn btn-success" onclick="btn_submit_draft_preselect()">บันทึกฉบับร่าง</button>
+                        <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
                     </div>
                 </div>
             </div>
@@ -191,11 +191,11 @@
             <div id="result_editinputItem"></div>
         </form>
     </section>
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/sweetalert2.all.min.js"></script>
-    <script src="js/select2.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/JQcustom.js"></script>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script src="../js/sweetalert2.all.min.js"></script>
+    <script src="../js/select2.min.js"></script>
+    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/JQcustom.js"></script>
     <script>
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     </script>

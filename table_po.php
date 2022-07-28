@@ -32,6 +32,7 @@
                 <tbody>
                     <?php 
                     include_once('conn.php');
+                    include('function.php');
                     $fetchdata = new DB_con();
                     $sql = $fetchdata->fetchdataPO();
                     $index = 1;
@@ -39,18 +40,24 @@
                     <tr id="POID_<?=$row['head_po_id']?>">
                         <td height="40"><?php echo $index?></td>
                         <td>
-                            <?php if ($row['head_pr_docnumber'] == null) { ?>
+                            <?php if ($row['head_pr_docnumber'] == null && $row['head_po_stock_status'] == 'Confirm') { ?>
                                 <a href="preorderreceipt.php?id=<?=$row['head_po_docnumber']?>">รับถังเข้า</a>
                             <?php } ?> 
                         </td>
                         <td>
                             <?php if ($row['head_pr_docnumber'] != null) { ?>
-                                <a href="edit/edit_po.php?id=<?=$row['head_po_docnumber']?>">แก้ไขเอกสาร</a>
+                                <a href="edit/editPO.php?id=<?=$row['head_po_docnumber']?>">แก้ไขเอกสาร</a>
                             <?php } ?>
                         </td>
                         <td><?=$row['head_po_docnumber']?></td>
                         <td><?=$row['head_po_round']?></td>
-                        <td>กำลังจัดส่ง</td>
+                        <td>
+                            <?php if ($row['head_po_stock_status'] == 'Draft') { ?>
+                                <a href="edit/draftPO.php?id=<?=$row['head_po_docnumber']?>"><?=POStatus($row['head_po_stock_status'])?></a>
+                            <?php } else { ?>
+                                <?=POStatus($row['head_po_stock_status'])?>
+                            <?php } ?>
+                        </td>
                         <td>05/05/2022</td>
                         <td>
                             <div class="row">

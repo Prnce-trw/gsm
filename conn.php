@@ -26,7 +26,7 @@
             return $result;
         }
 
-        public function Curmovement($cerrent_year, $DocumentNo, $Total, $brand, $size, $qty)
+        public function Curmovement($cerrent_year, $brand, $size, $qty)
         {
             $itemCode = 'I00-01G-'.$brand.$size;
 
@@ -45,7 +45,7 @@
             // $cur_bal            = $Curr_QTY_Balance - $Total; // Balance ปัจจุบัน
 
             $Curr_item_bal      = $Curr_QTY_Balance - $qty;
-            // echo 'I00-01G-'.$brand.$size;
+            // echo $itemCode;
             // var_dump($n_id);
             // exit(0);
             
@@ -95,16 +95,12 @@
             if (!isset($valid['head_pr_docnumber_po'])) {
                 $insertdata     = new DB_con();
                 $DocumentNo     = $insertdata->RunningNo("PR");
-                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref,head_pr_fillstation, head_pr_timeIn, head_pr_timeOut) VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref, head_pr_fillstation, head_pr_timeIn, head_pr_timeOut)
+                 VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
             } else {
-                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET WHERE head_pr_docnumber_po = '$POID'");
+                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET head_pr_doc_ref = '$RefDO', head_pr_fillstation = '$Fillstation', head_pr_timeIn = '$timeIn', head_pr_timeOut = '$timeOut' WHERE head_pr_docnumber_po = '$POID'");
             }
             return $result;
-        }
-
-        public function DraftPO()
-        {
-            # code...
         }
 
         public function CurmovementIn($cerrent_year, $RefDO, $Total, $brand, $size, $qty, $price)
@@ -163,29 +159,49 @@
             return $result;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public function insertPO($DocumentNo, $gas_filling, $comment)
+        public function UpdateStatusDraftPO($POID, $POStatus)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', 'Y')");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus' WHERE head_po_docnumber = '$POID'");
             return $result;
         }
+
+        public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', 'Y')");
+            return $result;
+        }
+
+        public function fetchdataFP()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_fillingplant WHERE FP_StatusActive = 'Y'");
+            return $result;
+        }
+
+        public function fetchdataItem($FPID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize LEFT JOIN tb_priceboard ON items_gas_weightsize.weightSize_id = tb_priceboard.PB_itemCode WHERE items_gas_weightsize.active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC;");
+            return $result;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
         public function fetchdataPO()
         {

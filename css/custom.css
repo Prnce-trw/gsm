@@ -194,7 +194,7 @@ section {
 }
 
 .btn-danger {
-    background-color: var(--btn-danger);
+    background-color: var(--danger);
     color: var(--font-white);
 }
 
