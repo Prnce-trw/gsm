@@ -40,7 +40,7 @@
                 <?php foreach ($dataSize as $key => $value) { ?>
                 <th width="80" height="30"><?=$value['weightSize_id']?></th>
                 <?php }// end for(1) ?>
-                <th width="150" height="30">ฝากเติม</th>
+                <th width="300" height="30">ฝากเติม</th>
             </tr>
             <?php foreach ($dataBrand as $index => $item) {?>
             <tr>
@@ -51,7 +51,7 @@
                 foreach ($dataSize as $key => $value) {?>
                     <td width="80" height="50">
                         <div class="div-inside">
-                            <select name="" class="pickitem" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
+                            <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
                                 <?php for ($n=0; $n <=20 ; $n++) { ?>
                                     <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                 <?php } ?>
@@ -86,7 +86,7 @@
             </tr>
             <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
-                <td></td>
+                <td><div class="totalWeight">0</div></td>
                 <td>กิโลกรัม</td>
             </tr>
         </table>

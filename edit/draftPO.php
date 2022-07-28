@@ -16,7 +16,7 @@
     <section id="purchase">
         <form action="../controller/POController.php" method="POST">
             <input type="hidden" name="parameter" id="DraftPO" value="DraftPO">
-            <input type="text" name="POStatus" id="POStatus" value="">
+            <input type="hidden" name="POStatus" id="POStatus" value="">
             <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
             <div class="container">
                 <?php

@@ -67,21 +67,6 @@
                 </div>
                 <div class="row">
                     <div class="col-50">
-                        <label class="label-titile">เวลาเข้า</label>
-                        <select name="hourIn" class="form-control">
-                            <option selected disabled>ชั่วโมง</option>
-                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
-                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeIn'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
-                            <?php } ?>
-                        </select> : 
-                        <select name="minuteIn" class="form-control">
-                            <option selected disabled>นาที</option>
-                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
-                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeIn'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="col-50">
                         <label class="label-titile">เวลาออก</label>
                         <select name="hourOut" class="form-control">
                             <option selected disabled>ชั่วโมง</option>
@@ -93,6 +78,21 @@
                             <option selected disabled>นาที</option>
                             <?php for ($mm=00; $mm <= 60; $mm++) { ?>
                                 <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeOut'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="col-50">
+                        <label class="label-titile">เวลาเข้า</label>
+                        <select name="hourIn" class="form-control">
+                            <option selected disabled>ชั่วโมง</option>
+                            <?php for ($hh=7; $hh <= 22; $hh++) { ?>
+                                <option value="<?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?>" <?php echo date("h", strtotime($row['head_pr_timeIn'])) == $hh ? 'selected': ''?>><?php echo strlen($hh) < 2 ? '0'.$hh : $hh;?></option>
+                            <?php } ?>
+                        </select> : 
+                        <select name="minuteIn" class="form-control">
+                            <option selected disabled>นาที</option>
+                            <?php for ($mm=00; $mm <= 60; $mm++) { ?>
+                                <option value="<?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?>" <?php echo date("i", strtotime($row['head_pr_timeIn'])) == $mm ? 'selected': ''?>><?php echo strlen($mm) < 2 ? '0'.$mm : $mm;?></option>
                             <?php } ?>
                         </select>
                     </div>

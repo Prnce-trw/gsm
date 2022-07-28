@@ -124,7 +124,7 @@ $(document).on('change', '.pickitem', function () {
         data: {parameter: "aJaxCheckSize", size: size, brand: brand, amount: amount, cytype: cytype},
         dataType: "JSON",
         success: function (response) {
-            console.log(response);
+            $(".totalWeight").text(sumTotalWeight(response['resultSize'], response['resultOrderBy']));
             if (appendItem == null) {
                 $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
                 if (cytype == 'Adv') {
@@ -150,6 +150,18 @@ $(document).on('change', '.pickitem', function () {
 $('select').change(function() {
     $("#total").text(getAllSum());
 });
+
+function sumTotalWeight(weight, weight_id) {
+    var $input = $('.weightSize_'+weight_id).val();
+    var curr_total = parseInt($('.totalWeight').text());
+    var result = 0;
+    
+    $('.weightSize_'+weight_id).each(function() {
+        result += parseInt($(this).val());
+    });
+    console.log(result*weight_id);
+    return result;
+}
 
 function getAllSum() {
     var result = 0;
@@ -211,7 +223,7 @@ function btn_submit_preselect () {
         cancelButtonText: 'ยกเลิก'
     }).then((result) => {
         if (result.isConfirmed) {
-            if ($('#total').text() != "0" && $('#gas_filling').val() != null) {
+            if ($('.total').text() != "0") {
                 Swal.fire({
                     icon: 'success',
                     text: 'บันทึกข้อมูลสำเร็จ',
@@ -233,8 +245,36 @@ function btn_submit_preselect () {
 }
 
 function btn_submit_draft_preselect() {
-    $('#POStatus').val('Draft');
-    $('#FormPreOrderCylinder').submit();
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "บันทึกเอกสารแบบฉบับร่าง",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if ($('.total').text() != "0") {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#POStatus').val('Draft');
+                $('#FormPreOrderCylinder').submit();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    text: "กรุณากรอกข้อมูลให้ครบ",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        }
+    })
 }
 
 function btn_delete (id) {
