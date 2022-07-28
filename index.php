@@ -72,17 +72,21 @@
             </tr>
             <?php }//end for(0) ?>
             <tr>
+                <td><b>
+                น้ำหนักทั้งหมด
+                </b></td>
+                <?php foreach ($dataSize as $key => $value) { ?>
+                    <td><span class="sumWeight_<?=$value['order_by_no']?> getSumWeight"></span></td>
+                <?php } ?>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
                 <td>
                     <div class="total">0</div>
                     <input type="hidden" name="total" class="total" value="0">
                 </td>
                 <td>รายการ</td>
-            </tr>
-            <tr>
-                <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">ขนาด 4</td>
-                <td></div></td>
-                <td>กิโลกรัม</td>
             </tr>
             <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>

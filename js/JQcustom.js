@@ -124,7 +124,17 @@ $(document).on('change', '.pickitem', function () {
         data: {parameter: "aJaxCheckSize", size: size, brand: brand, amount: amount, cytype: cytype},
         dataType: "JSON",
         success: function (response) {
-            $(".totalWeight").text(sumTotalWeight(response['resultSize'], response['resultOrderBy']));
+            var size = parseFloat(response['resultSize']).toFixed(1);
+            $(".sumWeight_"+response['resultOrderBy']).text(sumTotalWeight(size, response['resultOrderBy']));
+            var getWeight = 0;
+            $('.getSumWeight').each(function() {
+                if(isNaN($(this).text()) || $(this).text() === "") {
+                    getWeight+=0;
+                } else {
+                    getWeight+=parseInt($(this).text());
+                }
+            });
+            $(".totalWeight").text(getWeight);
             if (appendItem == null) {
                 $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
                 if (cytype == 'Adv') {
@@ -153,14 +163,18 @@ $('select').change(function() {
 
 function sumTotalWeight(weight, weight_id) {
     var $input = $('.weightSize_'+weight_id).val();
-    var curr_total = parseInt($('.totalWeight').text());
+    var curr_total = parseFloat($('.sumWeight_'+weight_id).text());
     var result = 0;
-    
+    var size = parseFloat(weight).toFixed(1);
     $('.weightSize_'+weight_id).each(function() {
-        result += parseInt($(this).val());
+        if(isNaN($(this).val()) || $(this).val() === "") {
+            result+=0;
+        } else {
+            result+=parseInt($(this).val());
+        }
     });
-    console.log(result*weight_id);
-    return result;
+
+    return result*weight;
 }
 
 function getAllSum() {
