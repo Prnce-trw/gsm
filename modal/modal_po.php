@@ -23,7 +23,7 @@ $dataSize = $fetchdata->fetchdataSize();
                         <tr>
                             <?php foreach ($dataSize as $key => $value) { ?>
                             <td>
-                                <select name="" class="pickitem" id="" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-size="<?=$value['order_by_no']?>">
+                                <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-size="<?=$value['order_by_no']?>">
                                     <?php for ($n=0; $n <=20 ; $n++) { ?>
                                         <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                     <?php } ?>

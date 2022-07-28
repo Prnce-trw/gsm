@@ -112,6 +112,7 @@ $(document).on('change', 'select', function(){
 }); 
 
 $(document).on('change', '.pickitem', function () {
+    console.log('123');
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
     var cytype = $(this).attr('data-Cytype');

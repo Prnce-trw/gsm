@@ -72,13 +72,18 @@
             </tr>
             <?php }//end for(0) ?>
             <tr>
-                <td><b>
-                น้ำหนักทั้งหมด
-                </b></td>
+                <td><b>รวม</b></td>
+                <?php foreach ($dataSize as $key => $value) { ?>
+                    <td><span class="sumcurrWeight_<?=$value['order_by_no']?> getcurrWeight"></span></td>
+                <?php } ?>
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td><b>น้ำหนักทั้งหมด</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
                     <td><span class="sumWeight_<?=$value['order_by_no']?> getSumWeight"></span></td>
                 <?php } ?>
-                <td colspan="2"></td>
+                <td colspan="2"><span class="sumWeightAdv"></span></td>
             </tr>
             <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">รายการทั้งหมด</td>
