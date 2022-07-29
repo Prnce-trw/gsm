@@ -6,31 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/select2.min.css">
     <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     <title>GSM</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <?php
     include_once('conn.php');
-    $fetchdata = new DB_con();
-    $dataBrand = $fetchdata->fetchdataBrand();
-    $dataSize = $fetchdata->fetchdataSize();
-    ?>
+    $fetchdata  = new DB_con();
+    $dataBrand  = $fetchdata->fetchdataBrand();
+    $dataSize   = $fetchdata->fetchdataSize(); 
+    $dataFP     = $fetchdata->fetchdataFP();?>
     <section id="purchase">
         <form action="controller/POController.php" method="POST" id="FormPreOrderCylinder">
             <input type="hidden" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
             <input type="hidden" name="POStatus" value="Confirm" id="POStatus">
         <div class="container">
-            <h4>จัดซื้อ</h4>
+            <h4>รายการนำถังไปบรรจุ</h4>
             <div class="row">
-                <div class="col-100">
+                <div class="col-50">
                     <label for="filling" class="label-titile">โรงบรรจุ</label>
-                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
+                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 170px;">
                         <option selected disabled>เลือกโรงบรรจุ...</option>
-                        <?php for ($i=0; $i < 10; $i++) { ?>
-                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <?php foreach ($dataFP as $key => $value) { ?>
+                            <option value="<?php echo $value['FP_ID']; ?>"><?php echo $value['FP_Name']; ?></option>
                         <?php } ?>
                     </select>
+                </div>
+                <div class="col-50">
+                    <label class="label-titile">วันที่</label>
+                    <input type="text" name="date" class="form-control" placeholder="วัน/เดือน/ปี" value="<?=date("d/m/Y")?>" readonly>
                 </div>
             </div>
         </div>
@@ -95,7 +100,10 @@
             </tr>
             <tr>
                 <td colspan="<?=$dataSize->num_rows?>" style="text-align: right; padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
-                <td><div class="totalWeight">0</div></td>
+                <td>
+                    <div class="totalWeight">0</div>
+                    <input type="hidden" name="totalWeight" class="totalWeight">
+                </td>
                 <td>กิโลกรัม</td>
             </tr>
         </table>
@@ -117,6 +125,7 @@
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script src="js/JQcustom.js"></script>
 </body>
 </html>

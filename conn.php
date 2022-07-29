@@ -165,9 +165,11 @@
             return $result;
         }
 
-        public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus)
+        public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus, $PODate)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', 'Y')");
+            $Ex_PODate = explode('/', $PODate);
+            $Date = $Ex_PODate[2].'-'.$Ex_PODate[1].'-'.$Ex_PODate[0];
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, head_po_docdate, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', '$Date', 'Y')");
             return $result;
         }
 

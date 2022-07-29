@@ -3,6 +3,8 @@ $(document).ready(function() {
         placeholder: "เลือกโรงบรรจุ...",
     });
 
+    $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+
     $(function() {
         //----- OPEN
         $('[data-modal-open]').on('click', function(e)  {
@@ -112,7 +114,6 @@ $(document).on('change', 'select', function(){
 }); 
 
 $(document).on('change', '.pickitem', function () {
-    console.log('123');
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
     var cytype = $(this).attr('data-Cytype');
@@ -132,10 +133,11 @@ $(document).on('change', '.pickitem', function () {
                 if(isNaN($(this).text()) || $(this).text() === "") {
                     getWeight+=0;
                 } else {
-                    getWeight+=parseInt($(this).text());
+                    getWeight+=parseFloat($(this).text());
                 }
             });
             $(".totalWeight").text(getWeight);
+            $(".totalWeight").val(getWeight);
             if (appendItem == null) {
                 $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
                 if (cytype == 'Adv') {
@@ -174,7 +176,6 @@ function sumTotalWeight(weight, weight_id) {
             result+=parseInt($(this).val());
         }
     });
-
     return result*weight;
 }
 

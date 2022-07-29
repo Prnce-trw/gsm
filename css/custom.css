@@ -46,11 +46,16 @@ body {
     /* line-height: 1.5; */
     color: #212529;
     text-align: left;
-    background-color: #fff;
+    background-color: var(--white);
 }
 
 div {
     display: block;
+}
+
+input[readonly] {
+    background-color: var(--secondary);
+    color: var(--white);
 }
 
 .container {
@@ -301,7 +306,7 @@ textarea {
     font-size: 0.85rem;
     line-height: 1.5;
     color: #495057;
-    background-color: #fff;
+    background-color: var(--white);
     background-clip: padding-box;
     border: 1px solid #ced4da;
     border-radius: .25rem;
@@ -369,7 +374,7 @@ textarea {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	background: #fff;
+	background: var(--white);
 }
 
 /* Close Button */

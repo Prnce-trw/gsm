@@ -8,7 +8,8 @@
             $filling        = $_POST['gas_filling'];
             $comment        = $_POST['comment'];
             $POStatus       = $_POST['POStatus'];
-            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment, $POStatus);
+            $PODate         = $_POST['date'];
+            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment, $POStatus, $PODate);
 
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);

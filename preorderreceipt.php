@@ -22,6 +22,7 @@
                 include_once('conn.php');
                 include('function.php');
                 $fetchdata = new DB_con();
+                $dataFP = $fetchdata->fetchdataFP();
                 $sql = $fetchdata->editPO($_GET['id']);
                 $row = mysqli_fetch_array($sql);
                 $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
@@ -30,8 +31,8 @@
                 ?>
                 <div class="row">
                     <div class="col-50">
-                        <label class="label-titile">เอกสารอ้างอิง</label>
-                        <input type="text" class="form-control" name="RefDO" placeholder="หมายเลขเอกสารอ้างอิง..." value="<?=$row['head_pr_doc_ref']?>">
+                        <label class="label-titile">เอกสารใบกำกับ</label>
+                        <input type="text" class="form-control" name="RefDO" placeholder="หมายเลขเอกสารใบกำกับ..." value="<?=$row['head_pr_doc_ref']?>">
                     </div>
                 </div>
                 <div class="row">
@@ -39,9 +40,8 @@
                         <label for="filling" class="label-titile">โรงบรรจุ</label>
                         <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
                             <option selected disabled>เลือกโรงบรรจุ...</option>
-                            <?php for ($i=0; $i < 10; $i++) { ?>
-                                <option value="<?php echo $i; ?>" <?php echo $row['head_po_fillstation'] == $i ? 'selected':'' ?>><?php echo $i; ?>
-                            </option>
+                            <?php foreach ($dataFP as $key => $value) { ?>
+                                <option value="<?=$value['FP_ID']; ?>" <?php echo $row['head_po_fillstation'] == $value['FP_ID'] ? 'selected':'' ?>><?=$value['FP_Name']; ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="col-50">
                         <label class="label-titile">วันที่</label>
-                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['created_at'] != null ? date("d/m/Y", strtotime($row['created_at'])) : '')?>">
+                        <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['created_at'] != null ? date("d/m/Y", strtotime($row['created_at'])) : date("d/m/Y"))?>">
                     </div>
                 </div>
                 <div class="row">
@@ -104,9 +104,10 @@
                         <th>ลำดับ</th>
                         <th>รายการสินค้า</th>
                         <th>จำนวนที่ออก</th>
+                        <th>จำนวนรับจริง</th>
                         <th>น้ำหนัก</th>
                         <th>ราคา/หน่วย</th>
-                        <th>รับจริง</th>
+                        
                         <th>จำนวนเงิน</th>
                     </tr>
                 </thead>
@@ -123,28 +124,30 @@
                         </td>
                         <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
                         <td>
-                            <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>" data-Cytype="<?=$rows['po_itemOut_type']?>">
+                            <!-- <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>" data-Cytype="<?=$rows['po_itemOut_type']?>">
                                 <span class="minus changeAmount">-</span>
-	                            <input class="input_amount itemAmountOut" type="number" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
+	                            <input class="input_amount itemAmountOut" type="number" value="" id="input_amount_" data-brand="">
                                 <span class="plus changeAmount">+</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=(float)$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
-                        </td>
-                        <td>
-                            <input type="number" name="" id="" class="form-control" style="width: 80px;" value="">
+                            </div> -->
+                            <?=$rows['po_itemOut_CyAmount']?>
                         </td>
                         <td>
                             <?php
                             $fetchdataitem = new DB_con();
                             $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
                             $itemEnReal = mysqli_fetch_array($itemEn); ?>
-                            <div class="number">
+                            <!-- <div class="number">
                                 <span class="minus changeItemEnt">-</span>
-	                            <input name="ItemEnt[<?=$key;?>]" class="input_amount itemEntAmt" type="text" value="<?=$rows['po_itemOut_CyAmount']?>" id="input_amount_" data-brand="">
+	                            <input name="ItemEnt[<?=$key;?>]" class="input_amount itemEntAmt" type="text" value="" id="input_amount_" data-brand="">
                                 <span class="plus changeItemEnt">+</span>
-                            </div>
+                            </div> -->
+                            <?=$rows['po_itemOut_CyAmount']?>
+                        </td>
+                        <td>
+                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=(float)$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
+                        </td>
+                        <td>
+                            <input type="number" name="" id="" class="form-control" style="width: 80px;" value="">
                         </td>
                         <td>
                             <input type="number" name="priceUnit[<?=$key;?>]" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;">
@@ -177,6 +180,7 @@
             </table>
             <div class="container">
                 <button class="btn btn-primary" style="margin-top: 10px;" onClick="addAdvance('<?=$_GET['id']?>')" type="button">เพิ่มถัง</button>
+                <button class="btn btn-warning" style="margin-top: 10px;" type="button">แก้ไขจำนวนรับจริง</button>
             </div>
             <div class="container">
                 <h4>หมายเหตุ</h4>
@@ -196,9 +200,6 @@
     <script src="js/select2.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/JQcustom.js"></script>
-    <script>
-        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
-    </script>
 </body>
 
 </html>
