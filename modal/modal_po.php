@@ -2,8 +2,7 @@
 include_once('../conn.php');
 $fetchdata = new DB_con();
 $dataBrand = $fetchdata->fetchdataBrand();
-$dataSize = $fetchdata->fetchdataSize();
-?>
+$dataSizeRelate = $fetchdata->fetchdataSizeRelate($_GET['modal_id']); ?>
 <div id="add_data_Modal" class="modal" data-modal="add_data_modal">
     <div class="modal-inner">
         <div class="modal-content">
@@ -16,12 +15,12 @@ $dataSize = $fetchdata->fetchdataSize();
                     <tbody>
                         <tr>
                             <td rowspan="2">ขนาด</td>
-                            <?php foreach ($dataSize as $key => $value) { ?>
+                            <?php foreach ($dataSizeRelate as $key => $value) { ?>
                                 <td><?=$value['weightSize_id']?></td>
                             <?php } ?>
                         </tr>
                         <tr>
-                            <?php foreach ($dataSize as $key => $value) { ?>
+                            <?php foreach ($dataSizeRelate as $key => $value) { ?>
                             <td>
                                 <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-size="<?=$value['order_by_no']?>">
                                     <?php for ($n=0; $n <=20 ; $n++) { ?>

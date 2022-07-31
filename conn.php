@@ -32,6 +32,12 @@
             return $result;
         }
 
+        public function fetchdataSizeRelate($brand)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize LEFT JOIN items_gas_weightsize ON tb_brandrelsize.brandRelSize_weight_autoID = items_gas_weightsize.weight_NoID WHERE tb_brandrelsize.brandRelSize_ms_product_id = '$brand' ORDER BY items_gas_weightsize.order_by_no ASC");
+            return $result;
+        }
+
         public function Curmovement($cerrent_year, $brand, $size, $qty)
         {
             $itemCode = 'I00-01G-'.$brand.$size;
@@ -191,6 +197,12 @@
             return $result;
         }
 
+        public function editCylinderPO($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id WHERE tb_po_itemout.po_itemOut_docNo = '$POID' ORDER BY po_itemOut_CyBrand ASC");
+            return $result;
+        }
+
 
 
 
@@ -251,10 +263,6 @@
             return $result;
         }
 
-        
-
-        
-
         public function CylinderCountSize($POID, $size, $type)
         {
             $result = mysqli_query($this->dbcon, "SELECT SUM(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' AND po_itemOut_CySize = '$size' AND po_itemOut_type = '$type'");
@@ -273,11 +281,7 @@
             return $result;
         }
 
-        public function editCylinderPO($POID)
-        {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' ORDER BY po_itemOut_CyBrand");
-            return $result;
-        }
+        
 
         public function fetchitemEntrance($refPO, $brand, $size, $type)
         {

@@ -54,8 +54,7 @@
                     <div class="div-inside"><?=$item['ms_product_name']?></div>
                 </td>
                 <?php //for(1) 
-                foreach ($dataSize as $key => $value) { 
-                    $stack = null; 
+                foreach ($dataSize as $key => $value) { $stack = null; 
                     foreach ($dataBS as $keyBS => $valueBS) {
                         if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                             <td width="80" height="50">

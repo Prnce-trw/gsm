@@ -349,10 +349,11 @@ function openModal() {
     $('#add_data_Modal').css("display", "block");
     
     $('.PRitemOut').each(function() {
-        var itemOut = $(this).val();
-        var Dataitem = itemOut.split('/')
-        $('#Realsize_'+Dataitem[0]+'_'+Dataitem[1]).val(Dataitem[2]).change();
-        $('#Realsize_'+Dataitem[0]+'_'+Dataitem[1]).prop('disabled', true);
+        var itemOut = $(this).data('info');
+        var Dataitem = itemOut.split('_');
+        var qty = $(this).val().split('/');
+        $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).val(qty[2]).change();
+        // $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).prop('disabled', true);
     });
 }
 
@@ -360,42 +361,63 @@ function modalPR_close() {
     $('#add_data_Modal').css("display", "none");
 }
 
-$(document).change('.pickitem_edit_PO', function () {
+$(document).on('change', '.pickitem_edit_PO', function () {
     var brand = $(this).data('brand');
+    var sizeID = $(this).attr('data-sizeID');
     var size = $(this).attr('data-size');
+    var wightSize = $(this).attr('data-wightSize');
     var amount = $(this).val();
-    var appendItem = $('#'+brand+'_'+size).attr('data-info');
+    var appendItem = $('#'+brand+'_'+sizeID).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    $(this).prop('disabled', true);
-    $.ajax({
-        type: "POST",
-        url: "controller/CustomController.php",
-        data: {parameter: 'aJaxModalCheckSize', size: size},
-        dataType: "json",
-        success: function (response) {
-            if (appendItem == null) {
-                $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
-                $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+response['resultOrderBy']+'">'+
-                '<td></td>'+
-                '<td style="text-align: left;">'+brand+'/ ขนาด '+response['resultSize']+' กก.</td>'+
-                '<td></td>'+
-                '<td><div id="edit_amount'+brand+'_'+response['resultOrderBy']+'">'+amount+'</div></td>'+
-                '<td><div id="edit_weight'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize'] * amount+'</td>'+
-                '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-                '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-                '</tr>');
-            } else {
-                if (amount != 0) {
-                    $('#'+brand+'_'+response['resultOrderBy']).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
-                    $('#edit_amount'+brand+'_'+response['resultOrderBy']).text(amount);
-                    $('#edit_weight'+brand+'_'+response['resultOrderBy']).text(response['resultSize'] * amount);
-                } else {
-                    $('#'+brand+'_'+response['resultOrderBy']).remove();
-                    $('#tdAppend_'+brand+'_'+response['resultOrderBy']).remove();
-                }
-            }
+    console.log(brand, sizeID, amount);
+    if (appendItem == null) {
+        $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+sizeID+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+size+'/'+amount+'">');
+        $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+sizeID+'">'+
+        '<td></td>'+
+        '<td style="text-align: left;">'+brand+'/ ขนาด '+size+' กก.</td>'+
+        '<td></td>'+
+        '<td><div id="edit_amount'+brand+'_'+sizeID+'">'+amount+'</div></td>'+
+        '<td><div id="edit_weight'+brand+'_'+sizeID+'">'+wightSize * amount+'</td>'+
+        '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+        '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+        '</tr>');
+    } else {
+        if (amount != 0) {
+            $('#'+brand+'_'+sizeID).val(brand+'/'+size+'/'+amount);
+        } else {
+            $('#'+brand+'_'+sizeID).remove();
+            $('#tdAppend_'+brand+'_'+sizeID).remove();
         }
-    });
+    }
+    // $.ajax({
+    //     type: "POST",
+    //     url: "controller/CustomController.php",
+    //     data: {parameter: 'aJaxModalCheckSize', size: size},
+    //     dataType: "json",
+    //     success: function (response) {
+    //         if (appendItem == null) {
+    //             $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
+    //             $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+response['resultOrderBy']+'">'+
+    //             '<td></td>'+
+    //             '<td style="text-align: left;">'+brand+'/ ขนาด '+response['resultSize']+' กก.</td>'+
+    //             '<td></td>'+
+    //             '<td><div id="edit_amount'+brand+'_'+response['resultOrderBy']+'">'+amount+'</div></td>'+
+    //             '<td><div id="edit_weight'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize'] * amount+'</td>'+
+    //             '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+    //             '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+    //             '</tr>');
+    //         } else {
+    //             if (amount != 0) {
+    //                 $('#'+brand+'_'+response['resultOrderBy']).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
+    //                 $('#edit_amount'+brand+'_'+response['resultOrderBy']).text(amount);
+    //                 $('#edit_weight'+brand+'_'+response['resultOrderBy']).text(response['resultSize'] * amount);
+    //             } else {
+    //                 $('#'+brand+'_'+response['resultOrderBy']).remove();
+    //                 $('#tdAppend_'+brand+'_'+response['resultOrderBy']).remove();
+    //             }
+    //         }
+    //     }
+    // });
 });
 
 $(document).on('change', '.pickitem_pr', function () {

@@ -58,6 +58,10 @@ input[readonly] {
     color: var(--white);
 }
 
+select[disabled] {
+    cursor: context-menu !important;
+}
+
 .container {
     width: 100%;
     padding-right: 15px;

@@ -21,15 +21,16 @@
                 <?php
                 include_once('conn.php');
                 include('function.php');
-                $fetchdata = new DB_con();
-                $dataFP = $fetchdata->fetchdataFP();
-                $sql = $fetchdata->editPO($_GET['id']);
-                $row = mysqli_fetch_array($sql);
-                $itemPO = $fetchdata->editCylinderPO($_GET['id']); 
-                $totalSum = $fetchdata->SumAmountItem($_GET['id']);
-                $totalItem = mysqli_fetch_array($totalSum);
-                $dataBrand = $fetchdata->fetchdataBrand();
-                $dataSize = $fetchdata->fetchdataSize();
+                $fetchdata  = new DB_con();
+                $dataFP     = $fetchdata->fetchdataFP();
+                $sql        = $fetchdata->editPO($_GET['id']);
+                $row        = mysqli_fetch_array($sql);
+                $itemPO     = $fetchdata->editCylinderPO($_GET['id']); 
+                $totalSum   = $fetchdata->SumAmountItem($_GET['id']);
+                $totalItem  = mysqli_fetch_array($totalSum);
+                $dataBrand  = $fetchdata->fetchdataBrand();
+                $dataSize   = $fetchdata->fetchdataSize();
+                $dataBS     = $fetchdata->fetchdataBS();
                 ?>
                 <div class="row">
                     <div class="col-50">
@@ -109,20 +110,18 @@
                         <th>จำนวนรับจริง</th>
                         <th>น้ำหนัก</th>
                         <th>ราคา/หน่วย</th>
-                        
                         <th>จำนวนเงิน</th>
                     </tr>
                 </thead>
                 <tbody id="edit_PO">
                     <?php 
                     foreach ($itemPO as $key => $rows) {
-                    $size_r = multiexplode(array(",",".","|",":","("), $rows['po_itemOut_CySize']);
-                    ?>
-                    <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>">
+                    $size_r = multiexplode(array(",",".","|",":","("), $rows['po_itemOut_CySize']); ?>
+                    <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>">
                         <td>
                             <?=$key+1;?>
-                            <input type="hidden" class="PRitemOut" name="pickitem[<?=$key;?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>_<?=$rows['po_itemOut_type']?>" 
-                            data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
+                            <input type="text" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
+                            data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
                         <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
                         <td>
@@ -220,17 +219,21 @@
                                     <div class="div-inside"><?=$item['ms_product_name']?></div>
                                 </td>
                                 <?php //for(1) 
-                                foreach ($dataSize as $key => $value) {?>
-                                    <td width="80" height="50">
-                                        <div class="div-inside">
-                                            <select name="" class="pickitem_edit_PO item_<?=$item['ms_product_id']?>" id="Realsize_<?=$item['ms_product_id']?>_<?=$value['weightSize_id']?>" data-brand="<?=$item['ms_product_id']?>" data-realsize="<?=$value['weightSize_id']?>" data-size="<?=$value['order_by_no']?>">
-                                                <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                                    <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                        </div>
-                                    </td>
-                                <?php }// end for(1) ?>
+                                foreach ($dataSize as $key => $value) { $stack = null; 
+                                    foreach ($dataBS as $keyBS => $valueBS) {
+                                        if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                                            <td width="80" height="50">
+                                                <div class="div-inside">
+                                                    <select name="" class="pickitem_edit_PO item_<?=$item['ms_product_id']?>" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeID="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
+                                                        <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                                            <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                    <?php $stack = true; } } if (!$stack) { ?>
+                                        <td width="80" height="50"></td>
+                                <?php } }// end for(1) ?>
                             </tr>
                             <?php }//end for(0) ?>
                             </tbody>
