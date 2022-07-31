@@ -16,7 +16,8 @@
     $fetchdata  = new DB_con();
     $dataBrand  = $fetchdata->fetchdataBrand();
     $dataSize   = $fetchdata->fetchdataSize(); 
-    $dataFP     = $fetchdata->fetchdataFP();?>
+    $dataFP     = $fetchdata->fetchdataFP();
+    $dataBS     = $fetchdata->fetchdataBS(); ?>
     <section id="purchase">
         <form action="controller/POController.php" method="POST" id="FormPreOrderCylinder">
             <input type="hidden" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
@@ -53,16 +54,23 @@
                     <div class="div-inside"><?=$item['ms_product_name']?></div>
                 </td>
                 <?php //for(1) 
-                foreach ($dataSize as $key => $value) {?>
-                    <td width="80" height="50">
-                        <div class="div-inside">
-                            <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
-                                <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                    <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </td>
+                foreach ($dataSize as $key => $value) { 
+                    $stack = null; 
+                    foreach ($dataBS as $keyBS => $valueBS) {
+                        if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                            <td width="80" height="50">
+                                <div class="div-inside">
+                                    <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
+                                        <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                            <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </td>
+                        <?php $stack = true;}
+                    } if (!$stack) { ?>
+                        <td width="80" height="50"></td>
+                    <?php } ?>
                 <?php }// end for(1) ?>
                 <td>
                     <div class="row">

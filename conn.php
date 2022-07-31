@@ -26,6 +26,12 @@
             return $result;
         }
 
+        public function fetchdataBS()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize");
+            return $result;
+        }
+
         public function Curmovement($cerrent_year, $brand, $size, $qty)
         {
             $itemCode = 'I00-01G-'.$brand.$size;

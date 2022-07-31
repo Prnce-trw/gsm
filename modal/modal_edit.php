@@ -2,10 +2,7 @@
 include_once('../conn.php');
 $fetchdata = new DB_con();
 $dataBrand = $fetchdata->fetchdataBrand();
-$dataSize = $fetchdata->fetchdataSize();
-$brand = ['PTT','WP','Siam','Unit','PT','Other'];
-$package = [4,7,8,11.5,13.5,15,48];
-?>
+$dataSize = $fetchdata->fetchdataSize(); ?>
 <div id="add_data_Modal" class="modal" data-modal="add_data_modal">
     <div class="modal-inner">
         <div class="modal-content">

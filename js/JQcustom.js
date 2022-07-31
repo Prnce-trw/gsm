@@ -345,13 +345,28 @@ function addAdvance(modal_id) {
     });
 }
 
-$(document).on('change', '.pickitem_edit_PO', function () {
+function openModal() {
+    $('#add_data_Modal').css("display", "block");
+    
+    $('.PRitemOut').each(function() {
+        var itemOut = $(this).val();
+        var Dataitem = itemOut.split('/')
+        $('#Realsize_'+Dataitem[0]+'_'+Dataitem[1]).val(Dataitem[2]).change();
+        $('#Realsize_'+Dataitem[0]+'_'+Dataitem[1]).prop('disabled', true);
+    });
+}
+
+function modalPR_close() {
+    $('#add_data_Modal').css("display", "none");
+}
+
+$(document).change('.pickitem_edit_PO', function () {
     var brand = $(this).data('brand');
     var size = $(this).attr('data-size');
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+size).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-
+    $(this).prop('disabled', true);
     $.ajax({
         type: "POST",
         url: "controller/CustomController.php",
@@ -363,16 +378,10 @@ $(document).on('change', '.pickitem_edit_PO', function () {
                 $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+response['resultOrderBy']+'">'+
                 '<td></td>'+
                 '<td style="text-align: left;">'+brand+'/ ขนาด '+response['resultSize']+' กก.</td>'+
+                '<td></td>'+
                 '<td><div id="edit_amount'+brand+'_'+response['resultOrderBy']+'">'+amount+'</div></td>'+
                 '<td><div id="edit_weight'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize'] * amount+'</td>'+
                 '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-                '<td>'+
-                    '<div class="number">'+
-                        '<span class="minus">-</span>'+
-                        '<input class="input_amount" type="number" value="0" id="input_amount_" data-brand="">'+
-                        '<span class="plus">+</span>'+
-                    '</div>'+
-                '</td>'+
                 '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
                 '</tr>');
             } else {
