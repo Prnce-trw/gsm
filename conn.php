@@ -67,8 +67,8 @@
             $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
 
             $data = array(
-                'resultInventMoving' => $resultInventMoving, 
-                'resultUpdateStockBranch' => $resultUpdateStockBranch, 
+                'resultInventMoving' => $resultInventMoving,
+                'resultUpdateStockBranch' => $resultUpdateStockBranch,
             );
             return $data;
         }
@@ -129,7 +129,7 @@
             $fetchQTY           = mysqli_fetch_array($sqlSum);
 
             // หาจำนวนสินค้าทั้งหมดในสาขา
-            $sqlSumItem         = mysqli_query($this->dbcon, "SELECT SUM(qty_balance) AS ResultItem, SUM(movAvgCost) AS ResultmovAvgCost FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' GROUP BY itemsCode");
+            $sqlSumItem         = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS ResultItem FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' GROUP BY itemsCode");
             $ItemInven          = mysqli_fetch_array($sqlSumItem);
             
 
@@ -142,15 +142,20 @@
             $movAvgCost         = $fetchQTY['movAvgCost'] + $price;
 
             $resultItemCurr     = $ItemInven['ResultItem']; // จำนวนในคลังทั้งหมด
-            $ResultmovAvgCostCur    = $ItemInven['ResultmovAvgCost']; // มูลค่าในคลังทั้งหมด
+            $ResultmovAvgCostCur    = $ItemInven['movAvgCost'] * $resultItemCurr; // มูลค่าในคลังทั้งหมด
 
-            $newItemCurr        = $ItemInven['ResultItem'] + $qty; // จำนวนในคลังทั้งหมด + จำนวนที่เข้ามาใหม่
+            $newItemCurr        = $resultItemCurr + $qty; // จำนวนในคลังทั้งหมด + จำนวนที่เข้ามาใหม่
 
-            // (มูลค่าในคลังทั้งหมด + มูลค่าใหม่ที่รับมา / จำนวนสิ้นค้าทั้งหมด) / จำนวน column ที่รวมกันทั้งหมด
-            $NewAvgCost         = $ResultmovAvgCostCur + $price / $newItemCurr;
+            // (มูลค่าในคลังทั้งหมด + มูลค่าใหม่ที่รับมา) / จำนวนสิ้นค้าทั้งหมด
+            $ResultAvgCost      = ($ResultmovAvgCostCur + $price) / $newItemCurr;
+            $NewAvgCost         = number_format($ResultAvgCost, 2, '.', '');
 
-            // var_dump($sqlSumItem->field_count);
-            // echo $NewAvgCost;
+            // var_dump($sqlSumItem['movAvgCost']);
+            // echo $NewAvgCost.
+            // '<br>'.$ItemInven['movAvgCost'].'*'.$resultItemCurr.'='.$ResultmovAvgCostCur.
+            // '<br>'.$price.
+            // '<br>'.$newItemCurr
+            // ;
             // exit(0);
 
             // บันทึก inventory movement
@@ -165,9 +170,9 @@
             return $data;
         }
 
-        public function insertItemEntrance($POID, $RefDO, $brand, $size, $amount, $cytype)
+        public function insertItemEntrance($POID, $RefDO, $brand, $size, $amount, $unitprice, $amtprice)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_type) VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$cytype')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_unitPrice, po_itemEnt_AmtPrice) VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$unitprice', '$amtprice')");
             return $result;
         }
 

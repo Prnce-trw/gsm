@@ -14,7 +14,7 @@
 
 <body>
     <section id="purchase">
-        <form action="controller.php" method="POST">
+        <form action="controller/PRController.php" method="POST">
             <input type="hidden" name="parameter" id="" value="PreOrderReCeipt">
             <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
             <div class="container">
@@ -120,38 +120,27 @@
                     <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>">
                         <td>
                             <?=$key+1;?>
-                            <input type="text" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
+                            <input type="hidden" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
                             data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
                         <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
-                        <td>
-                            <!-- <div class="number" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['po_itemOut_CySize']?>" data-Cytype="<?=$rows['po_itemOut_type']?>">
-                                <span class="minus changeAmount">-</span>
-	                            <input class="input_amount itemAmountOut" type="number" value="" id="input_amount_" data-brand="">
-                                <span class="plus changeAmount">+</span>
-                            </div> -->
-                            <?=$rows['po_itemOut_CyAmount']?>
-                        </td>
+                        <td><div id="qtyIn_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=$rows['po_itemOut_CyAmount']?></div></td>
                         <td>
                             <?php
                             $fetchdataitem = new DB_con();
                             $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
                             $itemEnReal = mysqli_fetch_array($itemEn); ?>
-                            <!-- <div class="number">
-                                <span class="minus changeItemEnt">-</span>
-	                            <input name="ItemEnt[<?=$key;?>]" class="input_amount itemEntAmt" type="text" value="" id="input_amount_" data-brand="">
-                                <span class="plus changeItemEnt">+</span>
-                            </div> -->
-                            <?=$rows['po_itemOut_CyAmount']?>
+                            <div class="itemAmountrecent_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=$rows['po_itemOut_CyAmount']?></div>
+                            <input type="hidden" name="itemEntrance[]" id="itemAmountrecent_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyAmount']?>">
                         </td>
                         <td>
-                            <span id="resultWeite_<?=$rows['po_itemOut_CyBrand']?>_<?=$size_r[0].(isset($size_r[1]) ? $size_r[1] : '')?>"><?=(float)$rows['po_itemOut_CySize'] * $rows['po_itemOut_CyAmount']?></span>
+                            <span class="itemweight" id="result_weight<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=(float)$rows['wightSize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
                         <td>
-                            <input type="number" name="" id="" class="form-control" style="width: 80px;" value="">
+                            <input type="number" name="unitprice[]" class="form-control itemperprice" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                         <td>
-                            <input type="number" name="priceUnit[<?=$key;?>]" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;">
+                            <input type="number" name="amtprice[]" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                     </tr>
                     <?php } ?>
@@ -163,25 +152,25 @@
                             <span id="totalitem_PR">
                                 <?php echo ($totalItem != null ? $totalItem[0] : '');?>
                             </span>
-                            <input type="text" name="total" class="total form-control" value="<?php echo ($totalItem != null ? $totalItem[0] : '');?>" style="width: 80px;">
+                            <input type="hidden" name="total" class="totalPR form-control" value="<?php echo ($totalItem != null ? $totalItem[0] : '');?>" style="width: 80px;">
                         </td>
                         <td class="text-left" style="padding-left: 10px;">ถัง</td>
                     </tr>
                     <tr>
-                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">จำนวนรับจริงทั้งหมด</td>
-                        <td></td>
-                        <td class="text-left" style="padding-left: 10px;">ถัง</td>
+                        <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">น้ำหนักรับจริงทั้งหมด</td>
+                        <td><div class="totalWeight"></div></td>
+                        <td class="text-left" style="padding-left: 10px;">กิโลกรัม</td>
                     </tr>
                     <tr>
                         <td colspan="5" class="text-right" style="padding-right: 10px;" height="30">ราคาทั้งหมด</td>
-                        <td></td>
+                        <td><div id="TotalPrice"></div></td>
                         <td class="text-left" style="padding-left: 10px;">บาท</td>
                     </tr>
                 </tfoot>
             </table>
             <div class="container">
                 <button class="btn btn-primary" style="margin-top: 10px;" onClick="openModal()" type="button">เพิ่มถัง</button>
-                <button class="btn btn-warning" style="margin-top: 10px;" type="button">แก้ไขจำนวนรับจริง</button>
+                <button class="btn btn-warning" style="margin-top: 10px;" onClick="openEditModal()" type="button">แก้ไขจำนวนรับจริง</button>
             </div>
             <div class="container">
                 <h4>หมายเหตุ</h4>
@@ -196,19 +185,70 @@
             <div id="result_editinputItem"></div>
 
             <div id="add_data_Modal" class="modal" data-modal="add_data_modal">
-                <div class="modal-inner">
-                    <div class="modal-content">
+                <div class="modal-inner-ml">
+                    <div class="modal-content-ml">
                         <div class="modal-header">
                             <input type="hidden" name="" id="" class="modal_brand" value="">
-                            <a class="modal-close" data-modal-close="add_data_modal" data-id="" onclick="modalPR_close()" href="#">x</a>
+                            <a class="modal-close-ml" data-modal-close="add_data_modal" data-id="" onclick="modalPR_close()" href="#">x</a>
                         </div>
                         <div class="modal-body">
                         <table>
                             <thead>
                                 <tr>
-                                    <th width="80" height="30"> ยี่ห้อ\ขนาด</th>
+                                    <th width="80" height="30" style="background-color: var(--blue); color: #fff"> ยี่ห้อ\ขนาด</th>
                                     <?php foreach ($dataSize as $key => $value) { ?>
-                                    <th width="80" height="30"><?=$value['weightSize_id']?></th>
+                                    <th width="80" height="30" style="background-color: var(--blue); color: #fff"><?=$value['weightSize_id']?></th>
+                                    <?php }// end for(1) ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($dataBrand as $index => $item) {?>
+                            <tr>
+                                <td width="80" height="50" >
+                                    <div class="div-inside"><?=$item['ms_product_name']?></div>
+                                </td>
+                                <?php //for(1) 
+                                foreach ($dataSize as $key => $value) { $stack = null; 
+                                    foreach ($dataBS as $keyBS => $valueBS) {
+                                        if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                                            <td width="150" height="50">
+                                                <div class="row">
+                                                    <div class="itemOut_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>"></div>&nbsp;/&nbsp;
+                                                    <div class="div-inside">
+                                                        <select name="" class="pickitem_add_PO item_<?=$item['ms_product_id']?>" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
+                                                            <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                                                <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                    <?php $stack = true; } } if (!$stack) { ?>
+                                        <td width="150" height="50"></td>
+                                <?php } }// end for(1) ?>
+                            </tr>
+                            <?php }//end for(0) ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="EdititemEnModal" class="modal" data-modal="EdititemEnModal">
+                <div class="modal-inner">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <input type="hidden" name="" id="" class="modal_brand" value="">
+                            <a class="modal-close" data-modal-close="EdititemEnModal" data-id="" onclick="modalPR_close()" href="#">x</a>
+                        </div>
+                        <div class="modal-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="80" height="30" style="background-color: var(--yellow);"> ยี่ห้อ\ขนาด</th>
+                                    <?php foreach ($dataSize as $key => $value) { ?>
+                                    <th width="80" height="30" style="background-color: var(--yellow);"><?=$value['weightSize_id']?></th>
                                     <?php }// end for(1) ?>
                                 </tr>
                             </thead>
@@ -224,7 +264,7 @@
                                         if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                                             <td width="80" height="50">
                                                 <div class="div-inside">
-                                                    <select name="" class="pickitem_edit_PO item_<?=$item['ms_product_id']?>" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeID="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
+                                                    <select name="" class="pickitem_edititemEn item_<?=$item['ms_product_id']?>" id="EdititemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
                                                         <?php for ($n=0; $n <=20 ; $n++) { ?>
                                                             <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                                         <?php } ?>

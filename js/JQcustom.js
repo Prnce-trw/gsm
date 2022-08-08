@@ -1,3 +1,9 @@
+function numberWithCommas(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
+
 $(document).ready(function() {
     $('.js-example-basic-single').select2({
         placeholder: "เลือกโรงบรรจุ...",
@@ -71,6 +77,16 @@ $(document).ready(function() {
         }
         
     });
+
+    var getWeight = 0;
+    $('.itemweight').each(function() {
+        if(isNaN($(this).text()) || $(this).text() === "") {
+            getWeight+=0;
+        } else {
+            getWeight+=parseFloat($(this).text());
+        }
+    });
+    $(".totalWeight").text(getWeight);
 });
 
 $(document).on('input', '.pickitem_advance', function () {
@@ -100,7 +116,7 @@ $(document).on('click','.modal-close', function() {
 })
 
 function modal_close(modal_id) {
-    console.log($(this).data('id'));
+    // console.log($(this).data('id'));
     $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
 }
 
@@ -109,9 +125,19 @@ $(document).on('change', 'select', function(){
     $('.pickitem').each(function() {
         sum += parseInt($(this).val());
     });
+    
     $(".total").text(sum);
     $(".total").val(sum);
 }); 
+
+$(document).on('change', '.pickitem_add_PO', function () {
+    var sum = 0;
+    $('.pickitem_add_PO').each(function () {
+        sum += parseInt($(this).val());
+    });
+    $("#totalitem_PR").text(sum);
+    $(".totalPR").val(sum);
+})
 
 $(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
@@ -352,6 +378,8 @@ function openModal() {
         var itemOut = $(this).data('info');
         var Dataitem = itemOut.split('_');
         var qty = $(this).val().split('/');
+        var qtyIn = $('#qtyIn_'+Dataitem[0]+'_'+Dataitem[1]).text();
+        $('.itemOut_'+Dataitem[0]+'_'+Dataitem[1]).text(qtyIn);
         $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).val(qty[2]).change();
         // $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).prop('disabled', true);
     });
@@ -359,66 +387,62 @@ function openModal() {
 
 function modalPR_close() {
     $('#add_data_Modal').css("display", "none");
+    $('#EdititemEnModal').css("display", "none");
 }
 
-$(document).on('change', '.pickitem_edit_PO', function () {
+$(document).on('change', '.pickitem_add_PO', function () {
     var brand = $(this).data('brand');
-    var sizeID = $(this).attr('data-sizeID');
+    var sizeID = $(this).attr('data-sizeid');
     var size = $(this).attr('data-size');
     var wightSize = $(this).attr('data-wightSize');
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+sizeID).attr('data-info');
     var cytype = $(this).attr('data-Cytype');
-    console.log(brand, sizeID, amount);
+    // console.log(size);
     if (appendItem == null) {
-        $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+sizeID+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+size+'/'+amount+'">');
+        $('#result_editinputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+size+'/'+amount+'">');
         $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+sizeID+'">'+
         '<td></td>'+
         '<td style="text-align: left;">'+brand+'/ ขนาด '+size+' กก.</td>'+
         '<td></td>'+
-        '<td><div id="edit_amount'+brand+'_'+sizeID+'">'+amount+'</div></td>'+
-        '<td><div id="edit_weight'+brand+'_'+sizeID+'">'+wightSize * amount+'</td>'+
-        '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-        '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
+        '<td>'+
+            '<div class="itemAmountrecent_'+brand+'_'+sizeID+'">'+amount+'</div>'+
+            '<input type="hidden" name="itemEntrance[]" id="itemAmountrecent_'+brand+'_'+sizeID+'" value="'+amount+'">'+
+        '</td>'+
+        '<td><div class="itemweight" id="result_weight'+brand+'_'+sizeID+'">'+wightSize * amount+'</td>'+
+        '<td><input type="number" name="" id="itemperprice_'+brand+'_'+sizeID+'" class="form-control itemperprice" style="width: 80px;" data-brand="'+brand+'" data-sizeid="'+sizeID+'" step="any"></td>'+
+        '<td><input type="number" name="" id="resultPrice_'+brand+'_'+sizeID+'" class="form-control AmountPrice" style="width: 80px;" step="any"></td>'+
         '</tr>');
     } else {
         if (amount != 0) {
             $('#'+brand+'_'+sizeID).val(brand+'/'+size+'/'+amount);
+            $('.itemAmountrecent_'+brand+'_'+sizeID).text(amount);
+            $('#itemAmountrecent_'+brand+'_'+sizeID).val(amount);
+            $('#result_weight'+brand+'_'+sizeID).text(wightSize * amount);
         } else {
             $('#'+brand+'_'+sizeID).remove();
             $('#tdAppend_'+brand+'_'+sizeID).remove();
         }
     }
-    // $.ajax({
-    //     type: "POST",
-    //     url: "controller/CustomController.php",
-    //     data: {parameter: 'aJaxModalCheckSize', size: size},
-    //     dataType: "json",
-    //     success: function (response) {
-    //         if (appendItem == null) {
-    //             $('#result_editinputItem').append('<input type="text" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
-    //             $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+response['resultOrderBy']+'">'+
-    //             '<td></td>'+
-    //             '<td style="text-align: left;">'+brand+'/ ขนาด '+response['resultSize']+' กก.</td>'+
-    //             '<td></td>'+
-    //             '<td><div id="edit_amount'+brand+'_'+response['resultOrderBy']+'">'+amount+'</div></td>'+
-    //             '<td><div id="edit_weight'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize'] * amount+'</td>'+
-    //             '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-    //             '<td><input type="number" name="" id="" class="form-control" style="width: 80px;"></td>'+
-    //             '</tr>');
-    //         } else {
-    //             if (amount != 0) {
-    //                 $('#'+brand+'_'+response['resultOrderBy']).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
-    //                 $('#edit_amount'+brand+'_'+response['resultOrderBy']).text(amount);
-    //                 $('#edit_weight'+brand+'_'+response['resultOrderBy']).text(response['resultSize'] * amount);
-    //             } else {
-    //                 $('#'+brand+'_'+response['resultOrderBy']).remove();
-    //                 $('#tdAppend_'+brand+'_'+response['resultOrderBy']).remove();
-    //             }
-    //         }
-    //     }
-    // });
+
+    var getWeight = 0;
+    $('.itemweight').each(function() {
+        if(isNaN($(this).text()) || $(this).text() === "") {
+            getWeight+=0;
+        } else {
+            getWeight+=parseFloat($(this).text());
+        }
+    });
+    $(".totalWeight").text(getWeight);
 });
+
+$(document).on('change', '.pickitem_edititemEn', function () {
+    alert()
+});
+
+function openEditModal() {
+    $('#EdititemEnModal').css("display", "block");
+}
 
 $(document).on('change', '.pickitem_pr', function () {
     var brand = $(this).data('brand');
@@ -476,9 +500,30 @@ function btnConfirmPO() {
     $('#POStatus').val('Confirm');
 }
 
-$(document).on('input', '.AmountPrice', function () {
-    var amountprince = $(this).val();
-    var brand = $(this).data('brand');
-    var size = $(this).data('size');
-    console.log(brand, size);
+$(document).on('click', '.priceHistory', function () {
+    console.log($(this).data('branch'), $(this).data('sizeID'));
 });
+
+$(document).on('input', '.itemperprice', SumTotalPrice);
+$(document).on('input', '.AmountPrice', SumTotalPrice);
+
+function SumTotalPrice() {
+    var brand = $(this).data('brand');
+    var sizeID = $(this).data('sizeid');
+    var price = $(this).val();
+    
+    var curritemEn = $('#itemAmountrecent_'+brand+'_'+sizeID).val();
+    if (!isNaN(curritemEn)) {
+        $('#resultPrice_'+brand+'_'+sizeID).val(parseFloat(price * curritemEn).toFixed(2));
+    }
+
+    var AmountPrice = 0;
+    $('.AmountPrice').each(function () {
+        if (isNaN($(this).val()) || $(this).val() === "") {
+            AmountPrice+=0;
+        } else {
+            AmountPrice+=parseFloat($(this).val());
+        }
+    });
+    $('#TotalPrice').text(numberWithCommas(parseFloat(AmountPrice).toFixed(2)));
+}
