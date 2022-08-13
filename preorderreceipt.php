@@ -123,7 +123,7 @@
                             <input type="hidden" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
                             data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
-                        <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก.</td>
+                        <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก. <span id="CountItem"><?=$key?></span></td>
                         <td><div id="qtyIn_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=$rows['po_itemOut_CyAmount']?></div></td>
                         <td>
                             <?php
@@ -131,16 +131,16 @@
                             $itemEn = $fetchdataitem->fetchitemEntrance($row['head_pr_doc_ref'], $rows['po_itemOut_CyBrand'], $rows['po_itemOut_CySize'], $rows['po_itemOut_type']);
                             $itemEnReal = mysqli_fetch_array($itemEn); ?>
                             <div class="itemAmountrecent_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=$rows['po_itemOut_CyAmount']?></div>
-                            <input type="hidden" name="itemEntrance[]" id="itemAmountrecent_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyAmount']?>">
+                            <input type="hidden" name="itemEntrance[<?=$key?>]" id="itemAmountrecent_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyAmount']?>">
                         </td>
                         <td>
                             <span class="itemweight" id="result_weight<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=(float)$rows['wightSize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
                         <td>
-                            <input type="number" name="unitprice[]" class="form-control itemperprice" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="unitprice[<?=$key?>]" class="form-control itemperprice" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                         <td>
-                            <input type="number" name="amtprice[]" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="amtprice[<?=$key?>]" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                     </tr>
                     <?php } ?>

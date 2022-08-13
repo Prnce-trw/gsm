@@ -118,6 +118,7 @@ $(document).on('click','.modal-close', function() {
 function modal_close(modal_id) {
     // console.log($(this).data('id'));
     $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
+    $('#modal_pricehistory').css("display", "none");
 }
 
 $(document).on('change', 'select', function(){
@@ -397,22 +398,24 @@ $(document).on('change', '.pickitem_add_PO', function () {
     var wightSize = $(this).attr('data-wightSize');
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+sizeID).attr('data-info');
-    var cytype = $(this).attr('data-Cytype');
-    // console.log(size);
+    var CountItem = $('#CountItem').text();
+    // console.log(parseInt(CountItem));
     if (appendItem == null) {
-        $('#result_editinputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+size+'/'+amount+'">');
+        var CountItem = parseInt(CountItem)+1;
+        $('#result_editinputItem').append('<input type="hidden" name="pickitem['+CountItem+']" id="'+brand+'_'+sizeID+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+size+'/'+amount+'">');
         $('#edit_PO tr:last').after('<tr id="tdAppend_'+brand+'_'+sizeID+'">'+
         '<td></td>'+
         '<td style="text-align: left;">'+brand+'/ ขนาด '+size+' กก.</td>'+
         '<td></td>'+
         '<td>'+
             '<div class="itemAmountrecent_'+brand+'_'+sizeID+'">'+amount+'</div>'+
-            '<input type="hidden" name="itemEntrance[]" id="itemAmountrecent_'+brand+'_'+sizeID+'" value="'+amount+'">'+
+            '<input type="hidden" name="itemEntrance['+CountItem+']" id="itemAmountrecent_'+brand+'_'+sizeID+'" value="'+amount+'">'+
         '</td>'+
         '<td><div class="itemweight" id="result_weight'+brand+'_'+sizeID+'">'+wightSize * amount+'</td>'+
-        '<td><input type="number" name="" id="itemperprice_'+brand+'_'+sizeID+'" class="form-control itemperprice" style="width: 80px;" data-brand="'+brand+'" data-sizeid="'+sizeID+'" step="any"></td>'+
-        '<td><input type="number" name="" id="resultPrice_'+brand+'_'+sizeID+'" class="form-control AmountPrice" style="width: 80px;" step="any"></td>'+
+        '<td><input type="number" name="unitprice['+CountItem+']" id="itemperprice_'+brand+'_'+sizeID+'" class="form-control itemperprice" style="width: 80px;" data-brand="'+brand+'" data-sizeid="'+sizeID+'" step="any"></td>'+
+        '<td><input type="number" name="amtprice['+CountItem+']" id="resultPrice_'+brand+'_'+sizeID+'" class="form-control AmountPrice" style="width: 80px;" step="any"></td>'+
         '</tr>');
+        $('#CountItem').text(CountItem);
     } else {
         if (amount != 0) {
             $('#'+brand+'_'+sizeID).val(brand+'/'+size+'/'+amount);
@@ -501,7 +504,19 @@ function btnConfirmPO() {
 }
 
 $(document).on('click', '.priceHistory', function () {
-    console.log($(this).data('branch'), $(this).data('sizeID'));
+    var branchID = "BRC1-1";
+    var sizeID = $(this).data('sizeid');
+    var fpID = $('#gas_filling').val();
+    $.ajax({
+        type: "POST",
+        url: "modal/modal_pricehis.php",
+        data: {parameter: "PriceHistory",branchID: branchID, sizeID: sizeID, fpID, fpID},
+        dataType: "HTML",
+        success: function (response) {
+            $('#result_modal').html(response)
+            $('#modal_pricehistory').css("display", "block");
+        } 
+    });
 });
 
 $(document).on('input', '.itemperprice', SumTotalPrice);

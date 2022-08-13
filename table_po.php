@@ -65,7 +65,7 @@
                                     <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
                                 </div>
                                 <div class="col-25">
-                                    <button type="button">พิมพ์</button>
+                                    <a href="info/po_pdf.php" class="btn btn-primary">พิมพ์</a>
                                 </div>
                                 <div class="col-25">
                                     <button type="button" onClick="btn_delete(<?=$row['head_po_id']?>)">ลบ</button>

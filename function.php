@@ -1,5 +1,6 @@
 <?php
 
+
 function POStatus($param)
 {
     if ($param == 'Draft') {
@@ -17,4 +18,27 @@ function multiexplode ($delimiters,$string) {
     $ready = str_replace($delimiters, $delimiters[0], $string);
     $launch = explode($delimiters[0], $ready);
     return  $launch;
+}
+
+function StatustoText($param)
+{
+    if ($param == 'Y') {
+        return '<span class="text-success">ใช้งาน</span>';
+    } elseif ($param == 'N') {
+        return '<span class="text-danger">ยกเลิก</span>';
+    } else {
+        return 'ไม่พบข้อมูล';
+    }
+}
+
+function getUnitPrice($sizeID, $branchID, $FPID)
+{
+    $fetchdata      = new DB_con();
+    $dataItem       = $fetchdata->fetchPriceUnit($sizeID, $branchID, $FPID);
+    $row            = mysqli_fetch_array($dataItem);
+    if (!isset($row)) {
+        return $row['currPB_itemPrice'];
+    } else {
+        return '';
+    }
 }

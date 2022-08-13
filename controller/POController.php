@@ -66,7 +66,7 @@
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
-                $sqlItem            = $insertdata->insertItemEntrance($POID, $RefDO, $item[0], $item[1], $item[2], $item[3]);
+                // $sqlItem            = $insertdata->insertItemEntrance($POID, $RefDO, $item[0], $item[1], $item[2], $item[3], $unitprice, $amtprice);
 
                 if ($_POST['sub_parameter'] == 'PreOrder') {
                     $cerrent_year   = date("Y");

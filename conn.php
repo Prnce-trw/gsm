@@ -150,7 +150,7 @@
             $ResultAvgCost      = ($ResultmovAvgCostCur + $price) / $newItemCurr;
             $NewAvgCost         = number_format($ResultAvgCost, 2, '.', '');
 
-            // var_dump($sqlSumItem['movAvgCost']);
+            // var_dump($ItemInven['movAvgCost']);
             // echo $NewAvgCost.
             // '<br>'.$ItemInven['movAvgCost'].'*'.$resultItemCurr.'='.$ResultmovAvgCostCur.
             // '<br>'.$price.
@@ -198,13 +198,31 @@
 
         public function fetchdataItem($FPID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize LEFT JOIN tb_priceboard ON items_gas_weightsize.weightSize_id = tb_priceboard.PB_itemCode WHERE items_gas_weightsize.active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC;");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize LEFT JOIN tb_curr_priceboard ON items_gas_weightsize.weight_NoID = tb_curr_priceboard.currPB_itemCode WHERE items_gas_weightsize.active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC;");
             return $result;
         }
 
         public function editCylinderPO($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id WHERE tb_po_itemout.po_itemOut_docNo = '$POID' ORDER BY po_itemOut_CyBrand ASC");
+            return $result;
+        }
+
+        public function fetchPriceItem()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize WHERE active_status = 'Y' ORDER BY order_by_no ASC");
+            return $result;
+        }
+
+        public function CheckPriceHistory($branchID, $sizeID, $FPID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_priceboard LEFT JOIN items_gas_weightsize ON tb_priceboard.PB_itemCode = items_gas_weightsize.weight_NoID WHERE tb_priceboard.PB_FPID = '$FPID' AND tb_priceboard.PB_itemCode = '$sizeID' AND tb_priceboard.PB_BranchID = '$branchID'");
+            return $result;
+        }
+
+        public function fetchPriceUnit($sizeID, $branchID, $FPID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice AS currPB_itemPrice FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
             return $result;
         }
 
