@@ -204,7 +204,10 @@
 
         public function editCylinderPO($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id WHERE tb_po_itemout.po_itemOut_docNo = '$POID' ORDER BY po_itemOut_CyBrand ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout 
+            LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id 
+            WHERE tb_po_itemout.po_itemOut_docNo = '$POID' 
+            ORDER BY po_itemOut_CyBrand ASC");
             return $result;
         }
 
@@ -216,13 +219,66 @@
 
         public function CheckPriceHistory($branchID, $sizeID, $FPID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_priceboard LEFT JOIN items_gas_weightsize ON tb_priceboard.PB_itemCode = items_gas_weightsize.weight_NoID WHERE tb_priceboard.PB_FPID = '$FPID' AND tb_priceboard.PB_itemCode = '$sizeID' AND tb_priceboard.PB_BranchID = '$branchID'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_priceboard LEFT JOIN items_gas_weightsize ON tb_priceboard.PB_itemCode = items_gas_weightsize.weight_NoID WHERE tb_priceboard.PB_FPID = '$FPID' AND tb_priceboard.PB_itemCode = '$sizeID' AND tb_priceboard.PB_BranchID = '$branchID' ORDER BY PB_ID DESC");
             return $result;
         }
 
         public function fetchPriceUnit($sizeID, $branchID, $FPID)
         {
             $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice AS currPB_itemPrice FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+            return $result;
+        }
+
+        public function insertPriceBoard($branchID, $FPID, $sizeID, $unitPrice)
+        {
+            $resultWeight = mysqli_query($this->dbcon, "SELECT * FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+            $weightRow = mysqli_fetch_array($resultWeight);
+            // var_dump($branchID, $FPID, $sizeID, $unitPrice);
+            if ($weightRow) {
+                // echo 1;
+                // exit();
+                $result = mysqli_query($this->dbcon, "UPDATE tb_curr_priceboard SET currPB_itemPrice = '$unitPrice', updated_at = CURRENT_TIMESTAMP WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+                $resultmaxPBId = mysqli_query($this->dbcon, "SELECT PB_ID FROM tb_priceboard");
+                $MaxPBId = mysqli_num_rows($resultmaxPBId);
+                $PBPBId = $MaxPBId+1;
+                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+            } else {
+                // echo 2;
+                // exit();
+                $resultmaxID = mysqli_query($this->dbcon, "SELECT currPB_ID FROM tb_curr_priceboard");
+                $MaxID = mysqli_num_rows($resultmaxID);
+                $currPBId = $MaxID+1;
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_curr_priceboard (currPB_ID, currPB_FPID, currPB_itemCode, currPB_BranchID, currPB_itemPrice, created_at) VALUES ('CPB$currPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+                
+                $resultmaxPBId = mysqli_query($this->dbcon, "SELECT PB_ID FROM tb_priceboard");
+                $MaxPBId = mysqli_num_rows($resultmaxID);
+                $PBPBId = $MaxPBId+1;
+                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+            }
+            return $result;
+        }
+
+        public function aJaxCheckStock($brand, $weight, $amount, $branch)
+        {
+            $itemsCode = "I00-01G-".$brand.$weight;
+            $result = mysqli_query($this->dbcon, "SELECT qty_balance FROM items_inventory_branch WHERE itemsCode = '$itemsCode' AND branchID = '$branch' AND store_area = '00'");
+            return $result;
+        }
+
+        public function itemUnitPrice($FPID, $sizeID, $branchID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_itemCode = '$sizeID' AND currPB_BranchID = '$branchID'");
+            return $result;
+        }
+        
+        public function fetchdataReport()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize 
+                                                    LEFT JOIN items_gas_weightsize 
+                                                    ON tb_brandrelsize.brandRelSize_weight_autoID = items_gas_weightsize.weight_NoID 
+                                                    LEFT JOIN ms_product 
+                                                    ON tb_brandrelsize.brandRelSize_ms_product_id = ms_product.ms_product_id 
+                                                    ORDER BY tb_brandrelsize.brandRelSize_weight_autoID, ms_product.ms_product_orderby_no ASC");
             return $result;
         }
 

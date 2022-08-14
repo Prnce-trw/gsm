@@ -59,7 +59,7 @@
                         if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                             <td width="80" height="50">
                                 <div class="div-inside">
-                                    <select name="" class="pickitem weightSize_<?=$value['order_by_no']?>" id="" data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['order_by_no']?>" data-Cytype="N">
+                                    <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N">
                                         <?php for ($n=0; $n <=20 ; $n++) { ?>
                                             <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                         <?php } ?>
@@ -83,17 +83,17 @@
                 </td>
             </tr>
             <?php }//end for(0) ?>
-            <tr>
+            <!-- <tr>
                 <td><b>รวม</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
-                    <td><span class="sumcurrWeight_<?=$value['order_by_no']?> getcurrWeight"></span></td>
+                    <td><span class="sumcurrWeight_<?=$value['weight_NoID']?> getcurrWeight"></span></td>
                 <?php } ?>
                 <td colspan="2"></td>
-            </tr>
+            </tr> -->
             <tr>
                 <td><b>น้ำหนักทั้งหมด</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
-                    <td><span class="sumWeight_<?=$value['order_by_no']?> getSumWeight"></span></td>
+                    <td><span class="sumWeight_<?=$value['weight_NoID']?> getSumWeight"></span></td>
                 <?php } ?>
                 <td colspan="2"><span class="sumWeightAdv"></span></td>
             </tr>

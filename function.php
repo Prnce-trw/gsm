@@ -36,8 +36,32 @@ function getUnitPrice($sizeID, $branchID, $FPID)
     $fetchdata      = new DB_con();
     $dataItem       = $fetchdata->fetchPriceUnit($sizeID, $branchID, $FPID);
     $row            = mysqli_fetch_array($dataItem);
-    if (!isset($row)) {
+    if (isset($row)) {
         return $row['currPB_itemPrice'];
+    } else {
+        return '';
+    }
+}
+
+function UnitAmount($FPID, $sizeID, $branchID, $qty)
+{
+    $fetchdata      = new DB_con();
+    $dataItem       = $fetchdata->itemUnitPrice($FPID, $sizeID, $branchID);
+    $row            = mysqli_fetch_array($dataItem);
+    if (isset($row)) {
+        return number_format($row['currPB_itemPrice'] * $qty,2);
+    } else {
+        return '';
+    }
+}
+
+function UnitPrice($FPID, $sizeID, $branchID, $qty)
+{
+    $fetchdata      = new DB_con();
+    $dataItem       = $fetchdata->itemUnitPrice($FPID, $sizeID, $branchID);
+    $row            = mysqli_fetch_array($dataItem);
+    if (isset($row)) {
+        return number_format($row['currPB_itemPrice'], 2);
     } else {
         return '';
     }

@@ -142,44 +142,50 @@ $(document).on('change', '.pickitem_add_PO', function () {
 
 $(document).on('change', '.pickitem', function () {
     var brand = $(this).data('brand');
-    var size = $(this).attr('data-size');
+    var sizeID = $(this).attr('data-sizeid');
     var cytype = $(this).attr('data-Cytype');
-    // var size_r = size.replace(/\./g, ""); // remove dot
+    var weight = $(this).data('weight');
+    var branch = "BRC1-1";
     var amount = $(this).val();
-    var appendItem = $('#'+brand+'_'+size+'_'+cytype).attr('data-info');
+    var appendItem = $('#'+brand+'_'+sizeID+'_'+cytype).attr('data-info');
+
     $.ajax({
         type: "POST",
-        url: "controller.php",
-        data: {parameter: "aJaxCheckSize", size: size, brand: brand, amount: amount, cytype: cytype},
+        url: "controller/POController.php",
+        data: {parameter: "aJaxCheckStock", weight: weight, brand: brand, amount: amount, branch: branch},
         dataType: "JSON",
         success: function (response) {
-            var size = parseFloat(response['resultSize']).toFixed(1);
-            $(".sumWeight_"+response['resultOrderBy']).text(sumTotalWeight(size, response['resultOrderBy']));
-            var getWeight = 0;
-            $('.getSumWeight').each(function() {
-                if(isNaN($(this).text()) || $(this).text() === "") {
-                    getWeight+=0;
-                } else {
-                    getWeight+=parseFloat($(this).text());
-                }
-            });
-            $(".totalWeight").text(getWeight);
-            $(".totalWeight").val(getWeight);
-            if (appendItem == null) {
-                $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+response['resultOrderBy']+'_'+cytype+'" data-info="'+brand+'_'+response['resultOrderBy']+'"  value="'+brand+'/'+response['resultSize']+'/'+amount+'/'+cytype+'">');
-                if (cytype == 'Adv') {
-                    $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+response['resultOrderBy']+'">'+response['resultSize']+' Kg. [<span class="'+brand+'_'+response['resultOrderBy']+'">'+amount+'</span>] </br></span>');
-                }
+            if (parseFloat(amount) > parseFloat(response['qty_balance'])) {
+                $('#input_'+brand+'_'+sizeID+'_'+cytype).val(0).change();
+                alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
             } else {
-                if (amount != 0) {
-                    $('#'+brand+'_'+response['resultOrderBy']+'_'+cytype).val(brand+'/'+response['resultSize']+'/'+amount+'/'+cytype);
+                $(".sumWeight_"+sizeID).text(sumTotalWeight(weight, sizeID));
+                var getWeight = 0;
+                $('.getSumWeight').each(function() {
+                    if(isNaN($(this).text()) || $(this).text() === "") {
+                        getWeight+=0;
+                    } else {
+                        getWeight+=parseFloat($(this).text());
+                    }
+                });
+                $(".totalWeight").text(getWeight);
+                $(".totalWeight").val(getWeight);
+                if (appendItem == null) {
+                    $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'_'+cytype+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+weight+'/'+amount+'/'+cytype+'">');
                     if (cytype == 'Adv') {
-                        $('#appendtext'+brand+'_'+response['resultOrderBy']).html(response['resultSize'] + ' Kg. [<span class="'+brand+'_'+response['resultOrderBy']+'">'+amount+'</span>]');
+                        $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+sizeID+'">'+weight+' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>] </br></span>');
                     }
                 } else {
-                    $('#'+brand+'_'+response['resultOrderBy']+'_'+cytype).remove();
-                    if (cytype == 'Adv') {
-                        $('#appendtext'+brand+'_'+response['resultOrderBy']).remove();
+                    if (amount != 0) {
+                        $('#'+brand+'_'+sizeID+'_'+cytype).val(brand+'/'+weight+'/'+amount+'/'+cytype);
+                        if (cytype == 'Adv') {
+                            $('#appendtext'+brand+'_'+sizeID).html(weight + ' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>]');
+                        }
+                    } else {
+                        $('#'+brand+'_'+sizeID+'_'+cytype).remove();
+                        if (cytype == 'Adv') {
+                            $('#appendtext'+brand+'_'+sizeID).remove();
+                        }
                     }
                 }
             }
@@ -192,41 +198,39 @@ $('select').change(function() {
 });
 
 function sumTotalWeight(weight, weight_id) {
-    var $input = $('.weightSize_'+weight_id).val();
-    var curr_total = parseFloat($('.sumWeight_'+weight_id).text());
     var result = 0;
-    var size = parseFloat(weight).toFixed(1);
     $('.weightSize_'+weight_id).each(function() {
         if(isNaN($(this).val()) || $(this).val() === "") {
             result+=0;
         } else {
-            result+=parseInt($(this).val());
+            result+=parseFloat($(this).val());
         }
     });
+    console.log(weight);
     return result*weight;
 }
 
 function getAllSum() {
     var result = 0;
     $('.pickitem :selected').each(function() {
-        result += parseInt($(this).val());
+        result += parseFloat($(this).val());
     });
 
     $('.pickitem_pr :selected').each(function() {
-        result += parseInt($(this).val());
+        result += parseFloat($(this).val());
     });
     $(".pickitem_advance").each(function() {
         if(isNaN($(this).val()) || $(this).val() === "") {
             result+=0;
         } else {
-            result+=parseInt($(this).val());
+            result+=parseFloat($(this).val());
         }
     });
     $(".itemAmountOut").each(function() {
         if(isNaN($(this).val()) || $(this).val() === "") {
             result+=0;
         } else {
-            result+=parseInt($(this).val());
+            result+=parseFloat($(this).val());
         }
     });
     return result;
@@ -504,9 +508,9 @@ function btnConfirmPO() {
 }
 
 $(document).on('click', '.priceHistory', function () {
-    var branchID = "BRC1-1";
+    var branchID = $('#branchID').val();
     var sizeID = $(this).data('sizeid');
-    var fpID = $('#gas_filling').val();
+    var fpID = $('#fillingplant').val();
     $.ajax({
         type: "POST",
         url: "modal/modal_pricehis.php",
@@ -521,6 +525,17 @@ $(document).on('click', '.priceHistory', function () {
 
 $(document).on('input', '.itemperprice', SumTotalPrice);
 $(document).on('input', '.AmountPrice', SumTotalPrice);
+$(document).ready(function () {
+    var AmountPrice = 0;
+    $('.AmountPrice').each(function () {
+        if (isNaN($(this).val()) || $(this).val() === "") {
+            AmountPrice+=0;
+        } else {
+            AmountPrice+=parseFloat($(this).val());
+        }
+    });
+    $('#TotalPrice').text(numberWithCommas(parseFloat(AmountPrice).toFixed(2)));
+});
 
 function SumTotalPrice() {
     var brand = $(this).data('brand');
@@ -542,3 +557,26 @@ function SumTotalPrice() {
     });
     $('#TotalPrice').text(numberWithCommas(parseFloat(AmountPrice).toFixed(2)));
 }
+
+$(document).on('click', '#checkall', function () {
+    if (this.checked) {
+        $('.checkchild:checkbox').each(function() {
+            this.checked = true;
+            $('.unitprice').attr("disabled", false);
+        });
+    } else {
+        $('.checkchild:checkbox').each(function() {
+            this.checked = false;
+            $('.unitprice').attr("disabled", true);
+        });
+    }
+});
+
+$(document).on('click', '.checkchild', function () {
+    var sizeID = $(this).data('sizeid');
+    if (this.checked) {
+        $("#unitid_"+sizeID).attr("disabled", false);
+    } else {
+        $("#unitid_"+sizeID).attr("disabled", true); 
+    }
+})

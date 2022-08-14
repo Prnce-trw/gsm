@@ -52,20 +52,6 @@
             echo "<script>window.location.href='table_po.php'</script>";
         }
         exit(0);
-    } elseif ($_POST['parameter'] == 'aJaxCheckSize') {
-        $size = $_POST['size'];
-        $selectdata         = new DB_con();
-        $resultSize = $selectdata->aJaxCheckWeight($size);
-        $weightSize = mysqli_fetch_array($resultSize);
-        // var_dump($weightSize["weightSize_id"]);
-        // print_r($weightSize["weightSize_id"]);
-        // echo $weightSize["weightSize_id"];
-        // exit(0);
-        $data = array(
-            'resultSize' => $weightSize['weightSize_id'],
-            'resultOrderBy' => $weightSize['order_by_no'],
-        );
-        echo json_encode($data);
     } else { 
         echo "<script>alert('ไม่พบหน้าที่ต้องการ')</script>";
         echo "<script>window.location.href='table_po.php'</script>";

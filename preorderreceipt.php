@@ -114,9 +114,7 @@
                     </tr>
                 </thead>
                 <tbody id="edit_PO">
-                    <?php 
-                    foreach ($itemPO as $key => $rows) {
-                    $size_r = multiexplode(array(",",".","|",":","("), $rows['po_itemOut_CySize']); ?>
+                    <?php foreach ($itemPO as $key => $rows) { ?>
                     <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>">
                         <td>
                             <?=$key+1;?>
@@ -137,10 +135,10 @@
                             <span class="itemweight" id="result_weight<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=(float)$rows['wightSize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
                         <td>
-                            <input type="number" name="unitprice[<?=$key?>]" class="form-control itemperprice" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="unitprice[<?=$key?>]" class="form-control itemperprice" value="<?=UnitPrice($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                         <td>
-                            <input type="number" name="amtprice[<?=$key?>]" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="amtprice[<?=$key?>]" value="<?=UnitAmount($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                     </tr>
                     <?php } ?>

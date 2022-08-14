@@ -62,6 +62,11 @@ select[disabled] {
     cursor: context-menu !important;
 }
 
+input[disabled] {
+    background-color: var(--secondary);
+    color: var(--white);
+}
+
 .container {
     width: 100%;
     padding-right: 15px;

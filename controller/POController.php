@@ -83,4 +83,23 @@
             echo "<script>window.location.href='table_po.php'</script>";
         }
         exit(0);
-    } 
+    } elseif ($_POST['parameter'] == 'aJaxCheckSize') {
+        $size = $_POST['size'];
+        $selectdata         = new DB_con();
+        $resultSize = $selectdata->aJaxCheckWeight($size);
+        $weightSize = mysqli_fetch_array($resultSize);
+        $data = array(
+            'resultSize' => $weightSize['weightSize_id'],
+            'resultOrderBy' => $weightSize['order_by_no'],
+        );
+        echo json_encode($data);
+    } elseif ($_POST['parameter'] == "aJaxCheckStock") {
+        $brand                  = $_POST['brand'];
+        $weight                 = $_POST['weight'];
+        $amount                 = $_POST['amount'];
+        $branch                 = $_POST['branch'];
+        $fetchdata              = new DB_con();
+        $resultSize             = $fetchdata->aJaxCheckStock($brand, $weight, $amount, $branch);
+        $fetchqty               = mysqli_fetch_array($resultSize);
+        echo json_encode($fetchqty);
+    }

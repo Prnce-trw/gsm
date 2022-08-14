@@ -19,10 +19,11 @@ $history            = $fetchdata->CheckPriceHistory($branchID, $sizeID, $FPID);
                     <thead>
                         <tr>
                             <th width="80" height="30">ลำดับ</th>
-                            <th>รายการ</th>
-                            <th>ผู้ทำรายการ</th>
-                            <th>วันที่ปรับราคา</th>
-                            <th>สถานะ</th>
+                            <th height="30">รายการ</th>
+                            <th height="30">ผู้ทำรายการ</th>
+                            <th width="80" height="30">ราคา</th>
+                            <th height="30">วันที่ปรับราคา</th>
+                            <!-- <th width="80" height="30">สถานะ</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -31,8 +32,9 @@ $history            = $fetchdata->CheckPriceHistory($branchID, $sizeID, $FPID);
                             <td width="80" height="30"><?=$key+1?></td>
                             <td class="text-left">ถังแก๊สขนาด <?=$value['weightSize_id']?> กก.</td>
                             <td></td>
+                            <td><?=$value['PB_itemPrice']?></td>
                             <td><?=$value['created_at']?></td>
-                            <td><?=StatustoText($value['PB_active'])?></td>
+                            <!-- <td><?=StatustoText($value['PB_active'])?></td> -->
                         </tr>
                     <?php } } ?>
                     </tbody>
