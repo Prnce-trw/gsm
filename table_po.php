@@ -61,14 +61,14 @@
                         <td>05/05/2022</td>
                         <td>
                             <div class="row">
-                                <div class="col-25">
+                                <!-- <div class="col-25">
                                     <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
-                                </div>
+                                </div> -->
                                 <div class="col-25">
                                     <a href="info/po_pdf.php" target="popup" class="btn btn-primary" onclick="window.open('info/po_pdf.php','popup','width=600,height=600,scrollbars=no,resizable=no'); return false;">พิมพ์</a>
                                 </div>
                                 <div class="col-25">
-                                    <button type="button" onClick="btn_delete(<?=$row['head_po_id']?>)">ลบ</button>
+                                    <button type="button" class="btn btn-danger" style="color: var(--white);" onClick="btn_delete(<?=$row['head_po_id']?>)">ยกเลิก</button>
                                 </div> 
                             </div>
                         </td>
