@@ -271,14 +271,31 @@
             return $result;
         }
         
-        public function fetchdataReport()
+        public function fetchdataReport($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize 
-                                                    LEFT JOIN items_gas_weightsize 
-                                                    ON tb_brandrelsize.brandRelSize_weight_autoID = items_gas_weightsize.weight_NoID 
-                                                    LEFT JOIN ms_product 
-                                                    ON tb_brandrelsize.brandRelSize_ms_product_id = ms_product.ms_product_id 
-                                                    ORDER BY tb_brandrelsize.brandRelSize_weight_autoID, ms_product.ms_product_orderby_no ASC");
+            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name
+                                                    FROM tb_head_preorder as po
+                                                    LEFT JOIN tb_po_itemout as itemout
+                                                    ON po.head_po_docnumber = itemout.po_itemOut_docNo
+                                                    LEFT JOIN ms_product as product
+                                                    ON itemout.po_itemOut_CyBrand = product.ms_product_id
+                                                    LEFT JOIN tb_fillingplant as fp
+                                                    ON po.head_po_fillstation = fp.FP_ID
+                                                    LEFT JOIN items_gas_weightsize as size
+                                                    ON itemout.po_itemOut_CySize = size.wightSize
+                                                    WHERE po.head_po_docnumber = \"$POID\" AND po.active_status = \"Y\"
+                                                    ORDER BY size.order_by_no ASC, product.ms_product_orderby_no ASC");
+            return $result;
+        }
+
+        public function fetchdataReportHeader($POID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT po.head_po_docdate, fp.FP_Name
+                                                    FROM tb_head_preorder as po
+                                                    LEFT JOIN tb_fillingplant as fp
+                                                    ON po.head_po_fillstation = fp.FP_ID
+                                                    WHERE po.head_po_docnumber = \"$POID\"
+                                                    LIMIT 1");
             return $result;
         }
 

@@ -402,7 +402,7 @@ $(document).on('change', '.pickitem_add_PO', function () {
     var wightSize = $(this).attr('data-wightSize');
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+sizeID).attr('data-info');
-    var CountItem = $('#CountItem').text();
+    // var CountItem = $('#CountItem').text();
     // console.log(parseInt(CountItem));
     if (appendItem == null) {
         var CountItem = parseInt(CountItem)+1;
@@ -419,7 +419,7 @@ $(document).on('change', '.pickitem_add_PO', function () {
         '<td><input type="number" name="unitprice['+CountItem+']" id="itemperprice_'+brand+'_'+sizeID+'" class="form-control itemperprice" style="width: 80px;" data-brand="'+brand+'" data-sizeid="'+sizeID+'" step="any"></td>'+
         '<td><input type="number" name="amtprice['+CountItem+']" id="resultPrice_'+brand+'_'+sizeID+'" class="form-control AmountPrice" style="width: 80px;" step="any"></td>'+
         '</tr>');
-        $('#CountItem').text(CountItem);
+        // $('#CountItem').text(CountItem);
     } else {
         if (amount != 0) {
             $('#'+brand+'_'+sizeID).val(brand+'/'+size+'/'+amount);

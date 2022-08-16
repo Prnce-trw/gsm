@@ -39,6 +39,27 @@
                     <input type="text" name="date" class="form-control" placeholder="วัน/เดือน/ปี" value="<?=date("d/m/Y")?>" readonly>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-50">
+                    <label for="filling" class="label-titile">ทะเบียนรถขนส่ง</label>
+                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 170px;">
+                        <option selected disabled>เลือกรถขนส่ง...</option>
+                        <?php foreach ($dataFP as $key => $value) { ?>
+                            <option value="<?php echo $value['FP_ID']; ?>"><?php echo $value['FP_Name']; ?></option>
+                        <?php } ?>
+                    </select>
+                    </div>
+                <div class="col-50">
+                    <label for="filling" class="label-titile">ผู้ขับ</label>
+                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 170px;">
+                        <option selected disabled>เลือกผู้ขับ...</option>
+                        <?php foreach ($dataFP as $key => $value) { ?>
+                            <option value="<?php echo $value['FP_ID']; ?>"><?php echo $value['FP_Name']; ?></option>
+                        <?php } ?>
+                    </select>
+                    </div>
+                </div>
+            </div>
         </div>
         <table border="1" cellspacing="1" cellpadding="1">
             <tr>
