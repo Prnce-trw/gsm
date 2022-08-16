@@ -299,6 +299,24 @@
             return $result;
         }
 
+        public function fetchdataCars()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_cars");
+            return $result;
+        }
+
+        public function fetchdataEmp()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM emp WHERE emp_position_id = 'PST01-4'");
+            return $result;
+        }
+
+        public function fetchdataItems()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items WHERE itemsType = '03A' AND itemsActive = 'Y' LIMIT 10");
+            return $result;
+        }
+
 
 
 

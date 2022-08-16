@@ -17,7 +17,9 @@
     $dataBrand  = $fetchdata->fetchdataBrand();
     $dataSize   = $fetchdata->fetchdataSize(); 
     $dataFP     = $fetchdata->fetchdataFP();
-    $dataBS     = $fetchdata->fetchdataBS(); ?>
+    $dataBS     = $fetchdata->fetchdataBS();
+    $dataCars   = $fetchdata->fetchdataCars();
+    $dataEmp   = $fetchdata->fetchdataEmp(); ?>
     <section id="purchase">
         <form action="controller/POController.php" method="POST" id="FormPreOrderCylinder">
             <input type="hidden" name="parameter" value="PreOrderCylinder" id="PreOrderCylinder">
@@ -42,19 +44,19 @@
             <div class="row">
                 <div class="col-50">
                     <label for="filling" class="label-titile">ทะเบียนรถขนส่ง</label>
-                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 170px;">
+                    <select class=" js-example-basic-single" name="" id="" style="width: 170px;">
                         <option selected disabled>เลือกรถขนส่ง...</option>
-                        <?php foreach ($dataFP as $key => $value) { ?>
-                            <option value="<?php echo $value['FP_ID']; ?>"><?php echo $value['FP_Name']; ?></option>
+                        <?php foreach ($dataCars as $key => $value) { ?>
+                            <option value="<?=$value['car_Code']?>"><?=$value['car_license']?> (<?=$value['car_name']?>)</option>
                         <?php } ?>
                     </select>
                     </div>
                 <div class="col-50">
                     <label for="filling" class="label-titile">ผู้ขับ</label>
-                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 170px;">
+                    <select class=" js-example-basic-single" name="" id="" style="width: 250px;">
                         <option selected disabled>เลือกผู้ขับ...</option>
-                        <?php foreach ($dataFP as $key => $value) { ?>
-                            <option value="<?php echo $value['FP_ID']; ?>"><?php echo $value['FP_Name']; ?></option>
+                        <?php foreach ($dataEmp as $key => $value) { ?>
+                            <option value="<?=$value['emp_name']?>"><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
                         <?php } ?>
                     </select>
                     </div>
@@ -79,12 +81,14 @@
                     foreach ($dataBS as $keyBS => $valueBS) {
                         if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                             <td width="80" height="50">
+                            <input type="number" class="form-control pickitem weightSize_<?=$value['weight_NoID']?>" style="width: 50px;" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N" min="0">
                                 <div class="div-inside">
-                                    <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N">
+                                    
+                                    <!-- <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N">
                                         <?php for ($n=0; $n <=20 ; $n++) { ?>
                                             <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
                                         <?php } ?>
-                                    </select>
+                                    </select> -->
                                 </div>
                             </td>
                         <?php $stack = true;}
@@ -112,7 +116,7 @@
                 <td colspan="2"></td>
             </tr> -->
             <tr>
-                <td><b>น้ำหนักทั้งหมด</b></td>
+                <td height="50"><b>น้ำหนักทั้งหมด</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
                     <td><span class="sumWeight_<?=$value['weight_NoID']?> getSumWeight"></span></td>
                 <?php } ?>
@@ -154,6 +158,7 @@
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/select2.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
-    <script src="js/JQcustom.js"></script>
+    <!-- <script src="js/JQcustom.js"></script> -->
+    <script src="js/index.js"></script>
 </body>
 </html>

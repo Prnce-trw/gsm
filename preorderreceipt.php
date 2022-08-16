@@ -137,10 +137,10 @@
                             <span class="itemweight" id="result_weight<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>"><?=(float)$rows['wightSize'] * $rows['po_itemOut_CyAmount']?></span>
                         </td>
                         <td>
-                            <input type="number" name="unitprice[<?=$key?>]" class="form-control itemperprice" value="<?=UnitPrice($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="unitprice[<?=$key?>]" min="0" class="form-control itemperprice" value="<?=UnitPrice($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="itemperprice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control" style="width: 80px;" value="" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                         <td>
-                            <input type="number" name="amtprice[<?=$key?>]" value="<?=UnitAmount($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
+                            <input type="number" name="amtprice[<?=$key?>]" min="0" value="<?=UnitAmount($row['head_po_fillstation'], $rows['weight_NoID'], 'BRC1-1', $rows['po_itemOut_CyAmount'])?>" id="resultPrice_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" class="form-control AmountPrice" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-size="<?=$rows['order_by_no']?>" style="width: 80px;" data-brand="<?=$rows['po_itemOut_CyBrand']?>" data-sizeid="<?=$rows['weight_NoID']?>" data-size="<?=$rows['wightSize']?>" step="any">
                         </td>
                     </tr>
                     <?php } ?>
@@ -169,8 +169,8 @@
                 </tfoot>
             </table>
             <div class="container">
-                <button class="btn btn-primary" style="margin-top: 10px;" onClick="openModal()" type="button">เพิ่มถัง</button>
-                <button class="btn btn-warning" style="margin-top: 10px;" onClick="openEditModal()" type="button">แก้ไขจำนวนรับจริง</button>
+                <button class="btn btn-warning" style="margin-top: 10px;" onClick="openModal()" type="button">แก้ไขจำนวนรับจริง</button>
+                <!-- <button class="btn btn-warning" style="margin-top: 10px;" onClick="openEditModal()" type="button"></button> -->
             </div>
             <div class="container">
                 <h4>หมายเหตุ</h4>
@@ -195,9 +195,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th width="80" height="30" style="background-color: var(--blue); color: #fff"> ยี่ห้อ\ขนาด</th>
+                                    <th width="80" height="30" style="background-color: var(--yellow);"> ยี่ห้อ\ขนาด</th>
                                     <?php foreach ($dataSize as $key => $value) { ?>
-                                    <th width="80" height="30" style="background-color: var(--blue); color: #fff"><?=$value['weightSize_id']?></th>
+                                    <th width="80" height="30" style="background-color: var(--yellow);"><?=$value['weightSize_id']?></th>
                                     <?php }// end for(1) ?>
                                 </tr>
                             </thead>
