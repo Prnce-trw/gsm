@@ -114,3 +114,69 @@ function sumTotalWeight(weight, weight_id) {
     // console.log(weight);
     return parseFloat(result*weight).toFixed(2);
 }
+
+function btn_submit_preselect () {
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "เอกสาร PO จะไม่สามารถแก้ไขได้! กรุณาตรวจสอบความถูกต้องก่อนยืนยัน",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if ($('.total').text() != "0") {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#POStatus').val('Confirm');
+                $('#FormPreOrderCylinder').submit();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    text: "กรุณากรอกข้อมูลให้ครบ",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        }
+    })
+}
+
+function btn_submit_draft_preselect() {
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "บันทึกเอกสารแบบฉบับร่าง",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if ($('.total').text() != "0") {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'บันทึกข้อมูลสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#POStatus').val('Draft');
+                $('#FormPreOrderCylinder').submit();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    text: "กรุณาระบุข้อมูลถัง",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        }
+    })
+}

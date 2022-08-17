@@ -44,7 +44,7 @@
             <div class="row">
                 <div class="col-50">
                     <label for="filling" class="label-titile">ทะเบียนรถขนส่ง</label>
-                    <select class=" js-example-basic-single" name="" id="" style="width: 170px;">
+                    <select class="js-example-basic-single" name="car" id="" style="width: 170px;">
                         <option selected disabled>เลือกรถขนส่ง...</option>
                         <?php foreach ($dataCars as $key => $value) { ?>
                             <option value="<?=$value['car_Code']?>"><?=$value['car_license']?> (<?=$value['car_name']?>)</option>
@@ -53,7 +53,7 @@
                     </div>
                 <div class="col-50">
                     <label for="filling" class="label-titile">ผู้ขับ</label>
-                    <select class=" js-example-basic-single" name="" id="" style="width: 250px;">
+                    <select class=" js-example-basic-single" name="driver" id="" style="width: 250px;">
                         <option selected disabled>เลือกผู้ขับ...</option>
                         <?php foreach ($dataEmp as $key => $value) { ?>
                             <option value="<?=$value['emp_name']?>"><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
@@ -145,7 +145,7 @@
             <div class="row" style="margin-top: 30px;">
                 <div class="col-12" style="text-align: right;">
                     <button type="button" class="btn btn-success" onclick="btn_submit_draft_preselect()">บันทึกฉบับร่าง</button>
-                    <button type="button" class="btn btn-success" onclick="btn_submit_preselect()">ยืนยัน</button>
+                    <!-- <button type="button" class="btn btn-success" onclick="btn_submit_preselect()" disabled>ยืนยัน</button> -->
                 </div>
             </div>
         </div>

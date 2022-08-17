@@ -205,9 +205,9 @@
         public function editCylinderPO($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout 
-            LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id 
-            WHERE tb_po_itemout.po_itemOut_docNo = '$POID' 
-            ORDER BY po_itemOut_CyBrand ASC");
+                                                    LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id 
+                                                    WHERE tb_po_itemout.po_itemOut_docNo = '$POID' 
+                                                    ORDER BY po_itemOut_CyBrand ASC");
             return $result;
         }
 
@@ -267,7 +267,10 @@
 
         public function itemUnitPrice($FPID, $sizeID, $branchID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_itemCode = '$sizeID' AND currPB_BranchID = '$branchID'");
+            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice FROM tb_curr_priceboard 
+                                                    WHERE currPB_FPID = '$FPID' 
+                                                    AND currPB_itemCode = '$sizeID' 
+                                                    AND currPB_BranchID = '$branchID'");
             return $result;
         }
         
@@ -314,6 +317,12 @@
         public function fetchdataItems()
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM items WHERE itemsType = '03A' AND itemsActive = 'Y' LIMIT 10");
+            return $result;
+        }
+
+        public function fetchdataBSDraft($POID, $brand, $size)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize");
             return $result;
         }
 

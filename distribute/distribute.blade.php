@@ -15,8 +15,8 @@
     <script src="../js/jquery-ui.min.js"></script>
     <script src="../js/JQcustom.js"></script>
     <script src="js/distribute.js"></script>
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="bootstrap/js/bootstrap.min.js" rel="stylesheet">
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap/js/bootstrap.min.js" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         section {
@@ -44,7 +44,6 @@
         include_once('../conn.php');
         $fetchdata  = new DB_con();
         $dataItems  = $fetchdata->fetchdataItems();
-        
     ?>
     <section>
         <form action="" method="POST">

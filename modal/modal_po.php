@@ -22,7 +22,7 @@ $dataSizeRelate = $fetchdata->fetchdataSizeRelate($_GET['modal_id']); ?>
                         <tr>
                             <?php foreach ($dataSizeRelate as $key => $value) { ?>
                             <td>
-                                <input type="number" style="width: 50px;" class="form-control pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$_GET['modal_id']?>_<?=$value['weight_NoID']?>_Adv" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>">
+                                <input type="number" min="0" style="width: 50px;" class="form-control pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$_GET['modal_id']?>_<?=$value['weight_NoID']?>_Adv" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>">
                                 <!-- <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$_GET['modal_id']?>_<?=$value['weight_NoID']?>_Adv" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>">
                                     <?php for ($n=0; $n <=20 ; $n++) { ?>
                                         <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>

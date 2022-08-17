@@ -31,6 +31,17 @@ function StatustoText($param)
     }
 }
 
+function CylinderType($param)
+{
+    if ($param == 'N') {
+        return 'ถังหมุนเวียน';
+    } elseif ($param == 'Adv') {
+        return 'ถังฝากเติม';
+    } else {
+        return 'ไม่พบข้อมูล';
+    }
+}
+
 function getUnitPrice($sizeID, $branchID, $FPID)
 {
     $fetchdata      = new DB_con();

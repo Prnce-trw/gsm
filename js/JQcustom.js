@@ -258,72 +258,6 @@ function cylinder_adcance(id) {
     }
 }
 
-function btn_submit_preselect () {
-    Swal.fire({
-        title: 'คุณแน่ใจหรือไม่?',
-        text: "เอกสาร PO จะไม่สามารถแก้ไขได้! กรุณาตรวจสอบความถูกต้องก่อนยืนยัน",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'ยืนยัน',
-        cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            if ($('.total').text() != "0") {
-                Swal.fire({
-                    icon: 'success',
-                    text: 'บันทึกข้อมูลสำเร็จ',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                $('#POStatus').val('Confirm');
-                $('#FormPreOrderCylinder').submit();
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    text: "กรุณากรอกข้อมูลให้ครบ",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-        }
-    })
-}
-
-function btn_submit_draft_preselect() {
-    Swal.fire({
-        title: 'คุณแน่ใจหรือไม่?',
-        text: "บันทึกเอกสารแบบฉบับร่าง",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'ยืนยัน',
-        cancelButtonText: 'ยกเลิก'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            if ($('.total').text() != "0") {
-                Swal.fire({
-                    icon: 'success',
-                    text: 'บันทึกข้อมูลสำเร็จ',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                $('#POStatus').val('Draft');
-                $('#FormPreOrderCylinder').submit();
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    text: "กรุณากรอกข้อมูลให้ครบ",
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
-        }
-    })
-}
-
 function btn_delete (id) {
     Swal.fire({
         title: 'คุณแน่ใจหรือไม่?',
@@ -384,7 +318,6 @@ function openModal() {
         var Dataitem = itemOut.split('_');
         var qty = $(this).val().split('/');
         var qtyIn = $('#qtyIn_'+Dataitem[0]+'_'+Dataitem[1]).text();
-        $('.itemOut_'+Dataitem[0]+'_'+Dataitem[1]).text(qtyIn);
         $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).val(qty[2]).change();
         // $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).prop('disabled', true);
     });
