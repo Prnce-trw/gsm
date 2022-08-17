@@ -25,6 +25,19 @@ $(document).ready(function () {
             });
         });
     });
+
+    $(document).on('input', '.pickitem', function(){
+        var sum = 0;
+        $('.pickitem').each(function() {
+            if(isNaN($(this).val()) || $(this).val() === "") {
+                sum+=0;
+            } else {
+                sum+=parseFloat($(this).val());
+            }
+        });
+        $(".total").text(sum);
+        $(".total").val(sum);
+    });
 });
 
 $(document).on('click','.modal-close', function() {
@@ -35,19 +48,6 @@ $(document).on('click','.modal-close', function() {
 function modal_close(modal_id) {
     $('#temp_'+modal_id+" #add_data_Modal").css("display", "none");
 }
-
-$(document).on('input', '.pickitem', function(){
-    var sum = 0;
-    $('.pickitem').each(function() {
-        if(isNaN($(this).val()) || $(this).val() === "") {
-            sum+=0;
-        } else {
-            sum+=parseFloat($(this).val());
-        }
-    });
-    $(".total").text(sum);
-    $(".total").val(sum);
-});
 
 $(document).on('input', '.pickitem', function () {
     var brand = $(this).data('brand');
@@ -67,6 +67,11 @@ $(document).on('input', '.pickitem', function () {
             if (parseFloat(amount) > parseFloat(response['qty_balance'])) {
                 $('#input_'+brand+'_'+sizeID+'_'+cytype).val(0).change();
                 alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
+                $('#'+brand+'_'+sizeID+'_'+cytype).remove();
+                if (cytype == 'Adv') {
+                    $('#appendtext'+brand+'_'+sizeID).remove();
+                }
+                $(".sumWeight_"+sizeID).text(sumTotalWeight(weight, sizeID));
             } else {
                 $(".sumWeight_"+sizeID).text(sumTotalWeight(weight, sizeID));
                 var getWeight = 0;
@@ -79,13 +84,14 @@ $(document).on('input', '.pickitem', function () {
                 });
                 $(".totalWeight").text(parseFloat(getWeight).toFixed(2));
                 $(".totalWeight").val(parseFloat(getWeight).toFixed(2));
-                if (appendItem == null) {
+                if (appendItem == null && amount > 0) {
                     $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'_'+cytype+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+weight+'/'+amount+'/'+cytype+'">');
                     if (cytype == 'Adv') {
                         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+sizeID+'">'+weight+' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>] </br></span>');
                     }
                 } else {
                     if (amount != 0) {
+                        
                         $('#'+brand+'_'+sizeID+'_'+cytype).val(brand+'/'+weight+'/'+amount+'/'+cytype);
                         if (cytype == 'Adv') {
                             $('#appendtext'+brand+'_'+sizeID).html(weight + ' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>]');

@@ -53,7 +53,7 @@
                         <td><?=$row['head_po_round']?></td>
                         <td>
                             <?php if ($row['head_po_stock_status'] == 'Draft') { ?>
-                                <a href="edit/draftPO.php?id=<?=$row['head_po_docnumber']?>"><?=POStatus($row['head_po_stock_status'])?></a>
+                                <a href="draft/draftPO.php?id=<?=$row['head_po_docnumber']?>"><?=POStatus($row['head_po_stock_status'])?></a>
                             <?php } else { ?>
                                 <?=POStatus($row['head_po_stock_status'])?>
                             <?php } ?>

@@ -326,6 +326,12 @@
             return $result;
         }
 
+        public function fetchdataBranch()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM owner_branch WHERE branch_active = 'Y'");
+            return $result;
+        }
+
 
 
 

@@ -5,15 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GSM</title>
-    
-    <script src="js/jquery.slim.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/draft.js"></script>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/select2.min.css">
-    <script src="../js/sweetalert2.all.min.js"></script>
-    <script src="../js/select2.min.js"></script>
-
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- Style.css -->
+    <!-- <link rel="stylesheet" type="text/css" href="../files/assets/css/style.css"> -->
+    <!-- Select 2 css -->
+    <link rel="stylesheet" href="../files/bower_components/select2/css/select2.min.css" />
     <style>
         section {
             padding: 15px;
@@ -25,10 +22,14 @@
         .text-middle {
             vertical-align: middle !important;
         }
+        
+        .modal-dialog {
+            max-width: 1000px !important;
+        }
     </style>
 </head>
 <body>
-    <?php
+<?php
     include_once('../conn.php');
     include('../function.php');
     $fetchdata          = new DB_con();
@@ -151,12 +152,12 @@
                             </button>
                         </div>
                         <div class="modal-body"> 
-                            <table class="table table-bordered table-hover" style="width: 100%;">
+                            <table class="table-bordered nowrap" style="width: 100%;">
                                 <thead>
-                                    <tr class="text-center">
-                                        <th width="50" height="30"> ยี่ห้อ\ขนาด</th>
+                                    <tr>
+                                        <th class="text-center" width="50" height="30"> ยี่ห้อ\ขนาด</th>
                                         <?php foreach ($dataSize as $key => $value) { ?>
-                                        <th width="80" height="30"><?=$value['weightSize_id']?></th>
+                                        <th class="text-center" width="80" height="30"><?=$value['weightSize_id']?></th>
                                         <?php }// end for(1) ?>
                                     </tr>
                                 </thead>
@@ -170,9 +171,10 @@
                                 foreach ($dataSize as $key => $value) { $stack = null; 
                                     foreach ($dataBS as $keyBS => $valueBS) {
                                         if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
-                                            <td width="150" height="50">
+                                            <td class="text-center">
                                                     <input type="number" name="" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" 
-                                                    class="form-control text-center adjustItemPO" style="width: 80px;" min="0">
+                                                    class=" text-center adjustItemPO" style="width: 80px;" min="0"
+                                                    data-brand="<?=$item['ms_product_id']?>" data-wightsize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
                                                     <!-- <div class="div-inside">
                                                         <select name="" class="pickitem_add_PO item_<?=$item['ms_product_id']?>" 
                                                         id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
@@ -183,7 +185,7 @@
                                                     </div> -->
                                             </td>
                                     <?php $stack = true; } } if (!$stack) { ?>
-                                        <td width="150" height="50"></td>
+                                        <td></td>
                                 <?php } }// end for(1) ?>
                             </tr>
                             <?php }//end for(0) ?>
@@ -195,5 +197,18 @@
             </div>
         </form>
     </section>
+
+    <!-- Required Jqurey -->
+    <script src="../files/bower_components/jquery/js/jquery.min.js"></script>
+    <script src="../files/bower_components/jquery-ui/js/jquery-ui.min.js"></script>
+    <script src="../files/bower_components/popper.js/js/popper.min.js"></script>
+    <!-- <script src="../files/bower_components/bootstrap/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- sweet alert js -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <!-- Select 2 js -->
+    <script src="../files/bower_components/select2/js/select2.full.min.js"></script>
+    <!-- custom js -->
+    <script src="js/draft.js"></script>
 </body>
 </html>

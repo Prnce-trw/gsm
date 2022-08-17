@@ -15,5 +15,24 @@ $(document).ready(function () {
 });
 
 $(document).on('input', '.adjustItemPO', function () {
-    alert($(this).val());
+    var qty         = $(this).val();
+    var brand       = $(this).data('brand');
+    var wightsize   = $(this).data('wightsize');
+    var sizeid      = $(this).data('sizeid');
+    var size        = $(this).data('size');
+    var branch      = "BRC1-1";
+    $.ajax({
+        type: "POST",
+        url: "../controller/POController.php",
+        data: {parameter: "aJaxCheckStock", weight: wightsize, brand: brand, amount: qty, branch: branch},
+        dataType: "JSON",
+        success: function (response) {
+            if (parseFloat(qty) > parseFloat(response['qty_balance'])) {
+                console.log(response['qty_balance']);
+                $(this).val(0);
+                alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
+            }
+        }
+    });
+    // console.log(qty, brand, wightsize, sizeid, size);
 })
