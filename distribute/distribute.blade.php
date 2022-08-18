@@ -14,7 +14,7 @@
     <!-- <link rel="stylesheet" type="text/css" href="../files/assets/css/style.css"> -->
     <!-- Select 2 css -->
     <link rel="stylesheet" href="../files/bower_components/select2/css/select2.min.css" />
-    
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <style>
         section {
             padding: 15px;
@@ -308,5 +308,9 @@
     <!-- Select 2 js -->
     <script src="../files/bower_components/select2/js/select2.full.min.js"></script>
     <script src="js/distribute.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+    </script>
 </body> 
 </html>

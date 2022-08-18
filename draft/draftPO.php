@@ -90,23 +90,23 @@
                         <th class="text-center" style="background-color: #e8e8e8;">น้ำหนัก</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="itemlist">
                     <?php foreach ($itemPO as $key => $value) { ?>
-                        <tr>
+                        <tr id="trItem_<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>">
                             <td class="text-center text-middle" style="width: 50px;">
                                 <?=$key+1?>
-                                <input type="hidden" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>" 
-                            data-info="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>" value="<?=$value['po_itemOut_CyBrand']?>/<?=$value['po_itemOut_CySize']?>/<?=$value['po_itemOut_CyAmount']?>/<?=$value['po_itemOut_type']?>">
+                                <input type="hidden" class="PRitemOut" name="pickitem[]" id="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>" 
+                            data-info="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>" value="<?=$value['po_itemOut_CyBrand']?>/<?=$value['po_itemOut_CySize']?>/<?=$value['po_itemOut_CyAmount']?>/<?=$value['po_itemOut_type']?>">
                             </td>
                             <td class="text-left text-middle"><?=$value['po_itemOut_CyBrand']?> / ขนาด <?=$value['po_itemOut_CySize']?> กก. </td>
                             <td class="text-center text-middle" style="width: 120px;">
                                 <?=CylinderType($value['po_itemOut_type'])?>
                             </td>
                             <td class="text-center" style="width: 120px;">
-                                <span id="qtyIn_<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>"><?=$value['po_itemOut_CyAmount']?></span>
+                                <span id="qtyIn_<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>"><?=$value['po_itemOut_CyAmount']?></span>
                             </td>
                             <td class="text-center" style="width: 120px;">
-                                <span>
+                                <span class="totalweight" id="weightIn_<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>">
                                     <?=number_format((float)$value['wightSize'] * $value['po_itemOut_CyAmount'], 2, '.', '')?>
                                 </span>
                             </td>
@@ -126,7 +126,7 @@
                     </tr>
                     <tr>
                         <td colspan="3" class="text-right" style="padding-right: 10px;" height="30">น้ำหนักทั้งหมด</td>
-                        <td><div class="totalWeight"></div></td>
+                        <td class="text-right"><div class="resultWeight"></div></td>
                         <td class="text-left" style="padding-left: 10px;">กิโลกรัม</td>
                     </tr>
                 </tfoot>
@@ -157,39 +157,40 @@
                                     <tr>
                                         <th class="text-center" width="50" height="30"> ยี่ห้อ\ขนาด</th>
                                         <?php foreach ($dataSize as $key => $value) { ?>
-                                        <th class="text-center" width="80" height="30"><?=$value['weightSize_id']?></th>
+                                        <th class="text-center" width="90" height="30"><?=$value['weightSize_id']?></th>
                                         <?php }// end for(1) ?>
                                     </tr>
                                 </thead>
                                 <tbody>
-                            <?php foreach ($dataBrand as $index => $item) {?>
-                            <tr>
-                                <td width="80" height="50" >
-                                    <div class="div-inside"><?=$item['ms_product_name']?></div>
-                                </td>
-                                <?php //for(1) 
-                                foreach ($dataSize as $key => $value) { $stack = null; 
-                                    foreach ($dataBS as $keyBS => $valueBS) {
-                                        if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
-                                            <td class="text-center">
-                                                    <input type="number" name="" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" 
-                                                    class=" text-center adjustItemPO" style="width: 80px;" min="0"
-                                                    data-brand="<?=$item['ms_product_id']?>" data-wightsize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
-                                                    <!-- <div class="div-inside">
-                                                        <select name="" class="pickitem_add_PO item_<?=$item['ms_product_id']?>" 
-                                                        id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
-                                                            <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                                                <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div> -->
-                                            </td>
-                                    <?php $stack = true; } } if (!$stack) { ?>
-                                        <td></td>
-                                <?php } }// end for(1) ?>
-                            </tr>
-                            <?php }//end for(0) ?>
-                            </tbody>
+                                <?php foreach ($dataBrand as $index => $item) {?>
+                                <tr>
+                                    <td width="80" height="50" >
+                                        <div class="div-inside"><?=$item['ms_product_name']?></div>
+                                    </td>
+                                    <?php //for(1) 
+                                    foreach ($dataSize as $key => $value) { $stack = null; 
+                                        foreach ($dataBS as $keyBS => $valueBS) {
+                                            if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                                                <td class="text-center">
+                                                        <input type="number" name="" id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" 
+                                                        class="form-control text-center adjustItemPO" style="width: 80px;" min="0"
+                                                        data-brand="<?=$item['ms_product_id']?>" data-wightsize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>"
+                                                        data-cytype="N">
+                                                        <!-- <div class="div-inside">
+                                                            <select name="" class="pickitem_add_PO item_<?=$item['ms_product_id']?>" 
+                                                            id="itemCy_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>" data-brand="<?=$item['ms_product_id']?>" data-wightSize="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>" data-size="<?=$value['weightSize_id']?>">
+                                                                <?php for ($n=0; $n <=20 ; $n++) { ?>
+                                                                    <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div> -->
+                                                </td>
+                                        <?php $stack = true; } } if (!$stack) { ?>
+                                            <td></td>
+                                    <?php } }// end for(1) ?>
+                                </tr>
+                                <?php }//end for(0) ?>
+                                </tbody>
                             </table>
                         </div>
                     </div>

@@ -91,7 +91,6 @@ $(document).on('input', '.pickitem', function () {
                     }
                 } else {
                     if (amount != 0) {
-                        
                         $('#'+brand+'_'+sizeID+'_'+cytype).val(brand+'/'+weight+'/'+amount+'/'+cytype);
                         if (cytype == 'Adv') {
                             $('#appendtext'+brand+'_'+sizeID).html(weight + ' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>]');

@@ -9,10 +9,23 @@ $(document).ready(function () {
         var qty = $(this).val().split('/');
         var qtyIn = $('#qtyIn_'+Dataitem[0]+'_'+Dataitem[1]).val();
         $('.itemOut_'+Dataitem[0]+'_'+Dataitem[1]).text(qtyIn);
-        $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]).val(qty[2]).change();
-        // console.log(qty);
+        $('#itemCy_'+Dataitem[0]+'_'+Dataitem[1]+'_'+qty[3]).val(qty[2]).change();
     });
+
+    $('.totalweight').each(function () {
+        var sum = 0;
+        $('.totalweight').each(function() {
+            if(isNaN($(this).text()) || $(this).text() === "") {
+                sum+=0;
+            } else {
+                sum+=parseFloat($(this).text());
+            }
+        });
+        $(".resultWeight").text(parseFloat(sum).toFixed(2));
+    })
 });
+
+
 
 $(document).on('input', '.adjustItemPO', function () {
     var qty         = $(this).val();
@@ -20,7 +33,10 @@ $(document).on('input', '.adjustItemPO', function () {
     var wightsize   = $(this).data('wightsize');
     var sizeid      = $(this).data('sizeid');
     var size        = $(this).data('size');
+    var cytype      = $(this).data('cytype');
     var branch      = "BRC1-1";
+    var tritem      = $('#'+brand+'_'+sizeid+'_'+cytype).data('info');
+    console.log(brand, sizeid, cytype, tritem);
     $.ajax({
         type: "POST",
         url: "../controller/POController.php",
@@ -28,9 +44,29 @@ $(document).on('input', '.adjustItemPO', function () {
         dataType: "JSON",
         success: function (response) {
             if (parseFloat(qty) > parseFloat(response['qty_balance'])) {
-                console.log(response['qty_balance']);
-                $(this).val(0);
+                $('#itemCy_'+brand+'_'+sizeid+'_'+cytype).val(0);
+                $('#trItem_'+brand+'_'+sizeid+'_'+cytype).remove();
                 alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
+            } else {
+                if (tritem == null && qty > 0) {
+                    $('#itemlist').after('<tr id="trItem_'+brand+'_'+sizeid+'_'+cytype+'">'+
+                        '<td class="text-middle"><input type="hidden" name="pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'"></td>'+
+                        '<td class="text-left text-middle">'+brand+' / ขนาด '+size+' กก.</td>'+
+                        '<td class="text-center text-middle">'+cytype+'</td>'+
+                        '<td class="text-center text-middle"><span id="qtyIn_'+brand+'_'+sizeid+'_'+cytype+'">'+qty+'</span></td>'+
+                        '<td class="text-center text-middle"><span id="weightIn_'+brand+'_'+sizeid+'_'+cytype+'">'+parseFloat(qty) * parseFloat(wightsize).toFixed(2)+'</span></td>'+
+                    '</tr>'
+                    );
+                } else {
+                    if (qty != 0) {
+                        $('#'+brand+'_'+sizeid+'_'+cytype).val(brand+'/'+size+'/'+qty+'/'+cytype);
+                        $('#qtyIn_'+brand+'_'+sizeid+'_'+cytype).text(qty);
+                        $('#weightIn_'+brand+'_'+sizeid+'_'+cytype).text(parseFloat(qty) * parseFloat(wightsize).toFixed(2));
+                    } else {
+                        $('#trItem_'+brand+'_'+sizeid+'_'+cytype).remove();
+                    }
+                }
+
             }
         }
     });
