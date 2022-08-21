@@ -348,6 +348,46 @@
             return $result;
         }
 
+        public function RunningDisID(Type $var = null)
+        {
+            $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(dis_id) AS dis_id FROM tb_head_distribute");
+            $RunningID          = mysqli_fetch_array($sqlN_id);
+            $currRunningID      = $RunningID['dis_id']+1;
+            return $currRunningID;
+        }
+
+        public function insertHeadDis($DisID, $supplier, $date_received, $refNo, $amount, $price, $vatSelect, $vat, $totalPrice)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_distribute (dis_docNo, dis_supplierID, dis_date_received, dis_refNo, dis_amount, dis_price, dis_totalPrice, dis_vat) 
+                                                    VALUES ('HD$DisID', '$supplier', '$date_received', '$refNo', '$amount', '$price', '$totalPrice', '$vat')");
+            return $result;
+        }
+
+        public function insertDisOut($DisID, $itemID, $unitprice, $totalitemprice, $qty)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, disout_amount, disout_qty) 
+                                                    VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
+            return $result;
+        }
+
+        public function fetchdataOutstand()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding 
+                                                    LEFT JOIN tb_head_distribute ON tb_distribute_outstanding.disout_HdisID = tb_head_distribute.dis_docNo
+                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id");
+            return $result;
+        }
+
+        public function selectHeadDis($dis_id)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute
+                                                    LEFT JOIN tb_distribute_outstanding ON tb_head_distribute.dis_docNo = tb_distribute_outstanding.disout_HdisID
+                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id
+                                                    WHERE tb_head_distribute.dis_id = '$dis_id'");
+            $rawdata = mysqli_fetch_array($result);
+            return $rawdata;
+        }
+
 
 
 

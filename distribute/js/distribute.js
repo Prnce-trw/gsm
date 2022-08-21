@@ -2,7 +2,7 @@ $(document).ready(function () {
     $(document).on('input', '.DisItemAmount', function () {
         var resultitemamount = $('#resultitemamount').val();
         var currtotal = $('.totalItem').text();
-        console.log(parseFloat(currtotal) > resultitemamount);
+        // console.log(parseFloat(currtotal) > resultitemamount);
         var sum = 0;
         $('.DisItemAmount').each(function() {
             if(isNaN($(this).val()) || $(this).val() === "") {
@@ -16,10 +16,16 @@ $(document).ready(function () {
 });
 
 $(document).on('click', '#vat', function (e) { 
+    var price = $('#price').val();
     if (this.checked) {
-        $('#input_vat').attr("readonly", false); ;
+        $('#input_vat').attr("readonly", false);
+        var calVat = price * 7 / 100;
+        $('#input_vat').val(calVat);
+        $('#totalPrice').val(parseFloat(price) + parseFloat(calVat));
     } else {
-        $('#input_vat').attr("readonly", true); ;
+        $('#input_vat').attr("readonly", true);
+        $('#input_vat').val(0);
+        $('#totalPrice').val(price);
     }
 });
 
@@ -51,11 +57,32 @@ $(document).on('click', '.radioItem', function () {
         $('#amount_'+n_id).attr("disabled", true);
         $('#btnDistribute_'+n_id).attr("disabled", true);
     }
-})
+});
+
+$(document).on('input', '.ItemAmount', function () {
+    var currAmount = $(this).val();
+    var InvAmount = $('#amount').val();
+    if (parseInt(currAmount) > parseInt(InvAmount)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'จำนวนที่ต้องการกระจาย มีจำนวนมากกว่าจำนวนจริง!',
+        });
+        $(this).val(0);
+    } else if (InvAmount == 0 || InvAmount == null) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'กรุณากรอกจำนวนทั้งหมดก่อน!',
+        });
+        $(this).val(0);
+    }
+});
 
 function distributeItem (n_id) {
-    var amount = $('#amount_'+n_id).val();
+    var amount = $('#qty_'+n_id).val();
+    var itemcode = $('#itemcode_'+n_id).text();
     $('#resultitemamount').val(amount);
+    $('#resultitemname').val(itemcode);
+    
 }
 
 function disCloseModal() {
@@ -64,18 +91,24 @@ function disCloseModal() {
     });
     $('.selectBranch').each(function () {
         this.checked = false;
-    })
+    });
+    $('.totalItem').text('');
 }
 
 $(document).on('click', '.btnsubmit', function () {
     var totalItem = $('.totalItem').text();
     var itemAmount =$('#resultitemamount').val();
-    if (totalItem > itemAmount) {
+    if (parseFloat(totalItem) > parseFloat(itemAmount)) {
         Swal.fire({
             icon: 'error',
             title: 'ไม่สามารถบันทึกได้!',
             html: "จำนวนทั้งหมด <b class='text-danger'>น้อยกว่า</b> จำนวนรวม", 
         })
+    } else if (totalItem == "") {
+        Swal.fire({
+            icon: 'warning',
+            title: 'กรอกจำนวนที่ต้องการกระจาย!',
+        });
     }
 });
 
@@ -85,17 +118,17 @@ $('#btnassets').click(function () {
         $.ajax({
             type: "POST",
             url: "../controller/DistributeController.php",
-            data: {parameter: "SearchAssets", assetID: assetID, assetName: assetName},
+            data: {parameter: "SearchAssets", assetID: assetID},
             dataType: "JSON",
             success: function (response) {
                 $('#assetsRow').empty();
                 $('#assetsRow').append('<tr>'+
                     '<td class="text-center text-middle"><input type="radio" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
-                    '<td class="text-middle">'+response['itemsCode']+'</td>'+
+                    '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
                     '<td class="text-middle">'+response['itemsName']+'</td>'+
                     '<td class="text-center text-middle"><input type="number" name="unitprice" id="unitprice_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="amount" id="amount_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="amount_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="amount" id="qty_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
                     '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
                     'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
                 '</tr>'
@@ -108,4 +141,47 @@ $('#btnassets').click(function () {
             title: 'กรุณากรอกรหัสอุปกรณ์!',
         });
     }
-})
+});
+
+function btnsubmitDis() {
+    $('#Distribute').submit();
+}
+
+$(document).on('input', '#price', function () {
+    var price = $(this).val();
+    $('#totalPrice').val(price);
+});
+
+function selectHeadDis(dis_id) {
+    $.ajax({
+        type: "POST",
+        url: "../controller/DistributeController.php",
+        data: {parameter: "selectHeadDis", dis_id: dis_id},
+        dataType: "JSON",
+        success: function (response) {
+            var rawdate = response['dis_date_received'].split("-");
+            var date_received = rawdate[2]+'/'+rawdate[1]+'/'+rawdate[0];
+            console.log(response);
+            $('#date_received').val(date_received);
+            $('#refNo').val(response['dis_refNo']);
+            $('#docNo').val(response['dis_docNo']);
+            $('#amount').val(response['dis_amount']);
+            $('#price').val(response['dis_price']);
+            $('#input_vat').val(response['dis_vat']);
+            $('#totalPrice').val(response['dis_totalPrice']);
+            $('#assetsRow').empty();
+            $('#assetID').val(response['itemsCode']);
+            $('#assetsRow').append('<tr>'+
+                    '<td class="text-center text-middle"><input type="radio" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
+                    '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
+                    '<td class="text-middle">'+response['itemsName']+'</td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+response['disout_unitPrice']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="qty" id="amount_'+response['n_id']+'" value="'+response['disout_amount']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="amount" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
+                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
+                '</tr>'
+            );
+        }
+    });
+}

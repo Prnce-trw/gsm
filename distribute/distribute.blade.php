@@ -46,15 +46,17 @@
         $fetchdata      = new DB_con();
         $dataItems      = $fetchdata->fetchdataItems();
         $dataBranch     = $fetchdata->fetchdataBranch();
+        $dataOutstand   = $fetchdata->fetchdataOutstand();
     ?>
     <section>
-        <form action="" method="POST">
+        <form action="../controller/DistributeController.php" method="POST" id="Distribute">
+            <input type="hidden" value="Distribute" name="parameter">
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">เลขที่เอกสาร</label>
                 <div class="col-sm-4">
                     <div class="row">
                         <div class="col-9">
-                            <input type="text" class="form-control" placeholder="เลขที่เอกสาร..." readonly>
+                            <input type="text" id="docNo" class="form-control" placeholder="เลขที่เอกสาร..." readonly>
                         </div>
                         <div class="col-3 text-right">
                             <button type="button" class="btn btn-primary" title="ค้นหา" data-toggle="modal" data-target="#searchinvoice"><i class="icofont icofont-document-search"></i></button>
@@ -69,7 +71,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">ผู้จำหน่าย</label>
                 <div class="col-sm-4">
-                    <select class="form-control js-example-basic-single" name="" id="">
+                    <select class="form-control js-example-basic-single" name="supplier" id="supplier">
                         <option selected disabled>เลือกผู้จำหน่าย...</option>
                         <?php for ($i=0; $i <= 10; $i++) { ?>
                             <option value="<?=$i?>"><?=$i?></option>
@@ -78,38 +80,38 @@
                 </div>
                 <label class="col-sm-2 col-form-label">วันที่รับสินค้า</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control datepicker" placeholder="วันที่..." value="">
+                    <input type="text" class="form-control datepicker" name="date_received" id="date_received" placeholder="วันที่..." value="" autocomplete="off">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">เอกสารอ้างอิง</label>
                 <div class="col-sm-4">
-                    <input type="text" name="" id="" class="form-control" placeholder="เอกสารอ้างอิง...">
+                    <input type="text" name="refNo" id="refNo" class="form-control" placeholder="เอกสารอ้างอิง...">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
                 <div class="col-sm-4">
-                    <input type="number" name="" id="" class="form-control" placeholder="จำนวนทั้งหมด..." min="0">
+                    <input type="number" name="amount" id="amount" class="form-control" placeholder="จำนวนทั้งหมด..." min="0">
                 </div>
                 <label class="col-sm-2 col-form-label">ราคา</label>
                 <div class="col-sm-4">
-                    <input type="number" name="" id="" class="form-control" placeholder="ราคา..." min="0">
+                    <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="vat">Vat 7%</label>
                 <div class="col-sm-4 form-check form-check-inline row">
                     <div class="col-sm-2">
-                        <input class="form-check-input" type="checkbox" id="vat" value="vat" style="width: 25px; height: 25px;">
+                        <input class="form-check-input" type="checkbox" name="vatSelect" id="vat" value="vatSelect" style="width: 25px; height: 25px;">
                     </div>
                     <div class="col-sm-10">
-                        <input type="number" name="" id="input_vat" class="form-control" readonly>
+                        <input type="number" name="vat" id="input_vat" class="form-control" readonly>
                     </div>
                 </div>
                 <label class="col-sm-2 col-form-label">รวมทั้งสิ้น</label>
                 <div class="col-sm-4">
-                    <input type="number" name="" id="" class="form-control" placeholder="รวมทั้งสิ้น..." min="0">
+                    <input type="number" name="totalPrice" id="totalPrice" class="form-control" placeholder="รวมทั้งสิ้น..." min="0">
                 </div>
             </div>
             <hr>
@@ -140,21 +142,20 @@
                             <td class="text-center text-middle">
                                 <input type="radio" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
                             </td>
-                            <td class="text-middle"><?=$value['itemsCode']?></td>
+                            <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
                             <td class="text-middle"><?=$value['itemsName']?></td>
                             <td class="text-center text-middle">
-                                <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                                <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
                             </td>
                             <td class="text-center text-middle">
-                                <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                                <input type="number" name="totalitemprice" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
                             </td>
                             <td class="text-center text-middle">
-                                <input type="number" name="amount" id="amount_<?=$value['n_id']?>" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled>
+                                <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled>
                             </td>
                             <td class="text-center text-middle">
                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
-                                    onclick="distributeItem(<?=$value['n_id']?>)" data-itemcode="<?=$value['itemsCode']?>" disabled>
-                                    <i class="icofont icofont-rounded-double-right"></i>
+                                    onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
                                 </button>
                             </td>
                         </tr>
@@ -170,18 +171,18 @@
             </table>
             <div class="form-group row">
                 <div class="col-sm-12 text-right">
-                    <button type="button" class="btn btn-success">บันทึก</button>
+                    <button type="button" class="btn btn-success" form="Distribute" onclick="btnsubmitDis()">บันทึก</button>
                 </div>
             </div>
         </form>
     </section>
 
-    <!-- modal แก้ไขถังหมุนเวียน -->
+    <!-- modal จำนวนคงเหลือ -->
     <div class="modal fade" id="searchinvoice" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="searchinvoiceLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="searchinvoiceLabel">แก้ไขถังหมุนเวียน</h5>
+                    <h5 class="modal-title" id="searchinvoiceLabel">จำนวนคงเหลือ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -200,20 +201,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($dataItems as $key => $value) { ?>
+                            <?php foreach ($dataOutstand as $key => $value) { ?>
                             <tr>
-                                <td class="text-middle">Inv<?=$key+1?></td>
-                                <td class="text-middle"><?=date("d/m/Y")?></td>
+                                <td class="text-center text-middle"><?=$value['dis_docNo']?> / <?=$value['dis_refNo']?></td>
+                                <td class="text-middle"><?=date("d/m/Y", strtotime($value['dis_date_received']))?></td>
                                 <td class="text-middle">
                                     <?=$value['itemsCode']?>
                                 </td>
                                 <td class="text-middle">
                                     <?=$value['itemsName']?>
                                 </td>
-                                <td class="text-middle"></td>
-                                <td class="text-middle"></td>
+                                <td class="text-center text-middle"><?=$value['disout_unitPrice']?></td>
+                                <td class="text-center text-middle"><?=$value['disout_qty']?></td>
                                 <td class="text-center text-middle">
-                                    <button type="button" class="btn btn-primary btn-sm">เลือก</button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['dis_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
                                 </td>
                             </tr>
                             <?php } ?>
@@ -238,7 +239,7 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">รหัสอุปกรณ์</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" placeholder="รหัสอุปกรณ์..." readonly>
+                            <input type="text" class="form-control" id="resultitemname" placeholder="รหัสอุปกรณ์..." readonly>
                         </div>
                         <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
                         <div class="col-sm-4">
