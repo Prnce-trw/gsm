@@ -432,14 +432,6 @@ $(document).on('input', '.itemAmountOut', function () {
     }
 });
 
-function btnCanclePO() {
-    $('#POStatus').val('Cancel');
-}
-
-function btnConfirmPO() {
-    $('#POStatus').val('Confirm');
-}
-
 $(document).on('click', '.priceHistory', function () {
     var branchID = $('#branchID').val();
     var sizeID = $(this).data('sizeid');

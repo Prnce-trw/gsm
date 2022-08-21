@@ -18,7 +18,7 @@
     <style>
         section {
             padding: 15px;
-            height: 978px;
+            height: 1200px;
             background-color: #f8f9fe;
             width: 900px;
         }
@@ -53,10 +53,10 @@
                 <label class="col-sm-2 col-form-label">เลขที่เอกสาร</label>
                 <div class="col-sm-4">
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-9">
                             <input type="text" class="form-control" placeholder="เลขที่เอกสาร..." readonly>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3 text-right">
                             <button type="button" class="btn btn-primary" title="ค้นหา" data-toggle="modal" data-target="#searchinvoice"><i class="icofont icofont-document-search"></i></button>
                         </div>
                     </div>
@@ -114,14 +114,12 @@
             </div>
             <hr>
             <div class="form-group row">
+                <div class="col-sm-5 text-center"></div>
                 <div class="col-sm-5 text-center">
-                    <input type="text" name="" id="" class="form-control" placeholder="ค้นหารหัสอุปกรณ์..." min="0">
-                </div>
-                <div class="col-sm-5 text-center">
-                    <input type="text" name="" id="" class="form-control" placeholder="ค้นหาชื่ออุปกรณ์..." min="0">
+                    <input type="text" name="" id="assetID" class="form-control" placeholder="ค้นหารหัสอุปกรณ์..." min="0">
                 </div>
                 <div class="col-sm-2">
-                    <button class="btn btn-primary">ค้นหาอุปกรณ์</button>
+                    <button class="btn btn-primary" id="btnassets" type="button">ค้นหาอุปกรณ์</button>
                 </div>
             </div>
             <table class="table table-hover table-bordered">
@@ -130,30 +128,30 @@
                         <th scope="col">#</th>
                         <th scope="col">รหัสอุปกรณ์</th>
                         <th scope="col">ชื่ออุปกรณ์</th>
-                        <th scope="col">Unit Price</th>
+                        <th scope="col">ราคาต่อหน่วย</th>
+                        <th scope="col">ราคา</th>
                         <th scope="col">จำนวน</th>
-                        <th scope="col">Amount</th>
                         <th scope="col">กระจาย</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="assetsRow">
                     <?php foreach ($dataItems as $key => $value) { ?>
                         <tr>
                             <td class="text-center text-middle">
-                                <input type="radio" name="selectItem" id="" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
+                                <input type="radio" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
                             </td>
                             <td class="text-middle"><?=$value['itemsCode']?></td>
                             <td class="text-middle"><?=$value['itemsName']?></td>
-                            <td>
-                                <input type="number" name="unitprice" id="" class="form-control text-center" style="width: 80px;" min="0">
+                            <td class="text-center text-middle">
+                                <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
                             </td>
-                            <td>
-                                <input type="number" name="qty" id="" class="form-control text-center" style="width: 80px;" min="0">
+                            <td class="text-center text-middle">
+                                <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
                             </td>
-                            <td>
-                                <input type="number" name="amount" id="amount_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0">
+                            <td class="text-center text-middle">
+                                <input type="number" name="amount" id="amount_<?=$value['n_id']?>" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled>
                             </td>
-                            <td class="text-center">
+                            <td class="text-center text-middle">
                                 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
                                     onclick="distributeItem(<?=$value['n_id']?>)" data-itemcode="<?=$value['itemsCode']?>" disabled>
                                     <i class="icofont icofont-rounded-double-right"></i>
@@ -162,11 +160,23 @@
                         </tr>
                     <?php } ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="5" class="text-right">รวม</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
+            <div class="form-group row">
+                <div class="col-sm-12 text-right">
+                    <button type="button" class="btn btn-success">บันทึก</button>
+                </div>
+            </div>
         </form>
     </section>
 
-    {{-- modal แก้ไขถังหมุนเวียน --}}
+    <!-- modal แก้ไขถังหมุนเวียน -->
     <div class="modal fade" id="searchinvoice" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="searchinvoiceLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -181,9 +191,10 @@
                         <thead>
                             <tr class="text-center">
                                 <th scope="col">เลขที่เอกสาร</th>
+                                <th scope="col">วันที่</th>
                                 <th scope="col">รหัสอุปกรณ์</th>
                                 <th scope="col">ชื่ออุปกรณ์</th>
-                                <th scope="col">Unit Price</th>
+                                <th scope="col">ราคาต่อหน่วย</th>
                                 <th scope="col">จำนวนคงเหลือ</th>
                                 <th scope="col">กระจาย</th>
                             </tr>
@@ -191,17 +202,18 @@
                         <tbody>
                             <?php foreach ($dataItems as $key => $value) { ?>
                             <tr>
-                                <td>Inv<?=$key+1?></td>
-                                <td>
+                                <td class="text-middle">Inv<?=$key+1?></td>
+                                <td class="text-middle"><?=date("d/m/Y")?></td>
+                                <td class="text-middle">
                                     <?=$value['itemsCode']?>
                                 </td>
-                                <td>
+                                <td class="text-middle">
                                     <?=$value['itemsName']?>
                                 </td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <button type="button" class="btn btn-primary">เลือก</button>
+                                <td class="text-middle"></td>
+                                <td class="text-middle"></td>
+                                <td class="text-center text-middle">
+                                    <button type="button" class="btn btn-primary btn-sm">เลือก</button>
                                 </td>
                             </tr>
                             <?php } ?>
@@ -212,7 +224,7 @@
         </div>
     </div>
 
-    {{-- modal กระจายอุปกรณ์ --}}
+    <!-- modal กระจายอุปกรณ์ -->
     <div class="modal fade" id="distributeItem" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="distributeItemLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -251,13 +263,13 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success">บันทึก</button>
+                    <button type="button" class="btn btn-success btnsubmit">บันทึก</button>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- modal เลือกสาขา --}}
+    <!-- modal เลือกสาขา -->
     <div class="modal fade" id="cylinderstore" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="cylinderstoreLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm" style="max-width: 500px !important;">
             <div class="modal-content">
@@ -310,6 +322,10 @@
     <script src="js/distribute.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+
         $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
     </script>
 </body> 

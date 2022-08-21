@@ -12,7 +12,7 @@ $(document).ready(function () {
             }
         });
         $(".totalItem").text(sum);
-    })
+    });
 });
 
 $(document).on('click', '#vat', function (e) { 
@@ -41,8 +41,14 @@ $(document).on('click', '.radioItem', function () {
     var n_id = $(this).val();
     var $radios = $(this.checked);
     if ($radios.is(':checked') == false) {
+        $('#unitprice_'+n_id).attr("disabled", false);
+        $('#qty_'+n_id).attr("disabled", false);
+        $('#amount_'+n_id).attr("disabled", false);
         $('#btnDistribute_'+n_id).attr("disabled", false);
     } else {
+        $('#unitprice_'+n_id).attr("disabled", true);
+        $('#qty_'+n_id).attr("disabled", true);
+        $('#amount_'+n_id).attr("disabled", true);
         $('#btnDistribute_'+n_id).attr("disabled", true);
     }
 })
@@ -60,3 +66,46 @@ function disCloseModal() {
         this.checked = false;
     })
 }
+
+$(document).on('click', '.btnsubmit', function () {
+    var totalItem = $('.totalItem').text();
+    var itemAmount =$('#resultitemamount').val();
+    if (totalItem > itemAmount) {
+        Swal.fire({
+            icon: 'error',
+            title: 'ไม่สามารถบันทึกได้!',
+            html: "จำนวนทั้งหมด <b class='text-danger'>น้อยกว่า</b> จำนวนรวม", 
+        })
+    }
+});
+
+$('#btnassets').click(function () {
+    var assetID = $('#assetID').val();
+    if (assetID) {
+        $.ajax({
+            type: "POST",
+            url: "../controller/DistributeController.php",
+            data: {parameter: "SearchAssets", assetID: assetID, assetName: assetName},
+            dataType: "JSON",
+            success: function (response) {
+                $('#assetsRow').empty();
+                $('#assetsRow').append('<tr>'+
+                    '<td class="text-center text-middle"><input type="radio" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
+                    '<td class="text-middle">'+response['itemsCode']+'</td>'+
+                    '<td class="text-middle">'+response['itemsName']+'</td>'+
+                    '<td class="text-center text-middle"><input type="number" name="unitprice" id="unitprice_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="amount" id="amount_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
+                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
+                '</tr>'
+            );
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: 'warning',
+            title: 'กรุณากรอกรหัสอุปกรณ์!',
+        });
+    }
+})

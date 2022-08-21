@@ -65,7 +65,7 @@
                                     <a href="info/info_po.php?id=<?=$row['head_po_docnumber']?>">ดูข้อมูล</a>
                                 </div> -->
                                 <div class="col-25">
-                                    <a href="info/po_pdf.php" target="popup" class="btn btn-primary" onclick="window.open('info/po_pdf.php?PO_ID=<?=$row['head_po_docnumber']?>','popup','width=850,height=800,scrollbars=no,resizable=no'); return false;">พิมพ์</a>
+                                    <a href="info/_printpotest.php" target="popup" class="btn btn-primary" onclick="window.open('info/_printpotest.php?PO_ID=<?=$row['head_po_docnumber']?>','popup','width=850,height=800,scrollbars=no,resizable=no'); return false;">พิมพ์</a>
                                 </div>
                                 <div class="col-25">
                                     <button type="button" class="btn btn-danger" style="color: var(--white);" onClick="btn_delete(<?=$row['head_po_id']?>)">ยกเลิก</button>

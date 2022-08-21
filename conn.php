@@ -40,7 +40,7 @@
 
         public function Curmovement($cerrent_year, $brand, $size, $qty)
         {
-            $itemCode = 'I00-01G-'.$brand.$size;
+            $itemCode = 'I00-02C-'.$brand.$size;
 
             // หา n_id
             $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(n_id) AS n_id FROM items_inventory_movement WHERE YEAR(transaction_date) = '$cerrent_year'");
@@ -117,7 +117,6 @@
 
         public function CurmovementIn($cerrent_year, $RefDO, $Total, $brand, $size, $qty, $price)
         {
-            
             $itemCode = 'I00-01G-'.$brand.$size;
             
             // หา n_id
@@ -176,9 +175,10 @@
             return $result;
         }
 
-        public function UpdateStatusDraftPO($POID, $POStatus)
+        public function UpdateStatusDraftPO($POID, $FPID, $POStatus, $car, $driver)
         {
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus' WHERE head_po_docnumber = '$POID'");
+            
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
@@ -329,6 +329,22 @@
         public function fetchdataBranch()
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM owner_branch WHERE branch_active = 'Y'");
+            return $result;
+        }
+
+        public function UpdateItemOut($POID, $brand, $size, $amount, $cylindertype)
+        {
+            $result = mysqli_query($this->dbcon, "UPDATE tb_po_itemout SET po_itemOut_CyAmount = '$amount', updated_at=CURRENT_TIMESTAMP 
+                                                    WHERE po_itemOut_docNo = '$POID' 
+                                                    AND po_itemOut_CyBrand = '$brand'
+                                                    AND po_itemOut_CySize = '$size'
+                                                    AND po_itemOut_type = '$cylindertype'");
+            return $result;
+        }
+
+        public function searchAssets($assetID)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT n_id, itemsCode, itemsName FROM items WHERE itemsCode LIKE '%$assetID%' AND itemsType = '03A'");
             return $result;
         }
 

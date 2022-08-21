@@ -1,0 +1,133 @@
+@page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+}
+
+@media print {
+    html,
+    body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    table.docpage {
+        page-break-inside: auto;
+    }
+
+    table.docpage>thead {
+        display: table-header-group;
+        /* position: fixed; */
+        /* top: 0; */
+    }
+
+    table.docpage>tfoot {
+        display: table-footer-group;
+        /* position: fixed;
+        bottom: 0; */
+        page-break-before: always;
+    }
+
+    table.docpage>tbody {
+        position: relative;
+        page-break-inside: avoid;
+        page-break-after: always;
+    }
+
+    .report tbody {
+        border-bottom: 1px solid black;
+    }
+
+    .report thead {
+        display: table-header-group;
+    }
+    
+    .report tfoot {
+        display: table-footer-group;
+        page-break-after: always;
+    }
+
+    .pagebreak {
+        display: table-row;
+        page-break-after: always;
+    }
+}
+
+body:before {
+    content: 'ห้ามดัดแปลงเอกสาร';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+
+    color: #000000;
+    font-family: sarabun;
+    font-size: 80px;
+    font-weight: 500px;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    opacity: 0.3;
+    transform: rotate(-45deg);
+}
+
+table {
+    width: 100%;
+    padding: 1px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+table.docheader {
+    width: 100%;
+    padding: 1px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.docheader tr,
+.docheader td,
+.docheader th {
+    padding: 1px;
+    border-collapse: collapse;
+    text-align: center;
+    border-style: none;
+    border: none;
+    background: none;
+    height: 25px;
+}
+
+table.report>thead>tr>th {
+    border-right: 1px solid black;
+    background: none;
+    height: 25px;
+}
+
+table.report>tbody>tr>td {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    background: none;
+    height: 25px;
+}
+
+.signature table {
+    table-layout: fixed;
+}
+
+.signature table,
+.signature tr,
+.signature td,
+.signature th {
+    border: none;
+    background: none;
+    height: 30px;
+}
+
+.moreinfo table,
+.moreinfo tr,
+.moreinfo td,
+.moreinfo th {
+    text-align: left;
+    height: 25px;
+}

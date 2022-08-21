@@ -22,7 +22,7 @@ $(document).ready(function () {
             }
         });
         $(".resultWeight").text(parseFloat(sum).toFixed(2));
-    })
+    });
 });
 
 
@@ -37,6 +37,9 @@ $(document).on('input', '.adjustItemPO', function () {
     var branch      = "BRC1-1";
     var tritem      = $('#'+brand+'_'+sizeid+'_'+cytype).data('info');
     console.log(brand, sizeid, cytype, tritem);
+    $('#divedited').css("display", "block");
+    $('#edited').val('edited');
+    $('#btnsubmit').attr('disabled', true);
     $.ajax({
         type: "POST",
         url: "../controller/POController.php",
@@ -48,13 +51,29 @@ $(document).on('input', '.adjustItemPO', function () {
                 $('#trItem_'+brand+'_'+sizeid+'_'+cytype).remove();
                 alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
             } else {
+                // var currweight = 0;
+                // $('.totalweight').each(function() {
+                //     if(isNaN($(this).text()) || $(this).text() === "") {
+                //         currweight+=0;
+                //     } else {
+                //         currweight+=parseFloat($(this).text());
+                //     }
+                // });
+                // $(".resultWeight").text(parseFloat(currweight).toFixed(2));
+                
                 if (tritem == null && qty > 0) {
+                    var wordType = "";
+                    if (cytype == 'N') {
+                        wordType = 'น้ำแก๊สหมุนเวียน';
+                    } else {
+                        wordType = 'ถังฝากเติม';
+                    }
                     $('#itemlist').after('<tr id="trItem_'+brand+'_'+sizeid+'_'+cytype+'">'+
-                        '<td class="text-middle"><input type="hidden" name="pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'"></td>'+
+                        '<td class="text-middle"><input type="hidden" name="Add_pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'"></td>'+
                         '<td class="text-left text-middle">'+brand+' / ขนาด '+size+' กก.</td>'+
-                        '<td class="text-center text-middle">'+cytype+'</td>'+
+                        '<td class="text-center text-middle">'+wordType+'</td>'+
                         '<td class="text-center text-middle"><span id="qtyIn_'+brand+'_'+sizeid+'_'+cytype+'">'+qty+'</span></td>'+
-                        '<td class="text-center text-middle"><span id="weightIn_'+brand+'_'+sizeid+'_'+cytype+'">'+parseFloat(qty) * parseFloat(wightsize).toFixed(2)+'</span></td>'+
+                        '<td class="text-center text-middle"><span class="totalweight" id="weightIn_'+brand+'_'+sizeid+'_'+cytype+'">'+parseFloat(qty) * parseFloat(wightsize).toFixed(2)+'</span></td>'+
                     '</tr>'
                     );
                 } else {
@@ -72,3 +91,30 @@ $(document).on('input', '.adjustItemPO', function () {
     });
     // console.log(qty, brand, wightsize, sizeid, size);
 })
+
+function btnCanclePO() {
+    $('#POStatus').val('Cancel');
+}
+
+function btnDraftPO() {
+    $('#POStatus').val('Draft');
+}
+
+function btnConfirmPO() {
+    Swal.fire({
+        title: 'คุณแน่ใจหรือไม่?',
+        text: "เอกสารจะไม่แก้ไขได้ในภายหลัก กรุณาตรวจสอบก่อนยืนยัน!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ยืนยัน',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            $('#POStatus').val('Confirm');
+            $('#FormDraftPO').submit();
+        }
+      })
+    
+}

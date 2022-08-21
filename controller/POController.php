@@ -31,22 +31,43 @@
         }
     } elseif ($_POST['parameter'] == 'DraftPO') {
         try {
+            // var_dump($_POST);
+            // exit();
             $insertdata     = new DB_con();
             $POID           = $_POST['POID'];
             $POStatus       = $_POST['POStatus'];
-            $sql            = $insertdata->UpdateStatusDraftPO($POID, $POStatus);
-
-            if ($POStatus == 'Confirm') {
+            $car            = $_POST['car'];
+            $FPID           = $_POST['gas_filling'];
+            $driver         = $_POST['driver'];
+            $sql            = $insertdata->UpdateStatusDraftPO($POID, $FPID, $POStatus, $car, $driver);
+            
+            if ($_POST['POStatus'] == 'Confirm') {
                 foreach ($_POST['pickitem'] as $key => $value) {
                     $item           = explode('/', $value);
                     $cerrent_year   = date("Y");
                     $Total          = $_POST['total'];
+                    $updateItemOut  = $insertdata->UpdateItemOut($POID, $item[0], $item[1], $item[2], $item[3]);
                     $datan_id       = $insertdata->Curmovement($cerrent_year, $item[0], $item[1], $item[2]);
                 }
+            } elseif ($_POST['POStatus'] == 'Draft') {
+                foreach ($_POST['pickitem'] as $key => $value) {
+                    $item           = explode('/', $value);
+                    $updateItemOut  = $insertdata->UpdateItemOut($POID, $item[0], $item[1], $item[2], $item[3]);
+                }
+
+                foreach ($_POST['Add_pickitem'] as $key => $valueItem) {
+                    $newitem           = explode('/', $valueItem);
+                    $insertNewItemOut  = $insertdata->insertItem($POID, $newitem[0], $newitem[1], $newitem[2], $newitem[3]);
+                }
             }
-            
-            echo "<script>alert('Success')</script>";
-            echo "<script>window.location.href='../table_po.php'</script>";
+
+            if ($_POST['POStatus'] == 'Draft') {
+                echo "<script>alert('Success')</script>";
+                echo "<script>window.location.href='../draft/draftPO.php?id=".$POID."'</script>";
+            } else {
+                echo "<script>alert('Success')</script>";
+                echo "<script>window.location.href='../table_po.php'</script>";
+            }
         } catch (\Throwable $th) {
             echo "<script>alert('Failed: "+$th->getMessage()+"')</script>";
             echo "<script>window.location.href='../table_po.php'</script>";
