@@ -43,6 +43,7 @@
             
             if ($_POST['POStatus'] == 'Confirm') {
                 foreach ($_POST['pickitem'] as $key => $value) {
+                    
                     $item           = explode('/', $value);
                     $cerrent_year   = date("Y");
                     $Total          = $_POST['total'];

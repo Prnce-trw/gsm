@@ -64,7 +64,7 @@ $(document).on('input', '.adjustItemPO', function () {
                 if (tritem == null && qty > 0) {
                     var wordType = "";
                     if (cytype == 'N') {
-                        wordType = 'น้ำแก๊สหมุนเวียน';
+                        wordType = 'น้ำแก๊ส';
                     } else {
                         wordType = 'ถังฝากเติม';
                     }

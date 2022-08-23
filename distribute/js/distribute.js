@@ -20,8 +20,10 @@ $(document).on('click', '#vat', function (e) {
     if (this.checked) {
         $('#input_vat').attr("readonly", false);
         var calVat = price * 7 / 100;
-        $('#input_vat').val(calVat);
-        $('#totalPrice').val(parseFloat(price) + parseFloat(calVat));
+        var vatdec = parseFloat(calVat).toFixed(2);
+        var result = parseFloat(price) + parseFloat(vatdec);
+        $('#input_vat').val(vatdec);
+        $('#totalPrice').val(parseFloat(result).toFixed(2));
     } else {
         $('#input_vat').attr("readonly", true);
         $('#input_vat').val(0);
@@ -35,7 +37,9 @@ $(document).on('click', '.selectBranch', function () {
     if (this.checked) {
         $('#branchSelected').before('<tr id="trBranch'+branchID+'" class="trBranch">'+
             '<td class="text-middle">'+BranchName+'</td>'+
-            '<td><input type="number" class="form-control text-center DisItemAmount" min="0"></td>'+
+            '<td class="text-middle"><input type="number" class="form-control text-center DisItemAmount" min="0"></td>'+
+            '<td class="text-middle"><input type="number" class="form-control text-center" min="0"></td>'+
+            '<td class="text-middle"><input type="number" class="form-control text-center" min="0"></td>'+
             '</tr>'
         );
     } else {
@@ -45,8 +49,8 @@ $(document).on('click', '.selectBranch', function () {
 
 $(document).on('click', '.radioItem', function () {
     var n_id = $(this).val();
-    var $radios = $(this.checked);
-    if ($radios.is(':checked') == false) {
+    // var $radios = $(this.checked);
+    if (this.checked == true) {
         $('#unitprice_'+n_id).attr("disabled", false);
         $('#qty_'+n_id).attr("disabled", false);
         $('#amount_'+n_id).attr("disabled", false);
@@ -104,7 +108,7 @@ $(document).on('click', '.btnsubmit', function () {
             title: 'ไม่สามารถบันทึกได้!',
             html: "จำนวนทั้งหมด <b class='text-danger'>น้อยกว่า</b> จำนวนรวม", 
         })
-    } else if (totalItem == "") {
+    } else if (itemAmount == "") {
         Swal.fire({
             icon: 'warning',
             title: 'กรอกจำนวนที่ต้องการกระจาย!',
@@ -123,12 +127,12 @@ $('#btnassets').click(function () {
             success: function (response) {
                 $('#assetsRow').empty();
                 $('#assetsRow').append('<tr>'+
-                    '<td class="text-center text-middle"><input type="radio" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
+                    '<td class="text-center text-middle"><input type="checkbox" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
                     '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
                     '<td class="text-middle">'+response['itemsName']+'</td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
                     '<td class="text-center text-middle"><input type="number" name="unitprice" id="unitprice_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="amount_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="amount" id="qty_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="amountitem" id="amount_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
                     '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
                     'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
                 '</tr>'
@@ -172,12 +176,12 @@ function selectHeadDis(dis_id) {
             $('#assetsRow').empty();
             $('#assetID').val(response['itemsCode']);
             $('#assetsRow').append('<tr>'+
-                    '<td class="text-center text-middle"><input type="radio" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
+                    '<td class="text-center text-middle"><input type="checkbox" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
                     '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
                     '<td class="text-middle">'+response['itemsName']+'</td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+response['disout_unitPrice']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="qty" id="amount_'+response['n_id']+'" value="'+response['disout_amount']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="amount" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
                     '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
                     'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
                 '</tr>'
@@ -185,3 +189,7 @@ function selectHeadDis(dis_id) {
         }
     });
 }
+
+$('#btnreload').click(function () {
+    location.reload();
+})

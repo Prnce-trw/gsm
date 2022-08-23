@@ -27,14 +27,6 @@
             vertical-align: middle !important;
         }
 
-        .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 48
-        }
-
         .modal-dialog {
             max-width: 1000px !important;
         }
@@ -94,7 +86,7 @@
                 <div class="col-sm-4">
                     <input type="number" name="amount" id="amount" class="form-control" placeholder="จำนวนทั้งหมด..." min="0">
                 </div>
-                <label class="col-sm-2 col-form-label">ราคา</label>
+                <label class="col-sm-2 col-form-label">จำนวนเงินรวม</label>
                 <div class="col-sm-4">
                     <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0">
                 </div>
@@ -116,12 +108,15 @@
             </div>
             <hr>
             <div class="form-group row">
-                <div class="col-sm-5 text-center"></div>
-                <div class="col-sm-5 text-center">
+                <div class="col-sm-4 text-left">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
+                </div>
+                <div class="col-sm-5 text-right">
                     <input type="text" name="" id="assetID" class="form-control" placeholder="ค้นหารหัสอุปกรณ์..." min="0">
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3 text-right">
                     <button class="btn btn-primary" id="btnassets" type="button">ค้นหาอุปกรณ์</button>
+                    <button type="button" class="btn btn-warning" title="Reset" id="btnreload"><i class="icofont icofont-refresh"></i></button>
                 </div>
             </div>
             <table class="table table-hover table-bordered">
@@ -130,35 +125,35 @@
                         <th scope="col">#</th>
                         <th scope="col">รหัสอุปกรณ์</th>
                         <th scope="col">ชื่ออุปกรณ์</th>
-                        <th scope="col">ราคาต่อหน่วย</th>
-                        <th scope="col">ราคา</th>
                         <th scope="col">จำนวน</th>
+                        <th scope="col">ราคาต่อหน่วย</th>
+                        <th scope="col">จำนวนเงิน</th>
                         <th scope="col">กระจาย</th>
                     </tr>
                 </thead>
                 <tbody id="assetsRow">
                     <?php foreach ($dataItems as $key => $value) { ?>
-                        <tr>
-                            <td class="text-center text-middle">
-                                <input type="radio" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
-                            </td>
-                            <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
-                            <td class="text-middle"><?=$value['itemsName']?></td>
-                            <td class="text-center text-middle">
-                                <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                            </td>
-                            <td class="text-center text-middle">
-                                <input type="number" name="totalitemprice" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                            </td>
-                            <td class="text-center text-middle">
-                                <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled>
-                            </td>
-                            <td class="text-center text-middle">
-                                <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
-                                    onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
-                                </button>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td class="text-center text-middle">
+                            <input type="checkbox" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
+                        </td>
+                        <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
+                        <td class="text-middle"><?=$value['itemsName']?></td>
+                        <td class="text-center text-middle">
+                            <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                        </td>
+                        <td class="text-center text-middle">
+                            <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                        </td>
+                        <td class="text-center text-middle">
+                            <input type="number" name="amountitem" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                        </td>
+                        <td class="text-center text-middle">
+                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
+                                onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
+                            </button>
+                        </td>
+                    </tr>
                     <?php } ?>
                 </tbody>
                 <tfoot>
@@ -252,13 +247,21 @@
                             <tr>
                                 <th class="text-center">ชื่อสาขา</th>
                                 <th class="text-center" width="150px">จำนวน</th>
+                                <th class="text-center" width="150px">ราคาต่อหน่วย</th>
+                                <th class="text-center" width="150px">จำนวนเงิน</th>
                             </tr>
                         </thead>
                         <tbody id="branchSelected"></tbody>
                         <tfoot>
                             <tr>
-                                <th class="text-right">รวม</th>
+                                <th class="text-right">จำนวนรวม</th>
                                 <th class="text-right"><span class="totalItem"></span></th>
+                                <th colspan="2"></th>
+                            </tr>
+                            <tr>
+                                <th class="text-right">จำนวนเงินรวม</th>
+                                <th class="text-right"></th>
+                                <th colspan="2">บาท</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -310,6 +313,67 @@
         </div>
     </div>
 
+    <!-- modal เลือกอุปกรณ์ -->
+    <!-- <div class="modal fade" id="selectasset" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="selectassetLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="selectassetLabel">จำนวนคงเหลือ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> 
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr class="text-center">
+                                <th scope="col">#</th>
+                                <th scope="col">รหัสอุปกรณ์</th>
+                                <th scope="col">ชื่ออุปกรณ์</th>
+                                <th scope="col">จำนวน</th>
+                                <th scope="col">ราคาต่อหน่วย</th>
+                                <th scope="col">ราคา</th>
+                                <th scope="col">กระจาย</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetsRow">
+                        <?php foreach ($dataItems as $key => $value) { ?>
+                            <tr>
+                                <td class="text-center text-middle">
+                                    <input type="checkbox" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
+                                </td>
+                                <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
+                                <td class="text-middle"><?=$value['itemsName']?></td>
+                                <td class="text-center text-middle">
+                                    <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                                </td>
+                                <td class="text-center text-middle">
+                                    <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                                </td>
+                                <td class="text-center text-middle">
+                                    <input type="number" name="amountitem" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
+                                </td>
+                                <td class="text-center text-middle">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
+                                        onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" class="text-right">รวม</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
     <!-- Required Jqurey -->
     <script src="../files/bower_components/jquery/js/jquery.min.js"></script>
     <script src="../files/bower_components/jquery-ui/js/jquery-ui.min.js"></script>
@@ -320,7 +384,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <!-- Select 2 js -->
     <script src="../files/bower_components/select2/js/select2.full.min.js"></script>
-    <script src="js/distribute.js"></script>
+    <script src="js/inventory.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
         $(document).ready(function() {

@@ -12,7 +12,7 @@
             $supplier               = $_POST['supplier'];
             $rawdate                = $_POST['date_received'];
             $refNo                  = $_POST['refNo'];
-            $amount                 = $_POST['amount'];
+            $amount                 = $_POST['amountitem'];
             $price                  = $_POST['price'];
             $vatSelect              = $_POST['vatSelect'];
             $vat                    = $_POST['vat'];

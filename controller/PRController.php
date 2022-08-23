@@ -16,7 +16,7 @@
 
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
-                // var_dump($_POST['priceUnit'][1], $_POST['itemPerPrice'][1], $item[3]);
+                // var_dump($value);
                 // exit(0);
                 $itemType           = 'N';
                 $unitprice          = $_POST['unitprice'][$key];

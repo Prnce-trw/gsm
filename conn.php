@@ -130,7 +130,6 @@
             // หาจำนวนสินค้าทั้งหมดในสาขา
             $sqlSumItem         = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS ResultItem FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' GROUP BY itemsCode");
             $ItemInven          = mysqli_fetch_array($sqlSumItem);
-            
 
             $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
             $n_id               = $fetchDataN_id['n_id']+1; // n_id+1
@@ -151,8 +150,8 @@
 
             // var_dump($ItemInven['movAvgCost']);
             // echo $NewAvgCost.
-            // '<br>'.$ItemInven['movAvgCost'].'*'.$resultItemCurr.'='.$ResultmovAvgCostCur.
-            // '<br>'.$price.
+            // '<br>'.$ItemInven['movAvgCost'].' * '.$resultItemCurr.' = '.$ResultmovAvgCostCur.
+            // '<br>'.$price.' + '.$ResultmovAvgCostCur.' = '.floatval($price + $ResultmovAvgCostCur).
             // '<br>'.$newItemCurr
             // ;
             // exit(0);
@@ -161,10 +160,12 @@
             $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_docRef, transaction_type, transaction_qty, store_area_in, transaction_last_balance, transaction_new_balance, movAvgCost, InvoiceCost) 
             VALUES ('$n_id', '$tranID', '$itemCode', 'BRC1-1', CURRENT_TIMESTAMP, 'From-Refill', '$RefDO', 'IN', '$qty', '00', '$Curr_QTY_Balance', '$Curr_item_bal', '$NewAvgCost', '$price');");
             
-            $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
+            $resultUpdateStockBranchBS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
+            $resultUpdateStockBranchFS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '01';");
             $data = array(
                 'resultInventMoving' => $resultInventMoving, 
-                'resultUpdateStockBranch' => $resultUpdateStockBranch, 
+                'resultUpdateStockBranchBS' => $resultUpdateStockBranchBS, 
+                'resultUpdateStockBranchFS' => $resultUpdateStockBranchFS, 
             );
             return $data;
         }
@@ -276,7 +277,7 @@
         
         public function fetchdataReport($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name
+            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name, size.wightSize
                                                     FROM tb_head_preorder as po
                                                     LEFT JOIN tb_po_itemout as itemout
                                                     ON po.head_po_docnumber = itemout.po_itemOut_docNo
@@ -293,10 +294,14 @@
 
         public function fetchdataReportHeader($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT po.head_po_docdate, fp.FP_Name
+            $result = mysqli_query($this->dbcon, "SELECT po.head_po_docdate, po.head_po_round, pr.head_pr_timeIn, pr.head_pr_timeOut, fp.FP_Name, emp.emp_name, emp.emp_lastname
                                                     FROM tb_head_preorder as po
+                                                    LEFT JOIN tb_head_po_receipt as pr
+                                                    ON po.head_po_docnumber = pr.head_pr_docnumber_po
                                                     LEFT JOIN tb_fillingplant as fp
                                                     ON po.head_po_fillstation = fp.FP_ID
+                                                    LEFT JOIN emp
+                                                    ON po.head_po_driverID = emp.emp_code
                                                     WHERE po.head_po_docnumber = \"$POID\"
                                                     LIMIT 1");
             return $result;
@@ -348,7 +353,7 @@
             return $result;
         }
 
-        public function RunningDisID(Type $var = null)
+        public function RunningDisID()
         {
             $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(dis_id) AS dis_id FROM tb_head_distribute");
             $RunningID          = mysqli_fetch_array($sqlN_id);
@@ -386,6 +391,18 @@
                                                     WHERE tb_head_distribute.dis_id = '$dis_id'");
             $rawdata = mysqli_fetch_array($result);
             return $rawdata;
+        }
+
+        public function fetchdataInventoryOut()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-02C-%' AND branchID = 'BRC1-1' ORDER BY qty_balance ASC");
+            return $result;
+        }
+
+        public function fetchdataInventoryIn()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-01G-%' AND branchID = 'BRC1-1' ORDER BY qty_balance DESC");
+            return $result;
         }
 
 

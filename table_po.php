@@ -41,7 +41,8 @@
                         <td height="40"><?php echo $index?></td>
                         <td>
                             <?php if ($row['head_pr_docnumber'] == null && $row['head_po_stock_status'] == 'Confirm') { ?>
-                                <a href="preorderreceipt.php?id=<?=$row['head_po_docnumber']?>">รับถังเข้า</a>
+                                <!-- <a href="preorderreceipt.php?id=<?=$row['head_po_docnumber']?>">รับถังเข้า</a> -->
+                                <a href="goodreciept/goodreciept.blade.php?id=<?=$row['head_po_docnumber']?>">รับถังเข้า</a>
                             <?php } ?> 
                         </td>
                         <td>

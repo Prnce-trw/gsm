@@ -118,7 +118,7 @@
                     <tr id="tdAppend_<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>">
                         <td>
                             <?=$key+1;?>
-                            <input type="hidden" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
+                            <input type="text" class="PRitemOut" name="pickitem[<?=$key?>]" id="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" 
                             data-info="<?=$rows['po_itemOut_CyBrand']?>_<?=$rows['weight_NoID']?>" value="<?=$rows['po_itemOut_CyBrand']?>/<?=$rows['po_itemOut_CySize']?>/<?=$rows['po_itemOut_CyAmount']?>/<?=$rows['po_itemOut_type']?>">
                         </td>
                         <td style="text-align: left;"><?=$rows['po_itemOut_CyBrand']?>/ ขนาด <?=$rows['po_itemOut_CySize']?> กก. 

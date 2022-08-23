@@ -34,7 +34,7 @@ function StatustoText($param)
 function CylinderType($param)
 {
     if ($param == 'N') {
-        return 'น้ำแก๊สหมุนเวียน';
+        return 'น้ำแก๊ส';
     } elseif ($param == 'Adv') {
         return 'ถังฝากเติม';
     } else {
