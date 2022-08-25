@@ -75,14 +75,19 @@
                     </select>
                 </div>
                 <label class="col-sm-2 col-form-label">หมายเลขเอกสาร </label>
-                <div class="col-sm-4"><span class="badge badge-primary"><?=$_GET['id']?></span></div>
+                <div class="col-sm-4">
+                    <input type="text" value="<?=$_GET['id']?>" class="form-control" readonly>
+                </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">รอบ </label>
-                <div class="col-sm-4"></div>
+                <label class="col-sm-2 col-form-label">รอบการส่งที่ </label>
+                <div class="col-sm-2">
+                    <input type="text" value="<?=$row['head_po_round']?>" readonly class="form-control">
+                </div>
+                <label class="col-sm-2"></label>
                 <label class="col-sm-2 col-form-label">วันที่ </label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['created_at'] != null ? date("d/m/Y", strtotime($row['created_at'])) : date("d/m/Y"))?>">
+                    <input type="text" class="form-control datepicker" placeholder="วัน/เดือน/ปี" value="<?=($row['head_po_docdate'] != null ? date("d/m/Y", strtotime($row['head_po_docdate'])) : date("d/m/Y"))?>">
                 </div>
             </div>
             <div class="form-group row">
@@ -90,10 +95,10 @@
                 <div class="col-sm-4">
                     <div class="row">
                         <div class="col-6">
-                            <input type="number" name="hourOut" class="form-control" min="7" max="22" placeholder="ชั่วโมง">
+                            <input type="number" name="hourOut" class="form-control maxlengthhour" value="<?=date("H", strtotime($row['head_po_docdate']))?>" min="7" max="22" placeholder="ชั่วโมง" onKeyPress="if(this.value.length==2) return false;" readonly>
                         </div>
                         <div class="col-6">
-                            <input type="number" name="minuteOut" class="form-control" min="0" max="60" placeholder="นาที">
+                            <input type="number" name="minuteOut" class="form-control maxlengthminute" value="<?=date("i", strtotime($row['head_po_docdate']))?>" min="0" max="60" placeholder="นาที" onKeyPress="if(this.value.length==2) return false;" readonly>
                         </div>
                     </div>
                 </div>
@@ -101,10 +106,10 @@
                 <div class="col-sm-4">
                     <div class="row">
                         <div class="col-6">
-                            <input type="number" name="hourIn" class="form-control" max="7" min="22" placeholder="ชั่วโมง">
+                            <input type="number" name="hourIn" class="form-control maxlengthhour" max="7" min="22" placeholder="ชั่วโมง" onKeyPress="if(this.value.length==2) return false;">
                         </div>
                         <div class="col-6">
-                            <input type="number" name="minuteIn" class="form-control" max="0" min="60" placeholder="นาที">
+                            <input type="number" name="minuteIn" class="form-control maxlengthminute" max="0" min="60" placeholder="นาที" onKeyPress="if(this.value.length==2) return false;">
                         </div>
                     </div>
                 </div>
@@ -149,7 +154,7 @@
                             </td>
                             <td>
                                 <input type="number" name="unitprice[<?=$key+1?>]" min="0" style="width: 80px;"
-                                class="form-control itemperprice text-center" value="" step="any">
+                                class="form-control itemperprice text-center" value="<?=UnitPrice($row['head_po_fillstation'], $weightID, 'BRC1-1', $value['po_itemOut_CyAmount'])?>" step="any">
                             </td>
                             <td>
                                 <input type="number" name="amtprice[<?=$key+1?>]" min="0" value="" style="width: 80px;" class="form-control AmountPrice text-center" step="any">

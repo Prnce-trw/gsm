@@ -31,8 +31,6 @@
         }
     } elseif ($_POST['parameter'] == 'DraftPO') {
         try {
-            // var_dump($_POST);
-            // exit();
             $insertdata     = new DB_con();
             $POID           = $_POST['POID'];
             $POStatus       = $_POST['POStatus'];

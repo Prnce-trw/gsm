@@ -7,17 +7,7 @@ $(document).ready(function () {
         $('#qtyIn_'+Dataitem[1]+'_'+Dataitem[2]+'_'+Dataitem[3]).val(qty[2]).change();
     });
 
-    $('.itemWeight').each(function () {
-        var sum = 0;
-        $('.itemWeight').each(function() {
-            if(isNaN($(this).text()) || $(this).text() === "") {
-                sum+=0;
-            } else {
-                sum+=parseFloat($(this).text());
-            }
-        });
-        $(".totalWeight").text(parseFloat(sum).toFixed(2));
-    });
+    $(".totalWeight").text(calWeight());
 });
 
 $(document).on('input', '.adjustItems', function () {
@@ -87,3 +77,33 @@ function calQty() {
     });
     return parseFloat(sum);
 }
+
+$(document).on('input', '.maxlengthhour', function () {
+    if(this.value.length==2){
+        if (this.value > 22) {
+            Swal.fire({
+                icon: 'error',
+                title: 'จำนวนชั่วโมงเกินกว่าที่กำหนดไว้',
+            });
+            $(this).val('0'+7);
+        } else if (this.value <= 7) {
+            Swal.fire({
+                icon: 'error',
+                title: 'จำนวนชั่วโมงต่ำกว่าที่กำหนดไว้',
+            });
+            $(this).val('0'+7);
+        }
+    };
+});
+
+$(document).on('input', '.maxlengthminute', function () {
+    if(this.value.length==2){
+        if (this.value > 60) {
+            Swal.fire({
+                icon: 'error',
+                title: 'จำนวนนาทีเกินกว่าที่กำหนดไว้',
+            });
+            $(this).val(0);
+        }
+    };
+});

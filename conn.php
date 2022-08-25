@@ -178,8 +178,12 @@
 
         public function UpdateStatusDraftPO($POID, $FPID, $POStatus, $car, $driver)
         {
-            
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
+            $currdate = date('Y-m-d');
+            $countPO = mysqli_query($this->dbcon, "SELECT COUNT(head_po_stock_status) AS POround FROM tb_head_preorder WHERE head_po_docdate = '$currdate' AND head_po_stock_status = 'Confirm'");
+            $resultPOround = mysqli_fetch_array($countPO);
+            $PORound = $resultPOround['POround']+1;
+
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_round = '$PORound', head_po_docdate = CURRENT_TIMESTAMP, head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
