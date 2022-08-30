@@ -69,7 +69,7 @@ $(document).on('input', '.adjustItemPO', function () {
                         wordType = 'ถังฝากเติม';
                     }
                     $('#itemlist').after('<tr id="trItem_'+brand+'_'+sizeid+'_'+cytype+'">'+
-                        '<td class="text-middle"><input type="hidden" name="Add_pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'"></td>'+
+                        '<td class="text-middle"><input type="text" name="Add_pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'/'+sizeid+'"></td>'+
                         '<td class="text-left text-middle">'+brand+' / ขนาด '+size+' กก.</td>'+
                         '<td class="text-center text-middle">'+wordType+'</td>'+
                         '<td class="text-center text-middle"><span id="qtyIn_'+brand+'_'+sizeid+'_'+cytype+'">'+qty+'</span></td>'+
@@ -78,7 +78,7 @@ $(document).on('input', '.adjustItemPO', function () {
                     );
                 } else {
                     if (qty != 0) {
-                        $('#'+brand+'_'+sizeid+'_'+cytype).val(brand+'/'+size+'/'+qty+'/'+cytype);
+                        $('#'+brand+'_'+sizeid+'_'+cytype).val(brand+'/'+size+'/'+qty+'/'+cytype+'/'+sizeid);
                         $('#qtyIn_'+brand+'_'+sizeid+'_'+cytype).text(qty);
                         $('#weightIn_'+brand+'_'+sizeid+'_'+cytype).text(parseFloat(qty) * parseFloat(wightsize).toFixed(2));
                     } else {

@@ -171,7 +171,7 @@ $(document).on('change', '.pickitem', function () {
                 $(".totalWeight").text(getWeight);
                 $(".totalWeight").val(getWeight);
                 if (appendItem == null) {
-                    $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'_'+cytype+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+weight+'/'+amount+'/'+cytype+'">');
+                    $('#result_inputItem').append('<input type="hidden" name="pickitem[]" id="'+brand+'_'+sizeID+'_'+cytype+'" data-info="'+brand+'_'+sizeID+'"  value="'+brand+'/'+weight+'/'+amount+'/'+cytype+'/'+sizeID+'">');
                     if (cytype == 'Adv') {
                         $('#result_adv_'+brand).append('<span id="appendtext'+brand+'_'+sizeID+'">'+weight+' Kg. [<span class="'+brand+'_'+sizeID+'">'+amount+'</span>] </br></span>');
                     }

@@ -59,7 +59,7 @@
                                 <?=POStatus($row['head_po_stock_status'])?>
                             <?php } ?>
                         </td>
-                        <td>05/05/2022</td>
+                        <td><?=date("d/m/Y H:i:s", strtotime($row['head_po_docdate']))?></td>
                         <td>
                             <div class="row">
                                 <!-- <div class="col-25">

@@ -56,7 +56,7 @@
                     <select class=" js-example-basic-single" name="driver" id="" style="width: 250px;">
                         <option selected disabled>เลือกผู้ขับ...</option>
                         <?php foreach ($dataEmp as $key => $value) { ?>
-                            <option value="<?=$value['emp_name']?>"><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
+                            <option value="<?=$value['emp_id']?>"><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
                         <?php } ?>
                     </select>
                     </div>

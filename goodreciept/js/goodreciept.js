@@ -8,7 +8,40 @@ $(document).ready(function () {
     });
 
     $(".totalWeight").text(calWeight());
+
+    var AmountPrice = 0;
+    $('.itemperprice').each(function () {
+        var value = $(this).val();
+        var brand = $(this).data('brand');
+        var sizeid = $(this).data('sizeid');
+        var cytype = $(this).data('cytype');
+        var curr_itemin = $('#itemIn_'+brand+'_'+sizeid+'_'+cytype).text();
+        if (isNaN($(this).val()) || $(this).val() === "") {
+            AmountPrice+=0;
+        } else {
+            AmountPrice+=parseFloat($(this).val());
+        }
+        console.log(AmountPrice);
+        var sumary = parseFloat(curr_itemin).toFixed(2) * parseFloat(value).toFixed(2); 
+        $('#resultTotal_'+brand+'_'+sizeid+'_'+cytype).val(sumary);
+    });
+    
+    var amountItem = 0;
+    $('.itemperprice').each(function () {
+        if (isNaN($(this).val()) || $(this).val() === "") {
+            AmountPrice+=0;
+        } else {
+            AmountPrice+=parseFloat($(this).val());
+        }
+        $('#TotalPrice').text(parseFloat(AmountPrice).toFixed(2));
+    });
 });
+
+function numberWithCommas(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
 
 $(document).on('input', '.adjustItems', function () {
     var qty = $(this).val();
@@ -33,8 +66,8 @@ $(document).on('input', '.adjustItems', function () {
             '<td></td>'+
             '<td class="text-right text-middle"><span class="qtyItem" id="itemIn_'+brand+'_'+weightid+'_'+cytype+'">'+qty+'</span></td>'+
             '<td class="text-right text-middle"><span class="itemWeight" id="calItemWeight_'+brand+'_'+weightid+'_'+cytype+'">'+qty * wightsize+'</span></td>'+
-            '<td><input type="number" class="form-control text-center" style="width: 80px;" value=""></td>'+
-            '<td><input type="number" class="form-control text-center" style="width: 80px;" value=""></td>'+
+            '<td><input type="number" class="form-control itemperprice" data-brand="'+brand+'" data-sizeid="'+weightid+'" data-cytype="'+cytype+'" style="width: 120px;" value=""></td>'+
+            '<td><input type="number" class="form-control" id="resultTotal_'+brand+'_'+weightid+'_'+cytype+'" style="width: 120px;" value=""></td>'+
         '</tr>'
         );
         $(".totalWeight").text(calWeight());
@@ -107,3 +140,16 @@ $(document).on('input', '.maxlengthminute', function () {
         }
     };
 });
+
+$(document).on('input', '.itemperprice', SumTotal);
+$(document).on('input', '.AmountPrice', SumTotal);
+
+function SumTotal() {
+    var value = $(this).val();
+    var brand = $(this).data('brand');
+    var sizeid = $(this).data('sizeid');
+    var cytype = $(this).data('cytype');
+    var curr_itemin = $('#itemIn_'+brand+'_'+sizeid+'_'+cytype).text(); 
+    var sumary = parseFloat(curr_itemin).toFixed(2) * parseFloat(value).toFixed(2); 
+    $('#resultTotal_'+brand+'_'+sizeid+'_'+cytype).val(sumary);
+}

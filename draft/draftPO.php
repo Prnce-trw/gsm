@@ -80,12 +80,12 @@
                         <?php } ?>
                     </select>
                 </div>
-                <label class="col-sm-2 col-form-label">ผู้ขับ</label>
+                <label class="col-sm-2 col-form-label">ผู้ขับ </label>
                 <div class="col-sm-4">
                     <select class=" js-example-basic-single" name="driver" id="" style="width: 250px;">
                         <option selected disabled>เลือกผู้ขับ...</option>
                         <?php foreach ($dataEmp as $key => $value) { ?>
-                            <option value="<?=$value['emp_code']?>" <?=$row['head_po_driverID'] == $value['emp_code'] ? 'selected':'' ?>><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
+                            <option value="<?=$value['emp_id']?>" <?=$row['head_po_driverID'] == $value['emp_id'] ? 'selected':'' ?>><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -109,7 +109,7 @@
                                 <input type="hidden" class="PRitemOut" name="pickitem[<?=$value['po_itemOut_id']?>]" id="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>" 
                             data-info="<?=$value['po_itemOut_CyBrand']?>_<?=$value['weight_NoID']?>_<?=$value['po_itemOut_type']?>" value="<?=$value['po_itemOut_CyBrand']?>/<?=$value['po_itemOut_CySize']?>/<?=$value['po_itemOut_CyAmount']?>/<?=$value['po_itemOut_type']?>">
                             </td>
-                            <td class="text-left text-middle"><?=$value['po_itemOut_CyBrand']?> / ขนาด <?=$value['po_itemOut_CySize']?> กก. </td>
+                            <td class="text-left text-middle"><?=$value['po_itemOut_CyBrand']?> / ขนาด <?=$value['weightSize_id']?> กก. </td>
                             <td class="text-center text-middle" style="width: 150px;">
                                 <?=CylinderType($value['po_itemOut_type'])?>
                             </td>

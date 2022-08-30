@@ -384,7 +384,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <!-- Select 2 js -->
     <script src="../files/bower_components/select2/js/select2.full.min.js"></script>
-    <script src="js/inventory.js"></script>
+    <script src="js/distribute.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
         $(document).ready(function() {

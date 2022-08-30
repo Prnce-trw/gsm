@@ -38,6 +38,9 @@
         .modal-dialog {
             max-width: 1000px !important;
         }
+        .table td, .table th {
+            padding: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -56,8 +59,12 @@
         $dataBrand  = $fetchdata->fetchdataBrand();
         $dataSize   = $fetchdata->fetchdataSize();
         $dataBS     = $fetchdata->fetchdataBS();
+        $dataCars   = $fetchdata->fetchdataCars();
+        $dataEmp    = $fetchdata->fetchdataEmp(); 
         ?>
-        <form action="" method="post">
+        <form action="../controller/PRController.php" method="post">
+            <input type="hidden" name="parameter" id="" value="PreOrderReCeipt">
+            <input type="hidden" name="POID" id="" value="<?=$_GET['id']?>">
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">เอกสารใบกำกับ </label>
                 <div class="col-sm-4">
@@ -67,7 +74,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">โรงบรรจุ </label>
                 <div class="col-sm-4">
-                    <select class="gas_filling js-example-basic-single" name="gas_filling" id="gas_filling" style="width: 150px;">
+                    <select class="gas_filling js-example-basic-single form-control" name="gas_filling" id="gas_filling">
                         <option selected disabled>เลือกโรงบรรจุ...</option>
                         <?php foreach ($dataFP as $key => $value) { ?>
                             <option value="<?=$value['FP_ID']; ?>" <?php echo $row['head_po_fillstation'] == $value['FP_ID'] ? 'selected':'' ?>><?=$value['FP_Name']; ?></option>
@@ -114,6 +121,26 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">ทะเบียนรถขนส่ง</label>
+                <div class="col-sm-4">
+                    <select class="js-example-basic-single form-control" name="car" id="">
+                        <option selected disabled>เลือกรถขนส่ง...</option>
+                        <?php foreach ($dataCars as $key => $value) { ?>
+                            <option value="<?=$value['car_Code']?>" <?=$row['head_po_carID'] == $value['car_Code'] ? 'selected':'' ?>><?=$value['car_license']?> (<?=$value['car_name']?>)</option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <label class="col-sm-2 col-form-label">ผู้ขับ </label>
+                <div class="col-sm-4">
+                    <select class=" js-example-basic-single form-control" name="driver" id="">
+                        <option selected disabled>เลือกผู้ขับ...</option>
+                        <?php foreach ($dataEmp as $key => $value) { ?>
+                            <option value="<?=$value['emp_id']?>" <?=$row['head_po_driverID'] == $value['emp_id'] ? 'selected':'' ?>><?=$value['emp_name']?> <?=$value['emp_lastname']?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="text-center">
@@ -152,12 +179,15 @@
                                     <?=(float)$value['wightSize'] * $value['po_itemOut_CyAmount']?>
                                 </span>
                             </td>
-                            <td>
-                                <input type="number" name="unitprice[<?=$key+1?>]" min="0" style="width: 80px;"
-                                class="form-control itemperprice text-center" value="<?=UnitPrice($row['head_po_fillstation'], $weightID, 'BRC1-1', $value['po_itemOut_CyAmount'])?>" step="any">
+                            <td class="text-center text-middle">
+                                <input type="number" name="unitprice[<?=$key+1?>]" min="0" style="width: 120px;"
+                                class="form-control itemperprice" value="<?=UnitPrice($row['head_po_fillstation'], $weightID, 'BRC1-1', $value['po_itemOut_CyAmount'])?>" 
+                                data-brand="<?=$brand?>" data-sizeid="<?=$weightID?>" data-cytype="<?=$cytype?>" step="any">
                             </td>
-                            <td>
-                                <input type="number" name="amtprice[<?=$key+1?>]" min="0" value="" style="width: 80px;" class="form-control AmountPrice text-center" step="any">
+                            <td class="text-center text-middle">
+                                <input type="number" name="amtprice[<?=$key+1?>]" min="0" value="" 
+                                id="resultTotal_<?=$brand?>_<?=$weightID?>_<?=$cytype?>" style="width: 120px;" 
+                                class="form-control AmountPrice" step="any">
                             </td>
                         </tr>
                     <?php } ?>
@@ -198,7 +228,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-sm-12">
-                    <button class="btn btn-success" type="button">ยืนยัน</button>
+                    <button class="btn btn-success" type="submit">ยืนยัน</button>
                 </div>
             </div>
 

@@ -8,13 +8,14 @@
             $filling        = $_POST['gas_filling'];
             $comment        = $_POST['comment'];
             $POStatus       = $_POST['POStatus'];
-            $PODate         = $_POST['date'];
-            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment, $POStatus, $PODate);
+            $CarID          = $_POST['car'];
+            $DriverID       = $_POST['driver'];
+            $sql            = $insertdata->insertPO($DocumentNo, $filling, $comment, $POStatus, $CarID, $DriverID);
 
             foreach ($_POST['pickitem'] as $key => $value) {
                 $item               = explode('/', $value);
                 $itemType           = 'N';
-                $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3]);
+                $sqlItem            = $insertdata->insertItem($DocumentNo, $item[0], $item[1], $item[2], $item[3], $item[4]);
 
                 if ($POStatus == 'Confirm') {
                     $cerrent_year   = date("Y");
@@ -41,7 +42,6 @@
             
             if ($_POST['POStatus'] == 'Confirm') {
                 foreach ($_POST['pickitem'] as $key => $value) {
-                    
                     $item           = explode('/', $value);
                     $cerrent_year   = date("Y");
                     $Total          = $_POST['total'];
@@ -56,7 +56,7 @@
 
                 foreach ($_POST['Add_pickitem'] as $key => $valueItem) {
                     $newitem           = explode('/', $valueItem);
-                    $insertNewItemOut  = $insertdata->insertItem($POID, $newitem[0], $newitem[1], $newitem[2], $newitem[3]);
+                    $insertNewItemOut  = $insertdata->insertItem($POID, $newitem[0], $newitem[1], $newitem[2], $newitem[3], $newitem[4]);
                 }
             }
 

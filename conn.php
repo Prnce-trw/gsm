@@ -183,15 +183,14 @@
             $resultPOround = mysqli_fetch_array($countPO);
             $PORound = $resultPOround['POround']+1;
 
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_round = '$PORound', head_po_docdate = CURRENT_TIMESTAMP, head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_round = '$PORound', head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
-        public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus, $PODate)
+        public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus, $CarID, $DriverID)
         {
-            $Ex_PODate = explode('/', $PODate);
-            $Date = $Ex_PODate[2].'-'.$Ex_PODate[1].'-'.$Ex_PODate[0];
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, head_po_docdate, active_status) VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', '$Date', 'Y')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, head_po_docdate, head_po_carID, head_po_driverID, active_status) 
+                                                    VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', CURRENT_TIMESTAMP, '$CarID', '$DriverID', 'Y')");
             return $result;
         }
 
@@ -210,7 +209,7 @@
         public function editCylinderPO($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout 
-                                                    LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySize = items_gas_weightsize.weightSize_id 
+                                                    LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySizeWeightID = items_gas_weightsize.weight_NoID 
                                                     WHERE tb_po_itemout.po_itemOut_docNo = '$POID' 
                                                     ORDER BY po_itemOut_CyBrand ASC");
             return $result;
@@ -265,7 +264,7 @@
 
         public function aJaxCheckStock($brand, $weight, $amount, $branch)
         {
-            $itemsCode = "I00-01G-".$brand.$weight;
+            $itemsCode = "I00-02C-".$brand.$weight;
             $result = mysqli_query($this->dbcon, "SELECT qty_balance FROM items_inventory_branch WHERE itemsCode = '$itemsCode' AND branchID = '$branch' AND store_area = '00'");
             return $result;
         }
@@ -281,7 +280,7 @@
         
         public function fetchdataReport($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name, size.wightSize
+            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name, product.ms_product_id, size.wightSize
                                                     FROM tb_head_preorder as po
                                                     LEFT JOIN tb_po_itemout as itemout
                                                     ON po.head_po_docnumber = itemout.po_itemOut_docNo
@@ -290,10 +289,11 @@
                                                     LEFT JOIN tb_fillingplant as fp
                                                     ON po.head_po_fillstation = fp.FP_ID
                                                     LEFT JOIN items_gas_weightsize as size
-                                                    ON itemout.po_itemOut_CySize = size.wightSize
-                                                    WHERE po.head_po_docnumber = \"$POID\" AND po.active_status = \"Y\"
-                                                    ORDER BY size.order_by_no ASC, product.ms_product_orderby_no ASC");
+                                                    ON po_itemOut_CySizeWeightID = size.weight_NoID
+                                                    WHERE po.head_po_docnumber = '$POID' AND po.active_status = 'Y'
+                                                    ORDER BY FIELD(itemout.po_itemOut_Type, 'N', 'Adv'), size.order_by_no ASC, product.ms_product_orderby_no ASC");
             return $result;
+
         }
 
         public function fetchdataReportHeader($POID)
@@ -305,8 +305,8 @@
                                                     LEFT JOIN tb_fillingplant as fp
                                                     ON po.head_po_fillstation = fp.FP_ID
                                                     LEFT JOIN emp
-                                                    ON po.head_po_driverID = emp.emp_code
-                                                    WHERE po.head_po_docnumber = \"$POID\"
+                                                    ON po.head_po_driverID = emp.emp_id
+                                                    WHERE po.head_po_docnumber = '$POID'
                                                     LIMIT 1");
             return $result;
         }
@@ -463,9 +463,10 @@
             return $result;
         }
 
-        public function insertItem($DocumentNo, $brand, $size, $amount, $cytype)
+        public function insertItem($DocumentNo, $brand, $size, $amount, $cytype, $sizeID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itemout(po_itemOut_docNo, po_itemOut_CyBrand, po_itemOut_CySize, po_itemOut_CyAmount, po_itemOut_type) VALUES('$DocumentNo', '$brand', '$size', '$amount', '$cytype')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itemout(po_itemOut_docNo, po_itemOut_CyBrand, po_itemOut_CySize, po_itemOut_CySizeWeightID, po_itemOut_CyAmount, po_itemOut_type) 
+                                                    VALUES('$DocumentNo', '$brand', '$size', '$sizeID', '$amount', '$cytype')");
             return $result;
         }
 

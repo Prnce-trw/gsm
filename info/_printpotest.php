@@ -25,28 +25,6 @@ if (!$_GET['PO_ID']) {
             margin: 0px;
         }
     </style>
-    <!-- <script type="text/javascript">
-        function Process() {
-            var rows = document.getElementsByClassName("data");
-            var len = rows.length;
-            for (var x = 0; x < len; x++) {
-                var ctr = x + 1;
-                if (ctr % 22 == 0) {
-                    createPageBreak(x, rows[x]);
-                    console.log("Break =>", rows[x])
-                }
-            }
-
-            function createPageBreak(x, row) {
-                // row.setAttribute("STYLE", "page-break-after:always;");
-                row.css({
-                    "page-break-after": "always",
-                    "-webkit-column-break-after": "always",
-                    "-webkit-region-break-after": "always",
-                });
-            }
-        }
-    </script> -->
 </head>
 <?php
 include_once("../conn.php");
@@ -54,13 +32,15 @@ $fetchdata = new DB_con();
 date_default_timezone_set("Asia/Bangkok");
 $dataBrandSize = $fetchdata->fetchdataReport($_GET['PO_ID']);
 $docHeader = $fetchdata->fetchdataReportHeader($_GET['PO_ID'])->fetch_assoc();
-$date = date_create($docHeader['head_po_docdate']);
+$timeStamp = strtotime($docHeader['head_po_docdate']);
+$date = date("d/m/Y", $timeStamp);
+$timeOut = date("H:i", $timeStamp);
 // $count = 0;
 $sizecount = 0;
 $weight = 0;
 ?>
 
-<body onload="Process();">
+<body>
     <table class="docpage">
         <!-- header -->
         <thead>
@@ -74,7 +54,7 @@ $weight = 0;
                             </td>
                         </tr>
                         <tr height="40px">
-                            <td colspan="2" style="text-align: left;"><strong>เติมแก๊ส ประจำวันที่</strong> <?= date_format($date, "d/m/Y") ?></td>
+                            <td colspan="2" style="text-align: left;"><strong>เติมแก๊ส ประจำวันที่</strong> <?= $date ?></td>
                             <td style="text-align: right;"><strong>รอบที่</strong>
                                 <?php if (!$docHeader['head_po_round']) {
                                     echo "ไม่ระบุ";
@@ -85,17 +65,17 @@ $weight = 0;
                         </tr>
                         <tr height="40px">
                             <td style="text-align: left;"><strong>เวลาออก</strong>
+                                <?php if (!$timeOut) {
+                                    echo "ไม่ระบุ";
+                                } else {
+                                    echo "$timeOut";
+                                } ?>
+                            </td>
+                            <td style="text-align: left;"><strong>เวลาเข้า</strong>
                                 <?php if (!$docHeader['head_pr_timeIn']) {
                                     echo "ไม่ระบุ";
                                 } else {
                                     echo "$docHeader[head_pr_timeIn]";
-                                } ?>
-                            </td>
-                            <td style="text-align: left;"><strong>เวลาเข้า</strong>
-                                <?php if (!$docHeader['head_pr_timeOut']) {
-                                    echo "ไม่ระบุ";
-                                } else {
-                                    echo "$docHeader[head_pr_timeOut]";
                                 } ?>
                             </td>
                             <td style="text-align: right;"><strong>โรงบรรจุ</strong>
@@ -119,18 +99,20 @@ $weight = 0;
                         <thead>
                             <tr style="border: 1px solid black;">
                                 <th width="8%">ลำดับที่</th>
-                                <th width="39%">ยี่ห้อ</th>
-                                <th width="10%">ประเภทถัง</th>
-                                <th width="10%">ขนาด</th>
-                                <th width="6.5%">จำนวน</th>
-                                <th colspan="2" width="10%">น้ำหนักทั้งหมด</th>
+                                <th width="13%">รหัสสินค้า</th>
+                                <th width="35%">ยี่ห้อ</th>
+                                <th width="13%">ประเภทถัง</th>
+                                <!-- <th width="10%">ขนาด</th> -->
+                                <th width="13%">จำนวน (ถัง)</th>
+                                <th colspan="2" width="18%">น้ำหนักทั้งหมด (kg)</th>
                             </tr>
                         </thead>
                         <tbody style="border-bottom: 1px solid black;">
                             <?php foreach ($dataBrandSize as $key => $value) { ?>
                                 <tr class="data" style="border-bottom: 0;" id="row_<?= $key + 1 ?>">
                                     <td><?= $key + 1 ?></td>
-                                    <td style="text-align: left; padding-left: 10px;"><?= $value['ms_product_name'] ?></td>
+                                    <td style="text-align: left; padding-left: 10px;"><?= $value['ms_product_id'] ?></td>
+                                    <td style="text-align: left; padding-left: 10px;"><?= $value['ms_product_name'] ?> <?= $value['po_itemOut_CySize'] ?> kg</td>
                                     <td>
                                         <?php
                                         if ($value['po_itemOut_type'] == 'N') {
@@ -140,9 +122,8 @@ $weight = 0;
                                         }
                                         ?>
                                     </td>
-                                    <td style="text-align: right; padding-right: 10px;"><?= $value['po_itemOut_CySize'] ?> กก.</td>
-                                    <td style="text-align: right; padding-right: 10px;"><?= $value['po_itemOut_CyAmount'] ?> ถัง</td>
-                                    <td colspan="2" style="text-align: right; padding-right: 10px;"><?= $value['wightSize'] * $value['po_itemOut_CyAmount'] ?> กก.</td>
+                                    <td style="text-align: right; padding-right: 10px;"><?= $value['po_itemOut_CyAmount'] ?></td>
+                                    <td colspan="2" style="text-align: right; padding-right: 10px;"><?= $value['wightSize'] * $value['po_itemOut_CyAmount'] ?></td>
                                 </tr>
                             <?php
                                 // if ((($key + 1) % 22) == 0) {
@@ -152,39 +133,38 @@ $weight = 0;
                                 $sizecount += $value['po_itemOut_CyAmount'];
                                 // $count++;
                             } ?>
-                            <tr style="border-top: 1px solid black; border-right: 1px solid black;">
+                            <tr style="border-top: 1px solid black; border-right: 1px solid black; line-height: 18pt;">
                                 <th colspan="3" rowspan="2" style="text-align: left; vertical-align: top; border-left: 1px solid black; 
-                                border-bottom: 1px solid black; padding-left: 5px;">
+                                border-bottom: 1px solid black; padding-left: 5px; height: 70px;">
                                     หมายเหตุ :
                                 </th>
-                                <th colspan="2" style="text-align: right; padding-right: 10px; border: 1px solid black; border-bottom: none; text-align: right;">
+                                <th colspan="2" style="text-align: right; padding-right: 10px; border: 1px solid black; text-align: right; vertical-align: bottom;">
                                     รายการทั้งหมด
-                                </th>
-                                <th style="text-align: right;"><?= $sizecount ?></th>
-                                <th style="text-align: left; padding-left: 5px;" width="1%">ถัง</th>
-                            </tr>
-                            <tr style="border-top: none; border-right: 1px solid black; text-align: right; padding-top: 10px">
-                                <th colspan="2" style="padding-right: 10px; border-left: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black;">
+                                    <br>
                                     น้ำหนักทั้งหมด
                                 </th>
-                                <th style="text-align: right; border-bottom: 1px solid black;"><?= $weight ?></th>
-                                <th style="text-align: left; padding-left: 5px; border-bottom: 1px solid black;" width="2%">กก.</th>
+                                <th style="text-align: right; vertical-align: bottom; border-bottom: 1px solid black"><?= $sizecount ?><br><?= $weight ?></th>
+                                <th style="text-align: left; border-right: 1px solid black; padding-left: 5px; vertical-align: bottom; border-bottom: 1px solid black" width="1%">ถัง<br>กก.</th>
                             </tr>
+                            <!-- <tr style="border-top: none; border-right: 1px solid black; text-align: right; padding-top: 10px">
+                                <th colspan="2" style="padding-right: 10px; border-left: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black;">
+                                    
+                                </th>
+                                <th style="text-align: right; border-bottom: 1px solid black;"><?= $weight ?></th>
+                                <th style="text-align: left; border-right: 1px solid black; padding-left: 5px; border-bottom: 1px solid black;" width="2%">กก.</th>
+                            </tr> -->
                         </tbody>
-                        <tfoot>
+                        <!-- <tfoot>
                             <tr style="line-height: 1px;">
                                 <td colspan="7" style="border-top: 1px;">&nbsp;</td>
                             </tr>
-                        </tfoot>
+                        </tfoot> -->
                     </table>
                     <!-- body -->
                 </td>
             </tr>
-        </tbody>
-        <tfoot>
             <tr>
                 <td>
-                    <!-- footer -->
                     <table>
                         <tr>
                             <td>
@@ -241,16 +221,83 @@ $weight = 0;
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" style="text-align: right;"><strong>Update <?= strftime("%e/%m/%Y %H:%M"); ?> ครั้งที่ 1/2022</strong></td>
+                                    <td colspan="3" style="text-align: right;"><strong>Update <?= date("d/m/Y H:i"); ?> ครั้งที่ 1/<?= date("Y"); ?></strong></td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                     </table>
-                    <!-- footer -->
                 </td>
             </tr>
-        </tfoot>
+        </tbody>
+        <!-- <tfoot>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <table class="moreinfo" style="text-align: left; padding-bottom: 10px;">
+                                    <tr>
+                                        <td colspan="2"><strong>หมายเหตุ</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="250px">ฝากเติม</td>
+                                        <td>.........................................................................................................................................</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="">ถังส่งซ่อม (ขนาด/จำนวนถัง)</td>
+                                        <td>.........................................................................................................................................</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="">รับถังซ่อมกลับ (ขนาด/จำนวนถัง)</td>
+                                        <td>.........................................................................................................................................</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="">รับถังซ่อมกลับจากการซ่อมวันที่</td>
+                                        <td>.........................................................................................................................................</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="signature">
+                                    <tr style="border: 1px solid black;">
+                                        <th width="33.33%" style="border-right: 1px solid black;">ผู้ขับ</th>
+                                        <th width="33.33%" style="border-right: 1px solid black;">ผู้ตรวจนับถังออก</th>
+                                        <th width="33.33%">ผู้ตรวจนับถังเข้า
+                                    <tr style="border: 1px solid black; height: 150px; vertical-align: bottom;">
+                                        <td style="border-right: 1px solid black; padding-bottom: 10px;">
+                                            .................................................<br><br>
+                                            <?php
+                                            // if (!$docHeader['emp_name'] && !$docHeader['emp_lastname']) {
+                                            //     echo "(.................................................)";
+                                            // } else {
+                                            //     echo "($docHeader[emp_name] $docHeader[emp_lastname])";
+                                            // }
+                                            ?>
+                                        </td>
+                                        <td style="border-right: 1px solid black; padding-bottom: 10px;">
+                                            .................................................
+                                            <br><br>
+                                            (.................................................)
+                                        </td>
+                                        <td style="padding-bottom: 10px;">
+                                            .................................................
+                                            <br><br>
+                                            (.................................................)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="text-align: right;"><strong>Update  ครั้งที่ 1/2022</strong></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tfoot> -->
     </table>
 
     <script src="../js/jquery-3.6.0.min.js"></script>
@@ -261,23 +308,6 @@ $weight = 0;
             //     window.print();
             //     window.onafterprint = window.close();
             // }, 200);
-
-            // var row = 0, max = 22, 
-            // pageBreak = '<tr class="page-break"><td style="border-top: 1px solid black; height: 1px;" colspan="7">&nbsp;</td></tr>',
-            // pb = '<tr><td style="border: none; height: 1px;" colspan="7">&nbsp;</td></tr>';
-            // $('.data').filter(':visible').each(function() {
-            //     row++;
-            //     console.log(row);
-
-            //     if (row >= max) {
-            //         for(var i = 0; i < 50; i++) {
-            //             $(this).after(pb);
-            //         }
-            //         $(this).after(pageBreak);
-            //         // $(this).css({"page-break-after": "always",});
-            //         row = 0;
-            //     }
-            // });
         });
     </script>
 </body>
