@@ -30,6 +30,10 @@
         .modal-dialog {
             max-width: 1000px !important;
         }
+
+        .table td, .table th {
+            padding: 0.50rem;
+        }
     </style>
 </head>
 <body>
@@ -111,11 +115,7 @@
                 <div class="col-sm-4 text-left">
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
                 </div>
-                <div class="col-sm-5 text-right">
-                    <input type="text" name="" id="assetID" class="form-control" placeholder="ค้นหารหัสอุปกรณ์..." min="0">
-                </div>
-                <div class="col-sm-3 text-right">
-                    <button class="btn btn-primary" id="btnassets" type="button">ค้นหาอุปกรณ์</button>
+                <div class="col-sm-8 text-right">
                     <button type="button" class="btn btn-warning" title="Reset" id="btnreload"><i class="icofont icofont-refresh"></i></button>
                 </div>
             </div>
@@ -131,36 +131,19 @@
                         <th scope="col">กระจาย</th>
                     </tr>
                 </thead>
-                <tbody id="assetsRow">
-                    <?php foreach ($dataItems as $key => $value) { ?>
-                    <tr>
-                        <td class="text-center text-middle">
-                            <input type="checkbox" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
-                        </td>
-                        <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
-                        <td class="text-middle"><?=$value['itemsName']?></td>
-                        <td class="text-center text-middle">
-                            <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                        </td>
-                        <td class="text-center text-middle">
-                            <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                        </td>
-                        <td class="text-center text-middle">
-                            <input type="number" name="amountitem" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                        </td>
-                        <td class="text-center text-middle">
-                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
-                                onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
+                <tbody id="assetsRow"></tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="5" class="text-right">รวม</th>
-                        <th></th>
-                        <th></th>
+                        <th colspan="3" class="text-right">รวม</th>
+                        <th class="text-right">
+                            <div id="total_qty"></div>
+                        </th>
+                        <th class="text-right">
+                            <div id="total_up"></div>
+                        </th>
+                        <th class="text-right">
+                            <div id="total_amount"></div>
+                        </th>
                     </tr>
                 </tfoot>
             </table>
@@ -237,8 +220,11 @@
                             <input type="text" class="form-control" id="resultitemname" placeholder="รหัสอุปกรณ์..." readonly>
                         </div>
                         <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
                             <input type="text" class="form-control" id="resultitemamount" placeholder="จำนวนทั้งหมด..." value="" readonly>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="resultitemup" placeholder="Unit Price..." value="" readonly>
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cylinderstore">เลือกสาขา</button>
@@ -314,65 +300,51 @@
     </div>
 
     <!-- modal เลือกอุปกรณ์ -->
-    <!-- <div class="modal fade" id="selectasset" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="selectassetLabel" aria-hidden="true">
+     <div class="modal fade" id="selectasset" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="selectassetLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="selectassetLabel">จำนวนคงเหลือ</h5>
+                    <h5 class="modal-title" id="selectassetLabel">เลือกอุปกรณ์</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"> 
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="assetid" placeholder="ค้นหารหัสอุปกรณ์...">
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-primary" id="btnassets">ค้นหา</button>
+                        </div>
+                    </div>
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr class="text-center">
                                 <th scope="col">#</th>
                                 <th scope="col">รหัสอุปกรณ์</th>
                                 <th scope="col">ชื่ออุปกรณ์</th>
-                                <th scope="col">จำนวน</th>
-                                <th scope="col">ราคาต่อหน่วย</th>
-                                <th scope="col">ราคา</th>
-                                <th scope="col">กระจาย</th>
                             </tr>
                         </thead>
-                        <tbody id="assetsRow">
-                        <?php foreach ($dataItems as $key => $value) { ?>
-                            <tr>
-                                <td class="text-center text-middle">
-                                    <input type="checkbox" name="selectItem" id="<?=$value['n_id']?>" class="radioItem" style="width: 20px; height: 20px;" value="<?=$value['n_id']?>">
-                                </td>
-                                <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
-                                <td class="text-middle"><?=$value['itemsName']?></td>
-                                <td class="text-center text-middle">
-                                    <input type="number" name="qty" id="qty_<?=$value['n_id']?>" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                                </td>
-                                <td class="text-center text-middle">
-                                    <input type="number" name="unitprice" id="unitprice_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                                </td>
-                                <td class="text-center text-middle">
-                                    <input type="number" name="amountitem" id="amount_<?=$value['n_id']?>" style="width: 110px;" class="form-control text-center" style="width: 80px;" min="0" disabled>
-                                </td>
-                                <td class="text-center text-middle">
-                                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_<?=$value['n_id']?>" 
-                                        onclick="distributeItem(<?=$value['n_id']?>)" disabled><i class="icofont icofont-rounded-double-right"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php } ?>
+                        <tbody id="ItemListRow">
+                            <?php foreach ($dataItems as $key => $value) { ?>
+                                <tr>
+                                    <td class="text-center text-middle">
+                                        <input type="checkbox" name="selectItem" class="selectitemacc" 
+                                        style="width: 20px; height: 20px;" value="<?=$value['n_id']?>" id="inputcheck_<?=$value['n_id']?>"
+                                        data-itemname="<?=$value['itemsName']?>" data-itemcode="<?=$value['itemsCode']?>">
+                                    </td>
+                                    <td class="text-middle"><span id="itemcode_<?=$value['n_id']?>"><?=$value['itemsCode']?></span></td>
+                                    <td class="text-middle"><?=$value['itemsName']?></td>
+                                </tr>
+                                <?php } ?>
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="5" class="text-right">รวม</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div> 
 
     <!-- Required Jqurey -->
     <script src="../files/bower_components/jquery/js/jquery.min.js"></script>

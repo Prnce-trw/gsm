@@ -34,11 +34,12 @@ $(document).on('click', '#vat', function (e) {
 $(document).on('click', '.selectBranch', function () {
     var branchID = $(this).val();
     var BranchName = $(this).data('branchname');
+    var unitprice = $('#resultitemup').val();
     if (this.checked) {
         $('#branchSelected').before('<tr id="trBranch'+branchID+'" class="trBranch">'+
             '<td class="text-middle">'+BranchName+'</td>'+
-            '<td class="text-middle"><input type="number" class="form-control text-center DisItemAmount" min="0"></td>'+
-            '<td class="text-middle"><input type="number" class="form-control text-center" min="0"></td>'+
+            '<td class="text-middle"><input type="number" class="form-control text-center DisItemAmount" data-info="'+branchID+'" min="0"></td>'+
+            '<td class="text-middle"><input type="number" class="form-control text-center" data-info="'+branchID+'" value="'+unitprice+'" min="0"></td>'+
             '<td class="text-middle"><input type="number" class="form-control text-center" min="0"></td>'+
             '</tr>'
         );
@@ -63,30 +64,31 @@ $(document).on('click', '.radioItem', function () {
     }
 });
 
-$(document).on('input', '.ItemAmount', function () {
-    var currAmount = $(this).val();
-    var InvAmount = $('#amount').val();
-    if (parseInt(currAmount) > parseInt(InvAmount)) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'จำนวนที่ต้องการกระจาย มีจำนวนมากกว่าจำนวนจริง!',
-        });
-        $(this).val(0);
-    } else if (InvAmount == 0 || InvAmount == null) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'กรุณากรอกจำนวนทั้งหมดก่อน!',
-        });
-        $(this).val(0);
-    }
-});
+// $(document).on('input', '.ItemAmount', function () {
+//     var currAmount = $(this).val();
+//     var InvAmount = $('#amount').val();
+//     if (parseInt(currAmount) > parseInt(InvAmount)) {
+//         Swal.fire({
+//             icon: 'warning',
+//             title: 'จำนวนที่ต้องการกระจาย มีจำนวนมากกว่าจำนวนจริง!',
+//         });
+//         $(this).val(0);
+//     } else if (InvAmount == 0 || InvAmount == null) {
+//         Swal.fire({
+//             icon: 'warning',
+//             title: 'กรุณากรอกจำนวนทั้งหมดก่อน!',
+//         });
+//         $(this).val(0);
+//     }
+// });
 
 function distributeItem (n_id) {
     var amount = $('#qty_'+n_id).val();
     var itemcode = $('#itemcode_'+n_id).text();
+    var unitprice = $('#unitprice_'+n_id).val();
     $('#resultitemamount').val(amount);
     $('#resultitemname').val(itemcode);
-    
+    $('#resultitemup').val(unitprice);
 }
 
 function disCloseModal() {
@@ -117,7 +119,7 @@ $(document).on('click', '.btnsubmit', function () {
 });
 
 $('#btnassets').click(function () {
-    var assetID = $('#assetID').val();
+    var assetID = $('#assetid').val();
     if (assetID) {
         $.ajax({
             type: "POST",
@@ -125,18 +127,19 @@ $('#btnassets').click(function () {
             data: {parameter: "SearchAssets", assetID: assetID},
             dataType: "JSON",
             success: function (response) {
-                $('#assetsRow').empty();
-                $('#assetsRow').append('<tr>'+
-                    '<td class="text-center text-middle"><input type="checkbox" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
-                    '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
-                    '<td class="text-middle">'+response['itemsName']+'</td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="unitprice" id="unitprice_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" name="amountitem" id="amount_'+response['n_id']+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
-                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
-                '</tr>'
-            );
+                $('#ItemListRow').empty();
+                // console.log(response);
+                if (response.length > 0) {
+                    for (let index = 0; index < response.length; index++) {
+                        $('#ItemListRow').append('<tr>'+
+                            '<td class="text-center text-middle"><input type="checkbox" name="selectitem" class="selectitemacc"'+
+                            'style="width: 20px; height: 20px;" value="'+response[index]['n_id']+'" id="inputcheck_'+response[index]['n_id']+'" data-itemname="'+response[index]['itemsName']+'" data-itemcode="'+response[index]['itemsCode']+'"></td>'+
+                            '<td class="text-middle"><span id="itemcode_'+response[index]['n_id']+'">'+response[index]['itemsCode']+'</span></td>'+
+                            '<td class="text-middle">'+response[index]['itemsName']+'</td>'+
+                        '</tr>'
+                        );
+                    }
+                }
             }
         });
     } else {
@@ -192,4 +195,65 @@ function selectHeadDis(dis_id) {
 
 $('#btnreload').click(function () {
     location.reload();
-})
+});
+
+$(document).on('click', '.selectitemacc', function () {
+    var itemID = $(this).val();
+    var itemname = $(this).data('itemname');
+    var itemcode = $(this).data('itemcode');
+    var curritem = $('#selectitemAcc_'+itemID).val();
+    if (curritem == null) {
+        $('#assetsRow').append('<tr id="itemAccRows_'+itemID+'">'+
+        '<td class="text-center text-middle"><button type="button" onclick="delitemAcc('+itemID+')" class="btn btn-danger btn-sm"><i class="icofont icofont-trash"></i></button></td>'+
+        '<td class="text-middle"><span id="itemcode_'+itemID+'">'+itemcode+'</span><input type="hidden" id="selectitemAcc_'+itemID+'" value="'+itemID+'"></td>'+
+        '<td class="text-middle">'+itemname+'</td>'+
+        '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+itemID+'" value="" data-info="'+itemID+'" class="form-control text-center itemqty" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+itemID+'" data-info="'+itemID+'" class="form-control text-center itemup" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+itemID+'" class="form-control text-center itemamount" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+itemID+'"'+
+        'onclick="distributeItem('+itemID+')" data-itemcode="'+itemcode+'"><i class="icofont icofont-rounded-double-right"></i></button>'+
+        '</tr>'
+        );
+    } else {
+        $('#itemAccRows_'+itemID).remove();
+    }
+    
+});
+
+function delitemAcc(id) {
+    $('#itemAccRows_'+id).remove();
+    $('#inputcheck_'+id).prop('checked', false);
+}
+
+$(document).on('input', '.itemqty', function () {
+    var item_info = $(this).data('info');
+    var itemqty = $('#unitprice_'+item_info).val();
+    var currqty = $(this).val();
+    var sum = 0;
+    $('.itemqty').each(function() {
+        if(isNaN($(this).val()) || $(this).val() === "") {
+            sum+=0;
+        } else {
+            sum+=parseFloat($(this).val());
+        }
+    });
+    $("#total_qty").text(sum);
+    $("#amount_"+item_info).val(parseFloat(currqty) * parseFloat(itemqty));
+});
+
+$(document).on('input', '.itemup', function () {
+    var item_info = $(this).data('info');
+    var itemqty = $('#qty_'+item_info).val();
+    var currup = $(this).val();
+    var sum = 0;
+    $('.itemup').each(function() {
+        if(isNaN($(this).val()) || $(this).val() === "") {
+            sum+=0;
+        } else {
+            sum+=parseFloat($(this).val());
+        }
+    });
+    // console.log(parseFloat(itemqty) * parseFloat(sum));
+    $("#total_up").text(sum);
+    $("#amount_"+item_info).val(parseFloat(itemqty) * parseFloat(currup));
+});

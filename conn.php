@@ -353,8 +353,14 @@
 
         public function searchAssets($assetID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT n_id, itemsCode, itemsName FROM items WHERE itemsCode LIKE '%$assetID%' AND itemsType = '03A'");
-            return $result;
+            $result = mysqli_query($this->dbcon, "SELECT n_id, itemsCode, itemsName FROM items WHERE itemsCode LIKE '%$assetID%' AND itemsType = '03A' LIMIT 20");
+            // foreach (mysqli_fetch_array($result) as $key => $value) {
+            //     $data[] = $value;
+            // }
+            while ($row = mysqli_fetch_array($result)) {
+                $data[] = $row;
+            }
+            return $data;
         }
 
         public function RunningDisID()
