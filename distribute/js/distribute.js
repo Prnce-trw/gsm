@@ -1,10 +1,13 @@
 $(document).ready(function () {
-    $(document).on('input', '.DisItemAmount', function () {
-        var resultitemamount = $('#resultitemamount').val();
-        var currtotal = $('.totalItem').text();
-        // console.log(parseFloat(currtotal) > resultitemamount);
+    $(document).on('input', '.DisItemQty', function () {
+        var qty = $(this).val();
+        var branchid = $(this).data('info');
+        var branch_up = $('#brandchup_'+branchid).val();
+        var result = qty * branch_up;
+        $('#branchamount_'+branchid).val(result);
+
         var sum = 0;
-        $('.DisItemAmount').each(function() {
+        $('.DisItemQty').each(function() {
             if(isNaN($(this).val()) || $(this).val() === "") {
                 sum+=0;
             } else {
@@ -12,6 +15,7 @@ $(document).ready(function () {
             }
         });
         $(".totalItem").text(sum);
+        $(".totalItem").val(sum);
     });
 });
 
@@ -31,6 +35,7 @@ $(document).on('click', '#vat', function (e) {
     }
 });
 
+var num = 0;
 $(document).on('click', '.selectBranch', function () {
     var branchID = $(this).val();
     var BranchName = $(this).data('branchname');
@@ -38,11 +43,12 @@ $(document).on('click', '.selectBranch', function () {
     if (this.checked) {
         $('#branchSelected').before('<tr id="trBranch'+branchID+'" class="trBranch">'+
             '<td class="text-middle">'+BranchName+'</td>'+
-            '<td class="text-middle"><input type="number" class="form-control text-center DisItemAmount" data-info="'+branchID+'" min="0"></td>'+
-            '<td class="text-middle"><input type="number" class="form-control text-center" data-info="'+branchID+'" value="'+unitprice+'" min="0"></td>'+
-            '<td class="text-middle"><input type="number" class="form-control text-center" min="0"></td>'+
+            '<td class="text-middle"><input type="number" name="disitemqty['+num+']" class="form-control text-center DisItemQty" data-info="'+branchID+'" id="branchqty_'+branchID+'" min="0"></td>'+
+            '<td class="text-middle"><input type="number" name="disitemunitprice['+num+']" class="form-control text-center DisitemUP" data-info="'+branchID+'" id="brandchup_'+branchID+'" value="'+unitprice+'" min="0"></td>'+
+            '<td class="text-middle"><input type="number" name="disitemamount['+num+']" class="form-control text-center" id="branchamount_'+branchID+'" min="0"></td>'+
             '</tr>'
         );
+        num++;
     } else {
         $('#trBranch'+branchID).remove();
     }
@@ -86,6 +92,7 @@ function distributeItem (n_id) {
     var amount = $('#qty_'+n_id).val();
     var itemcode = $('#itemcode_'+n_id).text();
     var unitprice = $('#unitprice_'+n_id).val();
+    $('#itemid').val(n_id);
     $('#resultitemamount').val(amount);
     $('#resultitemname').val(itemcode);
     $('#resultitemup').val(unitprice);
@@ -178,15 +185,16 @@ function selectHeadDis(dis_id) {
             $('#totalPrice').val(response['dis_totalPrice']);
             $('#assetsRow').empty();
             $('#assetID').val(response['itemsCode']);
+            $('#headdocid').val(response['dis_docNo']);
             $('#assetsRow').append('<tr>'+
                     '<td class="text-center text-middle"><input type="checkbox" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
                     '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
                     '<td class="text-middle">'+response['itemsName']+'</td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" disabled></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
+                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
                     '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
-                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" disabled><i class="icofont icofont-rounded-double-right"></i></button>'+
+                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" ><i class="icofont icofont-rounded-double-right"></i></button>'+
                 '</tr>'
             );
         }
@@ -197,6 +205,7 @@ $('#btnreload').click(function () {
     location.reload();
 });
 
+var index = 0;
 $(document).on('click', '.selectitemacc', function () {
     var itemID = $(this).val();
     var itemname = $(this).data('itemname');
@@ -205,19 +214,18 @@ $(document).on('click', '.selectitemacc', function () {
     if (curritem == null) {
         $('#assetsRow').append('<tr id="itemAccRows_'+itemID+'">'+
         '<td class="text-center text-middle"><button type="button" onclick="delitemAcc('+itemID+')" class="btn btn-danger btn-sm"><i class="icofont icofont-trash"></i></button></td>'+
-        '<td class="text-middle"><span id="itemcode_'+itemID+'">'+itemcode+'</span><input type="hidden" id="selectitemAcc_'+itemID+'" value="'+itemID+'"></td>'+
+        '<td class="text-middle"><span id="itemcode_'+itemID+'">'+itemcode+'</span><input type="hidden" name="selectItem['+index+']" id="selectitemAcc_'+itemID+'" value="'+itemID+'"></td>'+
         '<td class="text-middle">'+itemname+'</td>'+
-        '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+itemID+'" value="" data-info="'+itemID+'" class="form-control text-center itemqty" style="width: 80px;" min="0"></td>'+
-        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+itemID+'" data-info="'+itemID+'" class="form-control text-center itemup" style="width: 80px;" min="0"></td>'+
-        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+itemID+'" class="form-control text-center itemamount" style="width: 80px;" min="0"></td>'+
-        '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+itemID+'"'+
-        'onclick="distributeItem('+itemID+')" data-itemcode="'+itemcode+'"><i class="icofont icofont-rounded-double-right"></i></button>'+
+        '<td class="text-center text-middle"><input type="number" name="qty['+index+']" id="qty_'+itemID+'" value="" data-info="'+itemID+'" class="form-control text-center itemqty" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice['+index+']" id="unitprice_'+itemID+'" data-info="'+itemID+'" class="form-control text-center itemup" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="totalitemprice['+index+']" id="amount_'+itemID+'" class="form-control text-center itemamount" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"></td>'+
         '</tr>'
         );
+        index++;
     } else {
         $('#itemAccRows_'+itemID).remove();
     }
-    
 });
 
 function delitemAcc(id) {
@@ -257,3 +265,16 @@ $(document).on('input', '.itemup', function () {
     $("#total_up").text(sum);
     $("#amount_"+item_info).val(parseFloat(itemqty) * parseFloat(currup));
 });
+
+$(document).on('input', '.DisitemUP', function () {
+    var currup = $(this).val();
+    var branchid = $(this).data('info');
+    var currqty = $('#branchqty_'+branchid).val();
+    var sum = currup * currqty;
+    $('#branchamount_'+branchid).val(sum);
+});
+
+function FormAccDistribute() {
+    var totalItem = $('#totalItem').val();
+    var currqty = $('#resultitemamount').val();
+}

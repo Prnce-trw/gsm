@@ -45,7 +45,7 @@
         $dataOutstand   = $fetchdata->fetchdataOutstand();
     ?>
     <section>
-        <form action="../controller/DistributeController.php" method="POST" id="Distribute">
+        <form action="../controller/DistributeController.php" method="POST" id="distributeheadanddetail">
             <input type="hidden" value="Distribute" name="parameter">
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">เลขที่เอกสาร</label>
@@ -149,7 +149,7 @@
             </table>
             <div class="form-group row">
                 <div class="col-sm-12 text-right">
-                    <button type="button" class="btn btn-success" form="Distribute" onclick="btnsubmitDis()">บันทึก</button>
+                    <button type="submit" class="btn btn-success" form="distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
                 </div>
             </div>
         </form>
@@ -214,46 +214,51 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">รหัสอุปกรณ์</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="resultitemname" placeholder="รหัสอุปกรณ์..." readonly>
+                    <form action="../controller/DistributeController.php" method="post" id="FormAccDistribute">
+                        <input type="hidden" name="parameter" value="AccDistribute">
+                        <input type="hidden" name="itemid" id="itemid">
+                        <input type="hidden" name="headdocid" id="headdocid">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">รหัสอุปกรณ์</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="resultitemname" placeholder="รหัสอุปกรณ์..." readonly>
+                            </div>
+                            <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="resultitemamount" placeholder="จำนวนทั้งหมด..." value="" readonly>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="resultitemup" placeholder="Unit Price..." value="" readonly>
+                            </div>
                         </div>
-                        <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control" id="resultitemamount" placeholder="จำนวนทั้งหมด..." value="" readonly>
-                        </div>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control" id="resultitemup" placeholder="Unit Price..." value="" readonly>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cylinderstore">เลือกสาขา</button>
-                    <table class="table table-hover table-bordered mt-3">
-                        <thead>
-                            <tr>
-                                <th class="text-center">ชื่อสาขา</th>
-                                <th class="text-center" width="150px">จำนวน</th>
-                                <th class="text-center" width="150px">ราคาต่อหน่วย</th>
-                                <th class="text-center" width="150px">จำนวนเงิน</th>
-                            </tr>
-                        </thead>
-                        <tbody id="branchSelected"></tbody>
-                        <tfoot>
-                            <tr>
-                                <th class="text-right">จำนวนรวม</th>
-                                <th class="text-right"><span class="totalItem"></span></th>
-                                <th colspan="2"></th>
-                            </tr>
-                            <tr>
-                                <th class="text-right">จำนวนเงินรวม</th>
-                                <th class="text-right"></th>
-                                <th colspan="2">บาท</th>
-                            </tr>
-                        </tfoot>
-                    </table>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cylinderstore">เลือกสาขา</button>
+                        <table class="table table-hover table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ชื่อสาขา</th>
+                                    <th class="text-center" width="150px">จำนวน</th>
+                                    <th class="text-center" width="150px">ราคาต่อหน่วย</th>
+                                    <th class="text-center" width="150px">จำนวนเงิน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="branchSelected"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="text-right">จำนวนรวม</th>
+                                    <th class="text-right"><span class="totalItem"></span><input type="text" name="totalItem" class="totalItem"></th>
+                                    <th colspan="2"></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-right">จำนวนเงินรวม</th>
+                                    <th class="text-right"></th>
+                                    <th colspan="2">บาท</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success btnsubmit">บันทึก</button>
+                    <button type="submit" class="btn btn-success btnsubmit" form="FormAccDistribute" onclick="FormAccDistribute()">บันทึก</button>
                 </div>
             </div>
         </div>
@@ -300,7 +305,7 @@
     </div>
 
     <!-- modal เลือกอุปกรณ์ -->
-     <div class="modal fade" id="selectasset" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="selectassetLabel" aria-hidden="true">
+    <div class="modal fade" id="selectasset" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="selectassetLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -331,7 +336,7 @@
                             <?php foreach ($dataItems as $key => $value) { ?>
                                 <tr>
                                     <td class="text-center text-middle">
-                                        <input type="checkbox" name="selectItem" class="selectitemacc" 
+                                        <input type="checkbox" class="selectitemacc" 
                                         style="width: 20px; height: 20px;" value="<?=$value['n_id']?>" id="inputcheck_<?=$value['n_id']?>"
                                         data-itemname="<?=$value['itemsName']?>" data-itemcode="<?=$value['itemsCode']?>">
                                     </td>

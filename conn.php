@@ -380,6 +380,9 @@
 
         public function insertDisOut($DisID, $itemID, $unitprice, $totalitemprice, $qty)
         {
+            $detail = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_detail (disdet_HdisID, disdet_itemID, disdet_unitPrice, disdet_amount, disdet_qty) 
+                                                    VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
+
             $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, disout_amount, disout_qty) 
                                                     VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
             return $result;
@@ -415,6 +418,12 @@
             return $result;
         }
 
+        public function DistributetoBranch($headdocid, $itemID, $qty, $unitprice, $amount)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_branch(accbranch_HdisID, accbranch_itemID, accbranch_unitPrice, accbranch_amount, accbranch_qty) 
+                                                    VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty')");
+            return $result;
+        }
 
 
 
