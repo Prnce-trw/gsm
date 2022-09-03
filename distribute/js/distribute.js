@@ -21,19 +21,33 @@ $(document).ready(function () {
 
 $(document).on('click', '#vat', function (e) { 
     var price = $('#price').val();
+    var vat_percentage = $('#vat_percentage').val();
     if (this.checked) {
         $('#input_vat').attr("readonly", false);
-        var calVat = price * 7 / 100;
+        $('#vat_percentage').attr("disabled", false);
+        var calVat = price * vat_percentage / 100;
         var vatdec = parseFloat(calVat).toFixed(2);
         var result = parseFloat(price) + parseFloat(vatdec);
         $('#input_vat').val(vatdec);
         $('#totalPrice').val(parseFloat(result).toFixed(2));
     } else {
         $('#input_vat').attr("readonly", true);
+        $('#vat_percentage').attr("disabled", true);
         $('#input_vat').val(0);
         $('#totalPrice').val(price);
     }
 });
+
+$(document).on('change', '#vat_percentage', function () {
+    var vat_percentage = $(this).val();
+    var price = $('#price').val();
+
+    var calVat = price * vat_percentage / 100;
+    var vatdec = parseFloat(calVat).toFixed(2);
+    var result = parseFloat(price) + parseFloat(vatdec);
+    $('#input_vat').val(vatdec);
+    $('#totalPrice').val(parseFloat(result).toFixed(2));
+})
 
 var num = 0;
 $(document).on('click', '.selectBranch', function () {
@@ -42,7 +56,7 @@ $(document).on('click', '.selectBranch', function () {
     var unitprice = $('#resultitemup').val();
     if (this.checked) {
         $('#branchSelected').before('<tr id="trBranch'+branchID+'" class="trBranch">'+
-            '<td class="text-middle">'+BranchName+'</td>'+
+            '<td class="text-middle">'+BranchName+'<input type="hidden" name="disitembranchid['+num+']" value="'+branchID+'"></td>'+
             '<td class="text-middle"><input type="number" name="disitemqty['+num+']" class="form-control text-center DisItemQty" data-info="'+branchID+'" id="branchqty_'+branchID+'" min="0"></td>'+
             '<td class="text-middle"><input type="number" name="disitemunitprice['+num+']" class="form-control text-center DisitemUP" data-info="'+branchID+'" id="brandchup_'+branchID+'" value="'+unitprice+'" min="0"></td>'+
             '<td class="text-middle"><input type="number" name="disitemamount['+num+']" class="form-control text-center" id="branchamount_'+branchID+'" min="0"></td>'+
@@ -109,15 +123,58 @@ function disCloseModal() {
 }
 
 $(document).on('click', '.btnsubmit', function () {
-    var totalItem = $('.totalItem').text();
-    var itemAmount =$('#resultitemamount').val();
-    if (parseFloat(totalItem) > parseFloat(itemAmount)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'ไม่สามารถบันทึกได้!',
-            html: "จำนวนทั้งหมด <b class='text-danger'>น้อยกว่า</b> จำนวนรวม", 
-        })
-    } else if (itemAmount == "") {
+    var totalItem = $('.totalItem').val();
+    var itemAmount = $('#resultitemamount').val();
+    var countinput = 0;
+    $('.DisItemQty').each(function () {
+        if ($(this).val() == '' || $(this).val() == 0) {
+            countinput++;
+        }
+    });
+    if (countinput == 0) {
+        if (parseFloat(totalItem) > parseFloat(itemAmount)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่สามารถบันทึกได้!',
+                html: "จำนวนทั้งหมด <b class='text-danger'>น้อยกว่า</b> จำนวนรวม", 
+            });
+        } else if (itemAmount == null || totalItem == 0 || totalItem == null) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'กรอกจำนวนที่ต้องการกระจาย!',
+            });
+        } else if (parseFloat(totalItem) < parseFloat(itemAmount)) {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                html: "จำนวนรวม <b class='text-danger'>น้อยกว่า</b> จำนวนทั้งหมด อุปกรณ์ที่เหลือจะถูกบันทึกเป็น OutStanding", 
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#FormAccDistribute').submit();
+                }
+            });
+        } else if (parseFloat(totalItem) == parseFloat(itemAmount)) {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                title: 'ตรวจสอบความถูกต้องก่อนยืนยัน!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#FormAccDistribute').submit();
+                }
+            });
+        }
+    } else {
         Swal.fire({
             icon: 'warning',
             title: 'กรอกจำนวนที่ต้องการกระจาย!',
@@ -175,22 +232,31 @@ function selectHeadDis(dis_id) {
         success: function (response) {
             var rawdate = response['dis_date_received'].split("-");
             var date_received = rawdate[2]+'/'+rawdate[1]+'/'+rawdate[0];
-            console.log(response);
+            // console.log(response);
             $('#date_received').val(date_received);
             $('#refNo').val(response['dis_refNo']);
             $('#docNo').val(response['dis_docNo']);
-            $('#amount').val(response['dis_amount']);
+            // $('#amount').val(response['dis_amount']);
             $('#price').val(response['dis_price']);
             $('#input_vat').val(response['dis_vat']);
             $('#totalPrice').val(response['dis_totalPrice']);
             $('#assetsRow').empty();
             $('#assetID').val(response['itemsCode']);
             $('#headdocid').val(response['dis_docNo']);
+            if (response['dis_vat'] == 'Y') {
+                $('#vat').prop('checked', true);
+                $('#vat_percentage').val(7).change();
+            } else {
+                $('#vat').prop('checked', false);
+                $('#vat_percentage').val(0).change();
+            }
+            $('#btnselectacc').attr("disabled", true);
+            $('#btn_distributeheadanddetail').attr("disabled", true);
             $('#assetsRow').append('<tr>'+
-                    '<td class="text-center text-middle"><input type="checkbox" name="selectItem" id="'+response['n_id']+'" class="radioItem" style="width: 20px; height: 20px;" value="'+response['n_id']+'"></td>'+
+                    '<td class="text-center text-middle"></td>'+
                     '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
                     '<td class="text-middle">'+response['itemsName']+'</td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_qty']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
+                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_bal']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
                     '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
                     '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
                     '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
@@ -217,8 +283,8 @@ $(document).on('click', '.selectitemacc', function () {
         '<td class="text-middle"><span id="itemcode_'+itemID+'">'+itemcode+'</span><input type="hidden" name="selectItem['+index+']" id="selectitemAcc_'+itemID+'" value="'+itemID+'"></td>'+
         '<td class="text-middle">'+itemname+'</td>'+
         '<td class="text-center text-middle"><input type="number" name="qty['+index+']" id="qty_'+itemID+'" value="" data-info="'+itemID+'" class="form-control text-center itemqty" style="width: 80px;" min="0"></td>'+
-        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice['+index+']" id="unitprice_'+itemID+'" data-info="'+itemID+'" class="form-control text-center itemup" style="width: 80px;" min="0"></td>'+
-        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="totalitemprice['+index+']" id="amount_'+itemID+'" class="form-control text-center itemamount" style="width: 80px;" min="0"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice['+index+']" id="unitprice_'+itemID+'" data-info="'+itemID+'" class="form-control text-center itemup" style="width: 80px;" min="0" step="any"></td>'+
+        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="totalitemprice['+index+']" id="amount_'+itemID+'" class="form-control text-center itemamount" style="width: 80px;" min="0" step="any"></td>'+
         '<td class="text-center text-middle"></td>'+
         '</tr>'
         );
@@ -270,11 +336,6 @@ $(document).on('input', '.DisitemUP', function () {
     var currup = $(this).val();
     var branchid = $(this).data('info');
     var currqty = $('#branchqty_'+branchid).val();
-    var sum = currup * currqty;
-    $('#branchamount_'+branchid).val(sum);
+    var sum = parseFloat(currup) * parseFloat(currqty);
+    $('#branchamount_'+branchid).val(parseFloat(sum).toFixed(2));
 });
-
-function FormAccDistribute() {
-    var totalItem = $('#totalItem').val();
-    var currqty = $('#resultitemamount').val();
-}

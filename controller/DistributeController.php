@@ -12,10 +12,14 @@
             $supplier               = $_POST['supplier'];
             $rawdate                = $_POST['date_received'];
             $refNo                  = $_POST['refNo'];
-            $amount                 = $_POST['amountitem'];
+            // $amount                 = $_POST['amountitem'];
             $price                  = $_POST['price'];
-            $vatSelect              = $_POST['vatSelect'];
-            $vat                    = $_POST['vat'];
+            if ($_POST['vatSelect'] == null) {
+                $vatSelect          = 'N';
+            } else {
+                $vatSelect              = $_POST['vatSelect'];
+            }
+            $vat_percentage         = $_POST['vat_percentage'];
             $totalPrice             = $_POST['totalPrice'];
 
             $Exdate                 = explode('/', $rawdate);
@@ -23,7 +27,7 @@
             $fetchdata              = new DB_con();
 
             $DisID                  = $fetchdata->RunningDisID();
-            $HeadDis                = $fetchdata->insertHeadDis($DisID, $supplier, $date_received, $refNo, $amount, $price, $vatSelect, $vat, $totalPrice);
+            $HeadDis                = $fetchdata->insertHeadDis($DisID, $supplier, $date_received, $refNo, $price, $vatSelect, $vat_percentage, $totalPrice);
 
             foreach ($_POST['selectItem'] as $key => $value) {
                 $itemID                 = $value;
@@ -50,14 +54,24 @@
         try {
             $itemid                     = $_POST['itemid'];
             $headdocid                  = $_POST['headdocid'];
-            foreach ($_POST['disitemqty'] as $key => $value) {
-                $unitprice                  = $_POST['disitemunitprice'][$key];
-                $amount                     = $_POST['disitemamount'][$key];
-                $DistributetoBranch         = $fetchdata->DistributetoBranch($headdocid, $itemid, $value, $unitprice, $amount);
-            }
+            $totalItem                  = $_POST['totalItem'];
 
-            echo "<script>alert('Success')</script>";
-            echo "<script>window.location.href='../distribute/distribute.blade.php'</script>";
+            $updatebal                  = $fetchdata->DistributeUpdateOST($headdocid, $itemid, $totalItem);
+            if ($updatebal['status'] == true) {
+                foreach ($_POST['disitemqty'] as $key => $value) {
+                    $unitprice                  = $_POST['disitemunitprice'][$key];
+                    $amount                     = $_POST['disitemamount'][$key];
+                    $branchID                   = $_POST['disitembranchid'][$key];
+                    $DistributetoBranch         = $fetchdata->DistributetoBranch($headdocid, $itemid, $value, $unitprice, $amount, $branchID);
+                    $DistributeMovement         = $fetchdata->DistributeMovement($headdocid, $itemid, $value, $unitprice, $amount, $branchID);
+                }
+
+                echo "<script>alert('Success')</script>";
+                echo "<script>window.location.href='../distribute/distribute.blade.php'</script>";
+            } else if ($updatebal['status'] == false) {
+                echo "<script>alert('Failed: จำนวนคงเหลือไม่เพียงพอต่อการกระจายอุปกรณ์)</script>";
+                echo "<script>window.location.href='../distribute/distribute.blade.php'</script>";
+            }
         } catch (\Throwable $th) {
             echo "<script>alert('Failed: "+$th->getMessage()+"')</script>";
             echo "<script>window.location.href='../distribute/distribute.blade.php'</script>";

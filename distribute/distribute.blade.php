@@ -86,37 +86,37 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
-                <div class="col-sm-4">
-                    <input type="number" name="amount" id="amount" class="form-control" placeholder="จำนวนทั้งหมด..." min="0">
-                </div>
                 <label class="col-sm-2 col-form-label">จำนวนเงินรวม</label>
                 <div class="col-sm-4">
-                    <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0">
+                    <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0" autocomplete="off">
+                </div>
+                <label class="col-sm-2 col-form-label">VAT
+                    <input type="checkbox" name="vatSelect" id="vat" value="Y" style="width: 20px; height: 20px;">
+                </label>
+                <div class="col-sm-2">
+                    <select name="vat_percentage" id="vat_percentage" class="form-control" style="width: auto;" disabled>
+                        <option value="0">0 %</option>
+                        <option value="7" selected>7 %</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <input type="number" name="vat" id="input_vat" class="form-control" readonly autocomplete="off">
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="vat">Vat 7%</label>
-                <div class="col-sm-4 form-check form-check-inline row">
-                    <div class="col-sm-2">
-                        <input class="form-check-input" type="checkbox" name="vatSelect" id="vat" value="vatSelect" style="width: 25px; height: 25px;">
-                    </div>
-                    <div class="col-sm-10">
-                        <input type="number" name="vat" id="input_vat" class="form-control" readonly>
-                    </div>
-                </div>
+                <label class="col-sm-6"></label>
                 <label class="col-sm-2 col-form-label">รวมทั้งสิ้น</label>
                 <div class="col-sm-4">
-                    <input type="number" name="totalPrice" id="totalPrice" class="form-control" placeholder="รวมทั้งสิ้น..." min="0">
+                    <input type="number" name="totalPrice" id="totalPrice" class="form-control" placeholder="รวมทั้งสิ้น..." min="0" autocomplete="off">
                 </div>
             </div>
             <hr>
             <div class="form-group row">
                 <div class="col-sm-4 text-left">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
+                    <button type="button" class="btn btn-primary" id="btnselectacc" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
                 </div>
                 <div class="col-sm-8 text-right">
-                    <button type="button" class="btn btn-warning" title="Reset" id="btnreload"><i class="icofont icofont-refresh"></i></button>
+                    <button type="button" class="btn btn-warning" title="Reset" id="btnreload">รีเซ็ท <i class="icofont icofont-refresh"></i></button>
                 </div>
             </div>
             <table class="table table-hover table-bordered">
@@ -149,7 +149,7 @@
             </table>
             <div class="form-group row">
                 <div class="col-sm-12 text-right">
-                    <button type="submit" class="btn btn-success" form="distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
+                    <button type="submit" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
                 </div>
             </div>
         </form>
@@ -190,9 +190,9 @@
                                     <?=$value['itemsName']?>
                                 </td>
                                 <td class="text-center text-middle"><?=$value['disout_unitPrice']?></td>
-                                <td class="text-center text-middle"><?=$value['disout_qty']?></td>
+                                <td class="text-center text-middle"><?=$value['disout_bal']?></td>
                                 <td class="text-center text-middle">
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['dis_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['disout_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
                                 </td>
                             </tr>
                             <?php } ?>
@@ -228,7 +228,7 @@
                                 <input type="text" class="form-control" id="resultitemamount" placeholder="จำนวนทั้งหมด..." value="" readonly>
                             </div>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="resultitemup" placeholder="Unit Price..." value="" readonly>
+                                <input type="hidden" class="form-control" id="resultitemup" placeholder="Unit Price..." value="" readonly>
                             </div>
                         </div>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cylinderstore">เลือกสาขา</button>
@@ -245,7 +245,7 @@
                             <tfoot>
                                 <tr>
                                     <th class="text-right">จำนวนรวม</th>
-                                    <th class="text-right"><span class="totalItem"></span><input type="text" name="totalItem" class="totalItem"></th>
+                                    <th class="text-right"><span class="totalItem"></span><input type="hidden" name="totalItem" class="totalItem"></th>
                                     <th colspan="2"></th>
                                 </tr>
                                 <tr>
@@ -258,7 +258,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success btnsubmit" form="FormAccDistribute" onclick="FormAccDistribute()">บันทึก</button>
+                    <button type="button" class="btn btn-success btnsubmit" form="FormAccDistribute">บันทึก</button>
                 </div>
             </div>
         </div>

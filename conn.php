@@ -371,10 +371,10 @@
             return $currRunningID;
         }
 
-        public function insertHeadDis($DisID, $supplier, $date_received, $refNo, $amount, $price, $vatSelect, $vat, $totalPrice)
+        public function insertHeadDis($DisID, $supplier, $date_received, $refNo, $price, $vatSelect, $vat_percentage, $totalPrice)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_distribute (dis_docNo, dis_supplierID, dis_date_received, dis_refNo, dis_amount, dis_price, dis_totalPrice, dis_vat) 
-                                                    VALUES ('HD$DisID', '$supplier', '$date_received', '$refNo', '$amount', '$price', '$totalPrice', '$vat')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_distribute (dis_docNo, dis_supplierID, dis_date_received, dis_refNo, dis_price, dis_totalPrice, dis_vat, dis_vat_percentage) 
+                                                    VALUES ('HD$DisID', '$supplier', '$date_received', '$refNo', '$price', '$totalPrice', '$vatSelect', '$vat_percentage')");
             return $result;
         }
 
@@ -383,8 +383,8 @@
             $detail = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_detail (disdet_HdisID, disdet_itemID, disdet_unitPrice, disdet_amount, disdet_qty) 
                                                     VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
 
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, disout_amount, disout_qty) 
-                                                    VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, disout_amount, disout_qty, disout_bal) 
+                                                    VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty', '$qty')");
             return $result;
         }
 
@@ -392,7 +392,8 @@
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding 
                                                     LEFT JOIN tb_head_distribute ON tb_distribute_outstanding.disout_HdisID = tb_head_distribute.dis_docNo
-                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id");
+                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id 
+                                                    WHERE disout_bal != 0");
             return $result;
         }
 
@@ -401,7 +402,7 @@
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute
                                                     LEFT JOIN tb_distribute_outstanding ON tb_head_distribute.dis_docNo = tb_distribute_outstanding.disout_HdisID
                                                     LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id
-                                                    WHERE tb_head_distribute.dis_id = '$dis_id'");
+                                                    WHERE tb_distribute_outstanding.disout_id = '$dis_id'");
             $rawdata = mysqli_fetch_array($result);
             return $rawdata;
         }
@@ -418,10 +419,81 @@
             return $result;
         }
 
-        public function DistributetoBranch($headdocid, $itemID, $qty, $unitprice, $amount)
+        public function DistributetoBranch($headdocid, $itemID, $qty, $unitprice, $amount, $branchID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_branch(accbranch_HdisID, accbranch_itemID, accbranch_unitPrice, accbranch_amount, accbranch_qty) 
-                                                    VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_branch(accbranch_HdisID, accbranch_itemID, accbranch_unitPrice, accbranch_amount, accbranch_qty, accbranch_branchID) 
+                                                    VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty', '$branchID')");
+            return $result;
+        }
+
+        public function DistributeMovement($headdocid, $itemID, $qty, $unitprice, $amount, $branchID)
+        {
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_movement(accmov_HdisID, accmov_itemID, accmov_unitPrice, accmov_amount, accmov_qty, accmov_branchID) 
+                                                    VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty', '$branchID')");
+            return $result;
+        }
+
+        public function DistributeUpdateOST($headdocid, $itemid, $totalItem)
+        {
+            $SQLcurrentBal = mysqli_query($this->dbcon, "SELECT disout_bal, disout_id FROM tb_distribute_outstanding WHERE disout_HdisID = '$headdocid' AND disout_itemID = '$itemid'");
+            $currentBal = mysqli_fetch_array($SQLcurrentBal);
+            $currBal = $currentBal['disout_bal'];
+            $sum = $currBal - $totalItem;
+            $disout_id = $currentBal['disout_id'];
+            if ($sum < 0) {
+                $data = array(
+                    'status' => false,
+                    'currBal' => $currBal, 
+                    'sum' => $sum,
+                );
+                return $data;
+            } elseif ($sum >= 0) {
+                $updatebal = mysqli_query($this->dbcon, "UPDATE tb_distribute_outstanding SET disout_bal = '$sum', disout_last_bal = '$currBal', updated_at=CURRENT_TIMESTAMP WHERE disout_id = '$disout_id'");
+                $data = array(
+                    'status' => true,
+                    'updatebal' => $updatebal, 
+                );
+                return $data;
+            }
+        }
+
+        public function fetchdataitemBranchPending($branchid)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_accessories_branch
+                                                    LEFT JOIN items ON tb_accessories_branch.accbranch_itemID = items.n_id
+                                                    WHERE accbranch_branchID = '$branchid' AND accbranch_status = 'Pending'");
+            return $result;
+        }
+
+        public function CountitemBranchPending($branchid)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT accbranch_id FROM tb_accessories_branch
+                                                    LEFT JOIN items ON tb_accessories_branch.accbranch_itemID = items.n_id
+                                                    WHERE accbranch_branchID = '$branchid' AND accbranch_status = 'Pending'");
+            $rowcount = mysqli_num_rows($result);
+            return $rowcount;
+        }
+
+        public function fetchdataCategory() {
+            $sql = "SELECT * FROM tb_items_category";
+            $result = mysqli_query($this->dbcon, $sql);
+            return $result;
+        }
+
+        public function fetchdataBuyProd($branch, $product, $dateStart, $dateEnd) {
+            $sql = "SELECT * FROM tb_po_itementrance
+                    LEFT JOIN ms_product ON tb_po_itementrance.po_itemEnt_CyBrand = ms_product.ms_product_id";
+            // if($branch || $product || ($dateStart && $dateEnd)) {
+            //     if(isset($branch)) { $whereBranch = "po_itemEnt_branchID = $branch"; }
+            //     if(isset($product)) { $whereProduct = "po_itemEnt_itemsID = $product"; }
+            //     if(isset($dateStart) && isset($dateEnd)) { $whereDate = "created_at BETWEEN $dateStart AND $dateEnd"; }
+            //     if(isset($whereBranch) && isset($whereProduct)) {
+            //         $sql .= "WHERE $whereBranch AND $whereProduct";
+            //     } else if(isset($whereBranch) && isset($whereDate)) {
+            //         $sql .= "WHERE $whereBranch AND $whereDate";
+            //     }
+            // }
+            $result = mysqli_query($this->dbcon, $sql);
             return $result;
         }
 
