@@ -32,7 +32,11 @@
         }
 
         .table td, .table th {
-            padding: 0.50rem;
+            padding: 0.10rem;
+        }
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: #007bff;
         }
     </style>
 </head>
@@ -43,116 +47,224 @@
         $dataItems      = $fetchdata->fetchdataItems();
         $dataBranch     = $fetchdata->fetchdataBranch();
         $dataOutstand   = $fetchdata->fetchdataOutstand();
+        $itemtoBranch   = $fetchdata->fetchdataitemtoBranch();
+        
     ?>
     <section>
-        <form action="../controller/DistributeController.php" method="POST" id="distributeheadanddetail">
-            <input type="hidden" value="Distribute" name="parameter">
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">เลขที่เอกสาร</label>
-                <div class="col-sm-4">
-                    <div class="row">
-                        <div class="col-9">
-                            <input type="text" id="docNo" class="form-control" placeholder="เลขที่เอกสาร..." readonly>
+        <ul class="nav nav-tabs md-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#maindistribute" role="tab">กระจายอุปกรณ์</a>
+                <div class="slide"></div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#checkdistribute" role="tab">ตรวจสอบอุปกรณ์</a>
+                <div class="slide"></div>
+            </li>
+        </ul>
+        <div class="tab-content card-block">
+            <div class="tab-pane " id="maindistribute" role="tabpanel">
+                <form action="../controller/DistributeController.php" method="POST" id="distributeheadanddetail">
+                    <input type="hidden" value="Distribute" name="parameter">
+                    <div class="form-group row" style="padding-top: 25px;">
+                        <label class="col-sm-2 col-form-label">เลขที่เอกสาร</label>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-9">
+                                    <input type="text" id="docNo" class="form-control" placeholder="เลขที่เอกสาร..." readonly>
+                                </div>
+                                <div class="col-3 text-right">
+                                    <button type="button" class="btn btn-primary" title="ค้นหา" data-toggle="modal" data-target="#searchinvoice"><i class="icofont icofont-document-search"></i></button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-3 text-right">
-                            <button type="button" class="btn btn-primary" title="ค้นหา" data-toggle="modal" data-target="#searchinvoice"><i class="icofont icofont-document-search"></i></button>
+                        <label class="col-sm-2 col-form-label">วันที่</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" placeholder="วันที่..." value="<?=date("d/m/Y")?>" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">ผู้จำหน่าย</label>
+                        <div class="col-sm-4">
+                            <select class="form-control js-example-basic-single" name="supplier" id="supplier" style="width: 100%;">
+                                <option selected disabled>เลือกผู้จำหน่าย...</option>
+                                <?php for ($i=0; $i <= 10; $i++) { ?>
+                                    <option value="<?=$i?>"><?=$i?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label">วันที่รับสินค้า</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control datepicker" name="date_received" id="date_received" placeholder="วันที่..." value="" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">เอกสารอ้างอิง</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="refNo" id="refNo" class="form-control" placeholder="เอกสารอ้างอิง...">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">จำนวนเงินรวม</label>
+                        <div class="col-sm-4">
+                            <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0" autocomplete="off">
+                        </div>
+                        <label class="col-sm-2 col-form-label">VAT
+                            <input type="checkbox" name="vatSelect" id="vat" value="Y" style="width: 20px; height: 20px;">
+                        </label>
+                        <div class="col-sm-2">
+                            <select name="vat_percentage" id="vat_percentage" class="form-control" style="width: auto;" disabled>
+                                <option value="0">0 %</option>
+                                <option value="7" selected>7 %</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" name="vat" id="input_vat" class="form-control" readonly autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-6"></label>
+                        <label class="col-sm-2 col-form-label">รวมทั้งสิ้น</label>
+                        <div class="col-sm-4">
+                            <input type="number" name="totalPrice" id="totalPrice" class="form-control" placeholder="รวมทั้งสิ้น..." min="0" autocomplete="off">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <div class="col-sm-4 text-left">
+                            <button type="button" class="btn btn-primary" id="btnselectacc" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
+                        </div>
+                        <div class="col-sm-8 text-right">
+                            <button type="button" class="btn btn-warning" title="Reset" id="btnreload">รีเซ็ท <i class="icofont icofont-refresh"></i></button>
+                        </div>
+                    </div>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr class="text-center">
+                                <th scope="col">#</th>
+                                <th scope="col">รหัสอุปกรณ์</th>
+                                <th scope="col">ชื่ออุปกรณ์</th>
+                                <th scope="col">จำนวน</th>
+                                <th scope="col">ราคาต่อหน่วย</th>
+                                <th scope="col">จำนวนเงิน</th>
+                                <th scope="col">กระจาย</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetsRow"></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-right">รวม</th>
+                                <th class="text-right">
+                                    <div id="total_qty"></div>
+                                </th>
+                                <th class="text-right">
+                                    <div id="total_up"></div>
+                                </th>
+                                <th class="text-right">
+                                    <div id="total_amount"></div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div class="form-group row">
+                        <div class="col-sm-12 text-right">
+                            <button type="submit" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane active" id="checkdistribute" role="tabpanel">
+                <div class="card-block accordion-block">
+                    <div id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="accordion-panel">
+                            <div class="accordion-heading" role="tab" id="headingOne">
+                                <p class="card-title accordion-title" style="padding-top: 15px;">
+                                    <a class="accordion-msg btn btn-outline-info btn-sm" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        คัดกรอง <i class="icofont icofont-filter"></i>
+                                    </a>
+                                </p>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="accordion-content accordion-desc">
+                                    <div class="form-group row">
+                                        <div class="col-sm-4">
+                                            <label class="col-form-label ">สถานะ</label>
+                                            <select name="" id="" class="form-control">
+                                                <option value="ALL">ALL</option>
+                                                <option value="TF-OUT">TF-OUT</option>
+                                                <option value="TF-IN">TF-IN</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="col-form-label">สาขา</label>
+                                            <select name="" id="" class="form-control">
+                                                <option value="ALL">ALL</option>
+                                                <?php foreach ($dataBranch as $key => $value) { ?>
+                                                    <option value="<?=$value['branch_id']?>"><?=$value['branch_name']?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="col-form-label">ค้นหารหัสอุปกรณ์</label>
+                                            <input type="text" name="" id="" class="form-control" placeholder="ค้นหารหัสอุปกรณ์...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row text-center">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn-primary">ค้นหา</button>
+                                            <button type="button" class="btn btn-warning" title="Reset">รีเซ็ท <i class="icofont icofont-refresh"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <label class="col-sm-2 col-form-label">วันที่</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="วันที่..." value="<?=date("d/m/Y")?>" readonly>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">ผู้จำหน่าย</label>
-                <div class="col-sm-4">
-                    <select class="form-control js-example-basic-single" name="supplier" id="supplier">
-                        <option selected disabled>เลือกผู้จำหน่าย...</option>
-                        <?php for ($i=0; $i <= 10; $i++) { ?>
-                            <option value="<?=$i?>"><?=$i?></option>
+                <table class="table table-hover">
+                    <thead class="text-center">
+                        <tr>
+                            <th rowspan="2" class="text-middle" style="width: 40px;">#</th>
+                            <th colspan="3">สถานะ</th>
+                            <th colspan="2">ข้อมูลอุปกรณ์</th>
+                            <th rowspan="2" class="text-middle" style="width: 80px;">วัน / เวลา</th>
+                        </tr>
+                        <tr>
+                            <th class="text-middle" style="width: 70px;">ประเภท</th>
+                            <th class="text-middle" style="width: 90px;">การยืนยัน</th>
+                            <th class="text-middle" style="width: 90px;">สาขา</th>
+                            <th class="text-middle">ชื่อ / รหัส</th>
+                            <th class="text-middle" style="width: 60px;">จำนวน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($itemtoBranch as $key => $value) {?>
+                            <tr>
+                                <td class="text-middle text-center">
+                                    <input type="checkbox" name="" id="" style="width: 15px; height: 15px;">
+                                </td>
+                                <td class="text-middle text-center">
+                                    <?php if ($value['accmov_status'] == 'TF-OUT') { ?>
+                                        <span class="badge badge-sm badge-success">TF-OUT</span>
+                                    <?php } else if ($value['accmov_status'] == 'TF-IN') { ?>
+                                        <span class="badge badge-sm badge-warning">TF-IN</span>
+                                    <?php }?> 
+                                </td>
+                                <td class="text-middle"></td>
+                                <td class="text-middle"><?=$value['accmov_branchID']?></td>
+                                <td class="text-middle" style="width: 200px;">
+                                    <?=$value['itemsName']?><br>
+                                    <span style="color: gray;"><?=$value['itemsCode']?></span>
+                                    
+                                </td>
+                                <td class="text-middle text-center"><?=$value['accmov_qty']?></td>
+                                <td class="text-middle text-right"><?=date("d/m/Y H:i:m", strtotime($value['created_at']));?></td>
+                            </tr>
                         <?php } ?>
-                    </select>
-                </div>
-                <label class="col-sm-2 col-form-label">วันที่รับสินค้า</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control datepicker" name="date_received" id="date_received" placeholder="วันที่..." value="" autocomplete="off">
-                </div>
+                        
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">เอกสารอ้างอิง</label>
-                <div class="col-sm-4">
-                    <input type="text" name="refNo" id="refNo" class="form-control" placeholder="เอกสารอ้างอิง...">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">จำนวนเงินรวม</label>
-                <div class="col-sm-4">
-                    <input type="number" name="price" id="price" class="form-control" placeholder="ราคา..." min="0" autocomplete="off">
-                </div>
-                <label class="col-sm-2 col-form-label">VAT
-                    <input type="checkbox" name="vatSelect" id="vat" value="Y" style="width: 20px; height: 20px;">
-                </label>
-                <div class="col-sm-2">
-                    <select name="vat_percentage" id="vat_percentage" class="form-control" style="width: auto;" disabled>
-                        <option value="0">0 %</option>
-                        <option value="7" selected>7 %</option>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    <input type="number" name="vat" id="input_vat" class="form-control" readonly autocomplete="off">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-6"></label>
-                <label class="col-sm-2 col-form-label">รวมทั้งสิ้น</label>
-                <div class="col-sm-4">
-                    <input type="number" name="totalPrice" id="totalPrice" class="form-control" placeholder="รวมทั้งสิ้น..." min="0" autocomplete="off">
-                </div>
-            </div>
-            <hr>
-            <div class="form-group row">
-                <div class="col-sm-4 text-left">
-                    <button type="button" class="btn btn-primary" id="btnselectacc" data-toggle="modal" data-target="#selectasset">เพิ่มอุปกรณ์</button>
-                </div>
-                <div class="col-sm-8 text-right">
-                    <button type="button" class="btn btn-warning" title="Reset" id="btnreload">รีเซ็ท <i class="icofont icofont-refresh"></i></button>
-                </div>
-            </div>
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="text-center">
-                        <th scope="col">#</th>
-                        <th scope="col">รหัสอุปกรณ์</th>
-                        <th scope="col">ชื่ออุปกรณ์</th>
-                        <th scope="col">จำนวน</th>
-                        <th scope="col">ราคาต่อหน่วย</th>
-                        <th scope="col">จำนวนเงิน</th>
-                        <th scope="col">กระจาย</th>
-                    </tr>
-                </thead>
-                <tbody id="assetsRow"></tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="3" class="text-right">รวม</th>
-                        <th class="text-right">
-                            <div id="total_qty"></div>
-                        </th>
-                        <th class="text-right">
-                            <div id="total_up"></div>
-                        </th>
-                        <th class="text-right">
-                            <div id="total_amount"></div>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
-            <div class="form-group row">
-                <div class="col-sm-12 text-right">
-                    <button type="submit" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
-                </div>
-            </div>
-        </form>
+        </div>
+        
     </section>
 
     <!-- modal จำนวนคงเหลือ -->

@@ -473,6 +473,14 @@
             $rowcount = mysqli_num_rows($result);
             return $rowcount;
         }
+        
+        public function fetchdataitemtoBranch()
+        {
+            $result = mysqli_query($this->dbcon, "SELECT accmov_status, accmov_branchID, accmov_itemID,accmov_qty, tb_accessories_movement.created_at, itemsName, itemsCode FROM tb_accessories_movement
+                                                    LEFT JOIN items ON tb_accessories_movement.accmov_itemID = items.n_id
+                                                    ORDER BY accmov_id DESC");
+            return $result;
+        }
 
         public function fetchdataCategory() {
             $sql = "SELECT * FROM tb_items_category";
