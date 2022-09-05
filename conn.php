@@ -390,6 +390,12 @@
 
         public function fetchdataOutstand()
         {
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute");
+            return $result;
+        }
+
+        public function fetchdataOutstand_old()
+        {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding 
                                                     LEFT JOIN tb_head_distribute ON tb_distribute_outstanding.disout_HdisID = tb_head_distribute.dis_docNo
                                                     LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id 
@@ -399,12 +405,14 @@
 
         public function selectHeadDis($dis_id)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute
-                                                    LEFT JOIN tb_distribute_outstanding ON tb_head_distribute.dis_docNo = tb_distribute_outstanding.disout_HdisID
-                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id
-                                                    WHERE tb_distribute_outstanding.disout_id = '$dis_id'");
-            $rawdata = mysqli_fetch_array($result);
-            return $rawdata;
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute WHERE dis_id = '$dis_id'");
+            $disacc = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding WHERE disout_id = '$dis_id'");
+            $datahead = mysqli_fetch_array($result);
+            $data = array(
+                'datahead' => $datahead, 
+                'disacc' => $disacc, 
+            );
+            return $data;
         }
 
         public function fetchdataInventoryOut()

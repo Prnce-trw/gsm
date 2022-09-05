@@ -53,16 +53,16 @@
     <section>
         <ul class="nav nav-tabs md-tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#maindistribute" role="tab">กระจายอุปกรณ์</a>
+                <a class="nav-link active" data-toggle="tab" href="#maindistribute" role="tab">กระจายอุปกรณ์</a>
                 <div class="slide"></div>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#checkdistribute" role="tab">ตรวจสอบอุปกรณ์</a>
+                <a class="nav-link" data-toggle="tab" href="#checkdistribute" role="tab">ตรวจสอบอุปกรณ์</a>
                 <div class="slide"></div>
             </li>
         </ul>
         <div class="tab-content card-block">
-            <div class="tab-pane " id="maindistribute" role="tabpanel">
+            <div class="tab-pane active" id="maindistribute" role="tabpanel">
                 <form action="../controller/DistributeController.php" method="POST" id="distributeheadanddetail">
                     <input type="hidden" value="Distribute" name="parameter">
                     <div class="form-group row" style="padding-top: 25px;">
@@ -83,6 +83,16 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">เอกสารอ้างอิง</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="refNo" id="refNo" class="form-control" placeholder="เอกสารอ้างอิง...">
+                        </div>
+                        <label class="col-sm-2 col-form-label">วันที่รับสินค้า</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control datepicker" name="date_received" id="date_received" placeholder="วันที่..." value="" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-sm-2 col-form-label">ผู้จำหน่าย</label>
                         <div class="col-sm-4">
                             <select class="form-control js-example-basic-single" name="supplier" id="supplier" style="width: 100%;">
@@ -91,16 +101,6 @@
                                     <option value="<?=$i?>"><?=$i?></option>
                                 <?php } ?>
                             </select>
-                        </div>
-                        <label class="col-sm-2 col-form-label">วันที่รับสินค้า</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control datepicker" name="date_received" id="date_received" placeholder="วันที่..." value="" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">เอกสารอ้างอิง</label>
-                        <div class="col-sm-4">
-                            <input type="text" name="refNo" id="refNo" class="form-control" placeholder="เอกสารอ้างอิง...">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -172,15 +172,21 @@
                     </div>
                 </form>
             </div>
-            <div class="tab-pane active" id="checkdistribute" role="tabpanel">
-                <div class="card-block accordion-block">
+            <div class="tab-pane" id="checkdistribute" role="tabpanel">
+                <div class="card-block accordion-block" style="padding-top: 25px;">
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-warning btn-sm">Adjust</button>
+                            <a class="accordion-msg btn btn-outline-info btn-sm" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                คัดกรอง <i class="icofont icofont-filter"></i>
+                            </a>
+                        </div>
+                    </div>
                     <div id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="accordion-panel">
                             <div class="accordion-heading" role="tab" id="headingOne">
                                 <p class="card-title accordion-title" style="padding-top: 15px;">
-                                    <a class="accordion-msg btn btn-outline-info btn-sm" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        คัดกรอง <i class="icofont icofont-filter"></i>
-                                    </a>
+                                    
                                 </p>
                             </div>
                             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
@@ -264,7 +270,6 @@
                 </table>
             </div>
         </div>
-        
     </section>
 
     <!-- modal จำนวนคงเหลือ -->
@@ -291,7 +296,17 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php var_dump($dataOutstand);?>
                             <?php foreach ($dataOutstand as $key => $value) { ?>
+                                <tr>
+                                    <td><?=$value['dis_docNo']?></td>
+                                    <td class="text-center text-middle">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['dis_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                            
+                            <!-- <?php foreach ($dataOutstand as $key => $value) { ?>
                             <tr>
                                 <td class="text-center text-middle"><?=$value['dis_docNo']?> / <?=$value['dis_refNo']?></td>
                                 <td class="text-middle"><?=date("d/m/Y", strtotime($value['dis_date_received']))?></td>
@@ -307,7 +322,7 @@
                                     <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['disout_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
                                 </td>
                             </tr>
-                            <?php } ?>
+                            <?php } ?> -->
                         </tbody>
                     </table>
                 </div>

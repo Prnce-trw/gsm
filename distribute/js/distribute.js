@@ -230,39 +230,40 @@ function selectHeadDis(dis_id) {
         data: {parameter: "selectHeadDis", dis_id: dis_id},
         dataType: "JSON",
         success: function (response) {
-            var rawdate = response['dis_date_received'].split("-");
+            console.log(response);
+            var rawdate = response['datahead']['dis_date_received'].split("-");
             var date_received = rawdate[2]+'/'+rawdate[1]+'/'+rawdate[0];
-            // console.log(response);
+            // // console.log(response);
             $('#date_received').val(date_received);
-            $('#refNo').val(response['dis_refNo']);
-            $('#docNo').val(response['dis_docNo']);
+            $('#refNo').val(response['datahead']['dis_refNo']);
+            $('#docNo').val(response['datahead']['dis_docNo']);
             // $('#amount').val(response['dis_amount']);
-            $('#price').val(response['dis_price']);
-            $('#input_vat').val(response['dis_vat']);
-            $('#totalPrice').val(response['dis_totalPrice']);
-            $('#assetsRow').empty();
-            $('#assetID').val(response['itemsCode']);
-            $('#headdocid').val(response['dis_docNo']);
-            if (response['dis_vat'] == 'Y') {
+            $('#price').val(response['datahead']['dis_price']);
+            $('#input_vat').val(response['datahead']['dis_vat']);
+            $('#totalPrice').val(response['datahead']['dis_totalPrice']);
+            // $('#assetsRow').empty();
+            $('#assetID').val(response['datahead']['itemsCode']);
+            $('#headdocid').val(response['datahead']['dis_docNo']);
+            if (response['datahead']['dis_vat'] == 'Y') {
                 $('#vat').prop('checked', true);
                 $('#vat_percentage').val(7).change();
             } else {
                 $('#vat').prop('checked', false);
                 $('#vat_percentage').val(0).change();
             }
-            $('#btnselectacc').attr("disabled", true);
-            $('#btn_distributeheadanddetail').attr("disabled", true);
-            $('#assetsRow').append('<tr>'+
-                    '<td class="text-center text-middle"></td>'+
-                    '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
-                    '<td class="text-middle">'+response['itemsName']+'</td>'+
-                    '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_bal']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
-                    '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
-                    '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
-                    'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" ><i class="icofont icofont-rounded-double-right"></i></button>'+
-                '</tr>'
-            );
+            // $('#btnselectacc').attr("disabled", true);
+            // $('#btn_distributeheadanddetail').attr("disabled", true);
+            // $('#assetsRow').append('<tr>'+
+            //         '<td class="text-center text-middle"></td>'+
+            //         '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
+            //         '<td class="text-middle">'+response['itemsName']+'</td>'+
+            //         '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_bal']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
+            //         '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
+            //         '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
+            //         '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
+            //         'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" ><i class="icofont icofont-rounded-double-right"></i></button>'+
+            //     '</tr>'
+            // );
         }
     });
 }
