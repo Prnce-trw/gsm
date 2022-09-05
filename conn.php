@@ -406,11 +406,18 @@
         public function selectHeadDis($dis_id)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_distribute WHERE dis_id = '$dis_id'");
-            $disacc = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding WHERE disout_id = '$dis_id'");
             $datahead = mysqli_fetch_array($result);
+            $dis_docNo = $datahead['dis_docNo'];
+            $disacc = mysqli_query($this->dbcon, "SELECT * FROM tb_distribute_outstanding
+                                                    LEFT JOIN items ON tb_distribute_outstanding.disout_itemID = items.n_id 
+                                                    WHERE disout_HdisID = '$dis_docNo'");
+            
+            while ($row = mysqli_fetch_array($disacc)) {
+                $dataacc[] = $row;
+            }
             $data = array(
                 'datahead' => $datahead, 
-                'disacc' => $disacc, 
+                'dataacc' => $dataacc, 
             );
             return $data;
         }

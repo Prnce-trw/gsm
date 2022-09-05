@@ -215,7 +215,34 @@ $('#btnassets').click(function () {
 });
 
 function btnsubmitDis() {
-    $('#Distribute').submit();
+    Swal.fire({
+        icon: 'warning',
+        title: 'คุณต้องการกระจายอุปกรณ์ด้วยหรือไม่?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'บันทึกและกระจาย',
+        denyButtonText: `บันทึก`,
+        cancelButtonText: `ยกเลิก`,
+        confirmButtonColor: '#28a745',
+        denyButtonColor: '#007bff',
+        cancelButtonColor: '#d33',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#Distribute').submit();
+            var date_received = $('#date_received').val();
+            var refNo = $('#refNo').val();
+            if (!date_received) {
+                $('#date_received').addClass(' bg-warning');
+            } 
+            if (!refNo) {
+                $('#refNo').addClass(' bg-warning');
+            }
+        } else if (result.isDenied) {
+            $('#Distribute').submit();
+        } else if (result.isCancel) {
+          
+        }
+    });
 }
 
 $(document).on('input', '#price', function () {
@@ -230,10 +257,8 @@ function selectHeadDis(dis_id) {
         data: {parameter: "selectHeadDis", dis_id: dis_id},
         dataType: "JSON",
         success: function (response) {
-            console.log(response);
             var rawdate = response['datahead']['dis_date_received'].split("-");
             var date_received = rawdate[2]+'/'+rawdate[1]+'/'+rawdate[0];
-            // // console.log(response);
             $('#date_received').val(date_received);
             $('#refNo').val(response['datahead']['dis_refNo']);
             $('#docNo').val(response['datahead']['dis_docNo']);
@@ -241,7 +266,7 @@ function selectHeadDis(dis_id) {
             $('#price').val(response['datahead']['dis_price']);
             $('#input_vat').val(response['datahead']['dis_vat']);
             $('#totalPrice').val(response['datahead']['dis_totalPrice']);
-            // $('#assetsRow').empty();
+            $('#assetsRow').empty();
             $('#assetID').val(response['datahead']['itemsCode']);
             $('#headdocid').val(response['datahead']['dis_docNo']);
             if (response['datahead']['dis_vat'] == 'Y') {
@@ -251,19 +276,23 @@ function selectHeadDis(dis_id) {
                 $('#vat').prop('checked', false);
                 $('#vat_percentage').val(0).change();
             }
-            // $('#btnselectacc').attr("disabled", true);
-            // $('#btn_distributeheadanddetail').attr("disabled", true);
-            // $('#assetsRow').append('<tr>'+
-            //         '<td class="text-center text-middle"></td>'+
-            //         '<td class="text-middle"><span id="itemcode_'+response['n_id']+'">'+response['itemsCode']+'</span></td>'+
-            //         '<td class="text-middle">'+response['itemsName']+'</td>'+
-            //         '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['n_id']+'" value="'+response['disout_bal']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
-            //         '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['n_id']+'" value="'+parseFloat(response['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
-            //         '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['n_id']+'" value="'+parseFloat(response['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
-            //         '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['n_id']+'"'+
-            //         'onclick="distributeItem('+response['n_id']+')" data-itemcode="'+response['itemsCode']+'" ><i class="icofont icofont-rounded-double-right"></i></button>'+
-            //     '</tr>'
-            // );
+            $('#btnselectacc').attr("disabled", true);
+            $('#btn_distributeheadanddetail').attr("disabled", true);
+            if (response['dataacc'].length > 0) {
+                for (let index = 0; index < response['dataacc'].length; index++) {
+                    $('#assetsRow').append('<tr>'+
+                        '<td class="text-center text-middle"></td>'+
+                        '<td class="text-middle"><span id="itemcode_'+response['dataacc'][index]['disout_itemID']+'">'+response['dataacc'][index]['itemsCode']+'</span></td>'+
+                        '<td class="text-middle">'+response['dataacc'][index]['itemsName']+'</td>'+
+                        '<td class="text-center text-middle"><input type="number" name="qty" id="qty_'+response['dataacc'][index]['disout_itemID']+'" value="'+response['dataacc'][index]['disout_bal']+'" class="form-control text-center ItemAmount" style="width: 80px;" min="0" ></td>'+
+                        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="unitprice" id="unitprice_'+response['dataacc'][index]['disout_itemID']+'" value="'+parseFloat(response['dataacc'][index]['disout_unitPrice']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
+                        '<td class="text-center text-middle"><input type="number" style="width: 110px;" name="amountitem" id="amount_'+response['dataacc'][index]['disout_itemID']+'" value="'+parseFloat(response['dataacc'][index]['disout_amount']).toFixed(2)+'" class="form-control text-center" style="width: 80px;" min="0" ></td>'+
+                        '<td class="text-center text-middle"><button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#distributeItem" id="btnDistribute_'+response['dataacc'][index]['disout_itemID']+'"'+
+                        'onclick="distributeItem('+response['dataacc'][index]['disout_itemID']+')" data-itemcode="'+response['dataacc'][index]['itemsCode']+'" ><i class="icofont icofont-rounded-double-right"></i></button>'+
+                        '</tr>'
+                    );
+                }
+            }
         }
     });
 }

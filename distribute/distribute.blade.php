@@ -167,7 +167,7 @@
                     </table>
                     <div class="form-group row">
                         <div class="col-sm-12 text-right">
-                            <button type="submit" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
+                            <button type="button" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
                         </div>
                     </div>
                 </form>
@@ -185,9 +185,7 @@
                     <div id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="accordion-panel">
                             <div class="accordion-heading" role="tab" id="headingOne">
-                                <p class="card-title accordion-title" style="padding-top: 15px;">
-                                    
-                                </p>
+                                <p class="card-title accordion-title" style="padding-top: 15px;"> </p>
                             </div>
                             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                 <div class="accordion-content accordion-desc">
@@ -288,18 +286,15 @@
                             <tr class="text-center">
                                 <th scope="col">เลขที่เอกสาร</th>
                                 <th scope="col">วันที่</th>
-                                <th scope="col">รหัสอุปกรณ์</th>
-                                <th scope="col">ชื่ออุปกรณ์</th>
-                                <th scope="col">ราคาต่อหน่วย</th>
-                                <th scope="col">จำนวนคงเหลือ</th>
                                 <th scope="col">กระจาย</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php var_dump($dataOutstand);?>
+                            <!-- <?php var_dump($dataOutstand);?> -->
                             <?php foreach ($dataOutstand as $key => $value) { ?>
                                 <tr>
-                                    <td><?=$value['dis_docNo']?></td>
+                                    <td><?=$value['dis_docNo']?> / <?=$value['dis_refNo']?></td>
+                                    <td><?=$value['dis_date_received']?></td>
                                     <td class="text-center text-middle">
                                         <button type="button" class="btn btn-primary btn-sm" onclick="selectHeadDis(<?=$value['dis_id']?>)" data-dismiss="modal" aria-label="Close">เลือก</button>
                                     </td>
