@@ -53,6 +53,7 @@
         $fetchdata              = new DB_con();
         try {
             $itemid                     = $_POST['itemid'];
+            $itemcode                   = $_POST['itemcode'];
             $headdocid                  = $_POST['headdocid'];
             $totalItem                  = $_POST['totalItem'];
 
@@ -75,5 +76,25 @@
         } catch (\Throwable $th) {
             echo "<script>alert('Failed: "+$th->getMessage()+"')</script>";
             echo "<script>window.location.href='../distribute/distribute.blade.php'</script>";
+        }
+    } else if ($_POST['parameter'] == 'AcceptAccToBranch') {
+        try {
+            $fetchdata              = new DB_con();
+            // var_dump($_POST);
+            $branchID               = $_POST['branchid'];
+            $cerrent_year           = date("Y");
+            if ($_POST['itemid'] != null) {
+                foreach ($_POST['itemid'] as $key => $value) {
+                    $iteminfo               = explode('/', $_POST['iteminfo'][$key]);
+                    $qty                    = $iteminfo[0];
+                    $docRef                 = $iteminfo[1];
+                    $price                  = $iteminfo[2];
+                    // exit();
+                    $datamovement           = $fetchdata->insertInventMovment($cerrent_year, $value, $branchID, $qty, $docRef, $price);
+                }
+            }
+            
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }

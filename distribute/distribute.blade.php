@@ -167,7 +167,7 @@
                     </table>
                     <div class="form-group row">
                         <div class="col-sm-12 text-right">
-                            <button type="button" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
+                            <button type="submit" class="btn btn-success" form="distributeheadanddetail" id="btn_distributeheadanddetail" onclick="btnsubmitDis()">บันทึก</button>
                         </div>
                     </div>
                 </form>
@@ -176,7 +176,7 @@
                 <div class="card-block accordion-block" style="padding-top: 25px;">
                     <div class="row">
                         <div class="col-12">
-                            <button type="button" class="btn btn-warning btn-sm">Adjust</button>
+                            <button type="button" class="btn btn-warning btn-sm">ปรับปรุงคลัง</button>
                             <a class="accordion-msg btn btn-outline-info btn-sm" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 คัดกรอง <i class="icofont icofont-filter"></i>
                             </a>
@@ -343,7 +343,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">รหัสอุปกรณ์</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="resultitemname" placeholder="รหัสอุปกรณ์..." readonly>
+                                <input type="text" class="form-control" id="resultitemname" name="itemcode" placeholder="รหัสอุปกรณ์..." readonly>
                             </div>
                             <label class="col-sm-2 col-form-label">จำนวนทั้งหมด</label>
                             <div class="col-sm-2">

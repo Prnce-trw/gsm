@@ -47,7 +47,7 @@
             $fetchDataN_id      = mysqli_fetch_array($sqlN_id);
 
             // หา Balance ปัจจุบัน
-            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00'");
+            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '00'");
             $fetchQTY           = mysqli_fetch_array($sqlSum);
 
             $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
@@ -62,9 +62,9 @@
             // exit(0);
             
             // บันทึก inventory movement
-            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_type, transaction_qty, store_area_out, transaction_last_balance, transaction_new_balance) VALUES ('$n_id', '$tranID', '$itemCode', 'BRC1-1', CURRENT_TIMESTAMP, 'To-Refill', 'OUT', $qty, '00', '$Curr_QTY_Balance', $Curr_item_bal);");
+            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_type, transaction_qty, store_area_out, transaction_last_balance, transaction_new_balance) VALUES ('$n_id', '$tranID', '$itemCode', 'BRC01-2', CURRENT_TIMESTAMP, 'To-Refill', 'OUT', $qty, '00', '$Curr_QTY_Balance', $Curr_item_bal);");
 
-            $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
+            $resultUpdateStockBranch = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal' WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '00';");
 
             $data = array(
                 'resultInventMoving' => $resultInventMoving,
@@ -124,11 +124,11 @@
             $fetchDataN_id      = mysqli_fetch_array($sqlN_id);
 
             // หา Balance ปัจจุบัน
-            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00'");
+            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '00'");
             $fetchQTY           = mysqli_fetch_array($sqlSum);
 
             // หาจำนวนสินค้าทั้งหมดในสาขา
-            $sqlSumItem         = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS ResultItem FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' GROUP BY itemsCode");
+            $sqlSumItem         = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS ResultItem FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' GROUP BY itemsCode");
             $ItemInven          = mysqli_fetch_array($sqlSumItem);
 
             $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
@@ -158,10 +158,10 @@
 
             // บันทึก inventory movement
             $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_docRef, transaction_type, transaction_qty, store_area_in, transaction_last_balance, transaction_new_balance, movAvgCost, InvoiceCost) 
-            VALUES ('$n_id', '$tranID', '$itemCode', 'BRC1-1', CURRENT_TIMESTAMP, 'From-Refill', '$RefDO', 'IN', '$qty', '00', '$Curr_QTY_Balance', '$Curr_item_bal', '$NewAvgCost', '$price');");
+            VALUES ('$n_id', '$tranID', '$itemCode', 'BRC01-2', CURRENT_TIMESTAMP, 'From-Refill', '$RefDO', 'IN', '$qty', '00', '$Curr_QTY_Balance', '$Curr_item_bal', '$NewAvgCost', '$price');");
             
-            $resultUpdateStockBranchBS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '00';");
-            $resultUpdateStockBranchFS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC1-1' AND store_area = '01';");
+            $resultUpdateStockBranchBS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '00';");
+            $resultUpdateStockBranchFS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '01';");
             $data = array(
                 'resultInventMoving' => $resultInventMoving, 
                 'resultUpdateStockBranchBS' => $resultUpdateStockBranchBS, 
@@ -424,13 +424,13 @@
 
         public function fetchdataInventoryOut()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-02C-%' AND branchID = 'BRC1-1' ORDER BY qty_balance ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-02C-%' AND branchID = 'BRC01-2' ORDER BY qty_balance ASC");
             return $result;
         }
 
         public function fetchdataInventoryIn()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-01G-%' AND branchID = 'BRC1-1' ORDER BY qty_balance DESC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-01G-%' AND branchID = 'BRC01-2' ORDER BY qty_balance DESC");
             return $result;
         }
 
@@ -445,6 +445,7 @@
         {
             $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_movement(accmov_HdisID, accmov_itemID, accmov_unitPrice, accmov_amount, accmov_qty, accmov_branchID) 
                                                     VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty', '$branchID')");
+            $insertmovement = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement ()')");
             return $result;
         }
 
@@ -475,6 +476,7 @@
         public function fetchdataitemBranchPending($branchid)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_accessories_branch
+                                                    LEFT JOIN tb_head_distribute ON tb_accessories_branch.accbranch_HdisID = tb_head_distribute.dis_docNo
                                                     LEFT JOIN items ON tb_accessories_branch.accbranch_itemID = items.n_id
                                                     WHERE accbranch_branchID = '$branchid' AND accbranch_status = 'Pending'");
             return $result;
@@ -518,6 +520,59 @@
             // }
             $result = mysqli_query($this->dbcon, $sql);
             return $result;
+        }
+
+        public function insertInventMovment($cerrent_year, $itemCode, $branchID, $qty, $docRef, $price)
+        {
+            // หา n_id
+            $sqlN_id            = mysqli_query($this->dbcon, "SELECT MAX(n_id) AS n_id FROM items_inventory_movement WHERE YEAR(transaction_date) = '$cerrent_year'");
+            $fetchDataN_id      = mysqli_fetch_array($sqlN_id);
+
+            // หา Balance ปัจจุบัน
+            $sqlSum             = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS Curr_QTY_Balance FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = '$branchID'");
+            $fetchQTY           = mysqli_fetch_array($sqlSum);
+
+            // หาจำนวนสินค้าทั้งหมดในสาขา
+            $sqlSumItem         = mysqli_query($this->dbcon, "SELECT *, SUM(qty_balance) AS ResultItem FROM items_inventory_branch WHERE itemsCode = '$itemCode' AND branchID = '$branchID' GROUP BY itemsCode");
+            $ItemInven          = mysqli_fetch_array($sqlSumItem);
+
+            $Curr_QTY_Balance   = $fetchQTY['Curr_QTY_Balance']; // Balance ปัจจุบัน
+            $n_id               = $fetchDataN_id['n_id']+1; // n_id+1
+            $curr_year          = date("y");
+            $tranID             = $curr_year.''.$n_id; // transaction(เอาเฉพาะปี) + n_id
+
+            $Curr_item_bal      = $Curr_QTY_Balance + $qty;
+            $movAvgCost         = $fetchQTY['movAvgCost'] + $price;
+
+            $resultItemCurr     = $ItemInven['ResultItem']; // จำนวนในคลังทั้งหมด
+            $ResultmovAvgCostCur    = $ItemInven['movAvgCost'] * $resultItemCurr; // มูลค่าในคลังทั้งหมด
+
+            $newItemCurr        = $resultItemCurr + $qty; // จำนวนในคลังทั้งหมด + จำนวนที่เข้ามาใหม่
+
+            // (มูลค่าในคลังทั้งหมด + มูลค่าใหม่ที่รับมา) / จำนวนสิ้นค้าทั้งหมด
+            $ResultAvgCost      = ($ResultmovAvgCostCur + $price) / $newItemCurr;
+            $NewAvgCost         = number_format($ResultAvgCost, 2, '.', '');
+
+            // var_dump($ItemInven['movAvgCost']);
+            echo $NewAvgCost.
+            '<br>'.$ItemInven['movAvgCost'].' * '.$resultItemCurr.' = '.$ResultmovAvgCostCur.
+            '<br>'.$price.' + '.$ResultmovAvgCostCur.' = '.floatval($price + $ResultmovAvgCostCur).
+            '<br>'.$newItemCurr
+            ;
+            exit(0);
+
+            // บันทึก inventory movement
+            $resultInventMoving = mysqli_query($this->dbcon, "INSERT INTO items_inventory_movement(n_id, transaction_id, itemsCode, branchID, transaction_date, transaction_desc, transaction_docRef, transaction_type, transaction_qty, store_area_in, transaction_last_balance, transaction_new_balance, movAvgCost, InvoiceCost) 
+            VALUES ('$n_id', '$tranID', '$itemCode', 'BRC01-2', CURRENT_TIMESTAMP, 'From-Refill', '$RefDO', 'IN', '$qty', '00', '$Curr_QTY_Balance', '$Curr_item_bal', '$NewAvgCost', '$price');");
+            
+            $resultUpdateStockBranchBS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '00';");
+            $resultUpdateStockBranchFS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = 'BRC01-2' AND store_area = '01';");
+            $data = array(
+                'resultInventMoving' => $resultInventMoving, 
+                'resultUpdateStockBranchBS' => $resultUpdateStockBranchBS, 
+                'resultUpdateStockBranchFS' => $resultUpdateStockBranchFS, 
+            );
+            return $data;
         }
 
 

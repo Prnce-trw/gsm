@@ -215,34 +215,36 @@ $('#btnassets').click(function () {
 });
 
 function btnsubmitDis() {
-    Swal.fire({
-        icon: 'warning',
-        title: 'คุณต้องการกระจายอุปกรณ์ด้วยหรือไม่?',
-        showDenyButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'บันทึกและกระจาย',
-        denyButtonText: `บันทึก`,
-        cancelButtonText: `ยกเลิก`,
-        confirmButtonColor: '#28a745',
-        denyButtonColor: '#007bff',
-        cancelButtonColor: '#d33',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $('#Distribute').submit();
-            var date_received = $('#date_received').val();
-            var refNo = $('#refNo').val();
-            if (!date_received) {
-                $('#date_received').addClass(' bg-warning');
-            } 
-            if (!refNo) {
-                $('#refNo').addClass(' bg-warning');
-            }
-        } else if (result.isDenied) {
-            $('#Distribute').submit();
-        } else if (result.isCancel) {
-          
-        }
-    });
+    // Swal.fire({
+    //     icon: 'warning',
+    //     title: 'คุณต้องการกระจายอุปกรณ์ด้วยหรือไม่?',
+    //     showDenyButton: true,
+    //     showCancelButton: true,
+    //     confirmButtonText: 'บันทึกและกระจาย',
+    //     denyButtonText: `บันทึก`,
+    //     cancelButtonText: `ยกเลิก`,
+    //     confirmButtonColor: '#28a745',
+    //     denyButtonColor: '#007bff',
+    //     cancelButtonColor: '#d33',
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         $('#Distribute').submit();
+    //         var date_received = $('#date_received').val();
+    //         var refNo = $('#refNo').val();
+    //         if (!date_received) {
+    //             $('#date_received').addClass(' bg-warning');
+    //         } 
+    //         if (!refNo) {
+    //             $('#refNo').addClass(' bg-warning');
+                
+    //         }
+    //     } else if (result.isDenied) {
+    //         $('#Distribute').submit();
+    //     } else if (result.isCancel) {
+    //       $('#Distribute').submit();
+    //     }
+        $('#Distribute').submit();
+    // });
 }
 
 $(document).on('input', '#price', function () {

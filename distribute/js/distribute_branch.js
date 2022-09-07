@@ -14,7 +14,16 @@ $('#btn_submitdistributebranch').click(function () {
         cancelButtonText: 'ยกเลิก',
     }).then((result) => {
         if (result.isConfirmed) {
-          
+            $('#AcceptAccToBranch').submit();
         }
     })
-})
+});
+
+$(document).on('click', '.itemselected', function () {
+    var itemid = $(this).data('itemid');
+    if (this.checked) {
+        $('#inputitemid_'+itemid).prop("disabled", false);
+    } else {
+        $('#inputitemid_'+itemid).prop('disabled', true);
+    }
+});

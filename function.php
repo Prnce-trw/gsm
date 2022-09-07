@@ -77,3 +77,15 @@ function UnitPrice($FPID, $sizeID, $branchID, $qty)
         return '';
     }
 }
+function TransitStatus($param)
+{
+    if ($param == 'Pending') {
+        return '<span class="badge badge-warning badge-sm">Pending</span>';
+    } elseif ($param == 'Reject') {
+        return '<span class="badge badge-danger badge-sm">Reject</span>';
+    } elseif ($param == 'Accept') {
+        return '<span class="badge badge-success badge-sm">Accept</span>';
+    } else {
+        return '<span class="badge badge-secondary badge-sm">No Record</span>';
+    }
+}

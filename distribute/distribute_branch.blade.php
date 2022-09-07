@@ -39,6 +39,7 @@
 <body>
     <?php
         include_once('../conn.php');
+        include('../function.php');
         $fetchdata      = new DB_con();
         $branchid       = 'BRC01-2';
         $dataItems      = $fetchdata->fetchdataitemBranchPending($branchid);
@@ -47,58 +48,63 @@
     <section>
         <div class="form-group row">
             <div class="col-sm-4 text-left">
-                <h3>สาขา 2 ()</h3>
+                <h3>สาขา 2</h3>
             </div>
             <div class="col-sm-8 text-right">
                 <button type="button" class="btn btn-warning" title="Reset" id="btnreload">รีเซ็ท <i class="icofont icofont-refresh"></i></button>
             </div>
         </div>
-        <table class="table table-hover table-bordered">
-            <thead>
-                <tr class="text-center">
-                    <th scope="col"><input type="checkbox" name="" id="" style="width: 15px; height: 15px;"></th>
-                    <th scope="col">หมายเลขเอกสาร</th>
-                    <th scope="col">วันที่</th>
-                    <th scope="col">รหัสอุปกรณ์</th>
-                    <th scope="col">ชื่ออุปกรณ์</th>
-                    <th scope="col">จำนวน</th>
-                    <th scope="col">สถานะ</th>
-                </tr>
-            </thead>
-            <tbody id="accRow">
-                <?php foreach ($dataItems as $key => $value) { ?>
-                    <tr>
-                        <td class="text-middle">
-                            <input type="checkbox" style="width: 15px; height: 15px;">
-                        </td>
-                        <td class="text-middle">
-                            <?=$value['accbranch_HdisID']?>
-                        </td>
-                        <td class="text-center text-middle">
-                            <?=$value['created_at']?>
-                        </td>
-                        <td class="text-center text-middle">
-                            <?=$value['itemsCode']?>
-                        </td>
-                        <td class="text-middle">
-                            <?=$value['itemsName']?>
-                        </td>
-                        <td class="text-center text-middle">
-                            <input type="number" name="" id="" class="form-control" value="<?=$value['accbranch_qty']?>" style="width: 100px;">
-                        </td>
-                        <td class="text-center text-middle">
-                            <?=$value['accbranch_status']?>
-                        </td>
+        <form action="../controller/DistributeController.php" method="post" id="AcceptAccToBranch">
+            <input type="hidden" value="AcceptAccToBranch" name="parameter">
+            <input type="hidden" value="<?=$branchid?>" name="branchid">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col"><input type="checkbox" name="" id="" style="width: 15px; height: 15px;"></th>
+                        <th scope="col">หมายเลขเอกสาร</th>
+                        <th scope="col" width="100px">วันที่</th>
+                        <th scope="col" width="80px">สถานะ</th>
+                        <th scope="col">รหัสอุปกรณ์</th>
+                        <th scope="col">ชื่ออุปกรณ์</th>
+                        <th scope="col" width="70px">จำนวน</th>
                     </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-        <div class="form-group row">
-            <div class="col-sm-12 text-right">
-                <button type="button" class="btn btn-success" id="btn_submitdistributebranch">บันทึก</button>
+                </thead>
+                <tbody id="accRow">
+                    <?php foreach ($dataItems as $key => $value) { ?>
+                        <tr>
+                            <td class="text-middle text-middle">
+                                <input type="checkbox" name="itemid[<?=$key?>]" class="itemselected" style="width: 15px; height: 15px;" value="<?=$value['itemsCode']?>" data-itemid="<?=$value['n_id']?>">
+                            </td>
+                            <td class="text-middle">
+                                <b><?=$value['accbranch_HdisID']?></b> <br> <span class="text-secondary"><?=$value['dis_refNo']?></span>
+                            </td>
+                            <td class="text-center text-middle">
+                                <?=date("d/m/Y H:i", strtotime($value['created_at']))?>
+                            </td>
+                            <td class="text-center text-middle">
+                                <?=TransitStatus($value['accbranch_status'])?>
+                            </td>
+                            <td class="text-center text-middle">
+                                <?=$value['itemsCode']?>
+                            </td>
+                            <td class="text-middle">
+                                <?=$value['itemsName']?>
+                            </td>
+                            <td class="text-center text-middle">
+                                <?=$value['accbranch_qty']?>
+                                <input type="text" name="iteminfo[<?=$key?>]" value="<?=$value['accbranch_qty']?>/<?=$value['dis_refNo']?>/<?=$value['accbranch_amount']?>" id="inputitemid_<?=$value['n_id']?>" disabled>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <div class="form-group row">
+                <div class="col-sm-12 text-right">
+                    <button type="button" class="btn btn-success" id="btn_submitdistributebranch" form="AcceptAccToBranch">บันทึก</button>
+                </div>
             </div>
-        </div>
-        <div id="result"></div>
+            <div id="result"></div>
+        </form>
     </section>
 
     <!-- Required Jqurey -->
