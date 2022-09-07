@@ -80,7 +80,6 @@
     } else if ($_POST['parameter'] == 'AcceptAccToBranch') {
         try {
             $fetchdata              = new DB_con();
-            // var_dump($_POST);
             $branchID               = $_POST['branchid'];
             $cerrent_year           = date("Y");
             if ($_POST['itemid'] != null) {
@@ -89,12 +88,15 @@
                     $qty                    = $iteminfo[0];
                     $docRef                 = $iteminfo[1];
                     $price                  = $iteminfo[2];
-                    // exit();
-                    $datamovement           = $fetchdata->insertInventMovment($cerrent_year, $value, $branchID, $qty, $docRef, $price);
+                    $AccBranchID            = $iteminfo[3];
+                    $datamovement           = $fetchdata->insertInventMovment($cerrent_year, $value, $branchID, $qty, $docRef, $price, $AccBranchID);
                 }
             }
-            
+
+            echo "<script>alert('Success')</script>";
+            echo "<script>window.location.href='../distribute/distribute_branch.blade.php'</script>";
         } catch (\Throwable $th) {
-            //throw $th;
+            echo "<script>alert('Failed: "+$th->getMessage()+"')</script>";
+            echo "<script>window.location.href='../distribute/distribute_branch.blade.php'</script>";
         }
     }

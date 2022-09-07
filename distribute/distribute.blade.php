@@ -43,6 +43,7 @@
 <body>
     <?php
         include_once('../conn.php');
+        include('../function.php');
         $fetchdata      = new DB_con();
         $dataItems      = $fetchdata->fetchdataItems();
         $dataBranch     = $fetchdata->fetchdataBranch();
@@ -227,43 +228,40 @@
                     <thead class="text-center">
                         <tr>
                             <th rowspan="2" class="text-middle" style="width: 40px;">#</th>
-                            <th colspan="3">สถานะ</th>
+                            <th colspan="2">สถานะ</th>
                             <th colspan="2">ข้อมูลอุปกรณ์</th>
                             <th rowspan="2" class="text-middle" style="width: 80px;">วัน / เวลา</th>
+                            <th rowspan="2" class="text-middle" style="width: 80px;">การจัดการ</th>
                         </tr>
                         <tr>
-                            <th class="text-middle" style="width: 70px;">ประเภท</th>
-                            <th class="text-middle" style="width: 90px;">การยืนยัน</th>
+                            <th class="text-middle" style="width: 70px;">การยืนยัน</th>
                             <th class="text-middle" style="width: 90px;">สาขา</th>
                             <th class="text-middle">ชื่อ / รหัส</th>
                             <th class="text-middle" style="width: 60px;">จำนวน</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($itemtoBranch as $key => $value) {?>
+                        <?php foreach ($itemtoBranch as $key => $value) { ?>
                             <tr>
                                 <td class="text-middle text-center">
                                     <input type="checkbox" name="" id="" style="width: 15px; height: 15px;">
                                 </td>
-                                <td class="text-middle text-center">
-                                    <?php if ($value['accmov_status'] == 'TF-OUT') { ?>
-                                        <span class="badge badge-sm badge-success">TF-OUT</span>
-                                    <?php } else if ($value['accmov_status'] == 'TF-IN') { ?>
-                                        <span class="badge badge-sm badge-warning">TF-IN</span>
-                                    <?php }?> 
-                                </td>
-                                <td class="text-middle"></td>
-                                <td class="text-middle"><?=$value['accmov_branchID']?></td>
+                                <td class="text-middle text-center"><?=TransitStatus($value['accbranch_status'])?></td>
+                                <td class="text-middle"><?=$value['accbranch_branchID']?></td>
                                 <td class="text-middle" style="width: 200px;">
                                     <?=$value['itemsName']?><br>
                                     <span style="color: gray;"><?=$value['itemsCode']?></span>
                                     
                                 </td>
-                                <td class="text-middle text-center"><?=$value['accmov_qty']?></td>
+                                <td class="text-middle text-center"><?=$value['accbranch_qty']?></td>
                                 <td class="text-middle text-right"><?=date("d/m/Y H:i:m", strtotime($value['created_at']));?></td>
+                                <td class="text-middle text-center">
+                                    <?php if ($value['accbranch_status'] == 'Pending') { ?>
+                                        <button type="button" class="btn btn-danger btn-sm">Reject</button>
+                                    <?php } ?>
+                                </td>
                             </tr>
                         <?php } ?>
-                        
                     </tbody>
                 </table>
             </div>

@@ -92,7 +92,7 @@
                             </td>
                             <td class="text-center text-middle">
                                 <?=$value['accbranch_qty']?>
-                                <input type="text" name="iteminfo[<?=$key?>]" value="<?=$value['accbranch_qty']?>/<?=$value['dis_refNo']?>/<?=$value['accbranch_amount']?>" id="inputitemid_<?=$value['n_id']?>" disabled>
+                                <input type="hidden" name="iteminfo[<?=$key?>]" value="<?=$value['accbranch_qty']?>/<?=$value['dis_refNo']?>/<?=$value['accbranch_amount']?>/<?=$value['accbranch_id']?>" id="inputitemid_<?=$value['n_id']?>" disabled>
                             </td>
                         </tr>
                     <?php } ?>
