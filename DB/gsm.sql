@@ -11,7 +11,7 @@
  Target Server Version : 100422
  File Encoding         : 65001
 
- Date: 08/09/2022 09:27:04
+ Date: 08/09/2022 11:34:00
 */
 
 SET NAMES utf8mb4;
@@ -2041,17 +2041,17 @@ INSERT INTO `owner_branch` VALUES (6, 'BRC01-6', 'Y', 'OWN01-4441', 'สาข�
 DROP TABLE IF EXISTS `tb_accessories_branch`;
 CREATE TABLE `tb_accessories_branch`  (
   `accbranch_id` int(11) NOT NULL AUTO_INCREMENT,
-  `accbranch_HdisID` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `accbranch_itemID` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `accbranch_unitPrice` decimal(10, 2) NULL DEFAULT NULL,
-  `accbranch_amount` decimal(10, 2) NULL DEFAULT NULL,
-  `accbranch_qty` int(10) NULL DEFAULT NULL,
-  `accbranch_status` enum('Accept','Reject','Pending') CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'Pending',
-  `accbranch_branchID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `accbranch_HdisID` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'เก็บ id จาก tb_head_distribute',
+  `accbranch_itemID` varchar(11) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'เก็บ id จาก items',
+  `accbranch_unitPrice` decimal(10, 2) NULL DEFAULT NULL COMMENT 'unit price',
+  `accbranch_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT 'ราคารวม',
+  `accbranch_qty` int(10) NULL DEFAULT NULL COMMENT 'จำนวน',
+  `accbranch_status` enum('Accept','Reject','Pending') CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'Pending' COMMENT 'สถานะ \r\nAccept = รับแล้ว, Reject = ส่งกลับ, Pending = รอรับ',
+  `accbranch_branchID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'เก็บ id จากสาขา',
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`accbranch_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางเก็บข้อมูลการรับอุปกรณ์' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_accessories_branch
@@ -2073,16 +2073,16 @@ DROP TABLE IF EXISTS `tb_accessories_movement`;
 CREATE TABLE `tb_accessories_movement`  (
   `accmov_id` int(11) NOT NULL AUTO_INCREMENT,
   `accmov_HdisID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'id จากตาราง tb_head_distribute',
-  `accmov_itemID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `accmov_unitPrice` decimal(10, 2) NULL DEFAULT NULL,
-  `accmov_amount` decimal(10, 2) NULL DEFAULT NULL,
-  `accmov_qty` int(10) NULL DEFAULT NULL,
-  `accmov_branchID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `accmov_status` enum('TF-IN','TF-OUT') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'TF-OUT',
+  `accmov_itemID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'เก็บ id จาก items',
+  `accmov_unitPrice` decimal(10, 2) NULL DEFAULT NULL COMMENT 'unit price',
+  `accmov_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT 'amount',
+  `accmov_qty` int(10) NULL DEFAULT NULL COMMENT 'จำนวน',
+  `accmov_branchID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'id ของสาขา',
+  `accmov_status` enum('TF-IN','TF-OUT') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'TF-OUT' COMMENT 'สถานะการส่งอุปกรณ์\r\nTF-IN = Tranfer IN (กระจายสินค้าไปยังสาขา)\r\nTF-OUT = Tranfer Out (สาขาส่งกลับมายังสำนักงานใหญ่)',
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`accmov_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางเก็บข้อมูลดารเข้าออกอุปกรณ์' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_accessories_movement
@@ -2108,7 +2108,7 @@ CREATE TABLE `tb_brandrelsize`  (
   `crated_at` timestamp(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`brandRelSize_ID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางเชื่อมข้อมูลระหว่าง Brand และ Size ว่าแต่ละแบรนด์มีขนาดไหนบ้าง' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_brandrelsize
@@ -2160,7 +2160,7 @@ CREATE TABLE `tb_cars`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`car_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางข้อมูลรถ' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_cars
@@ -2183,7 +2183,7 @@ CREATE TABLE `tb_curr_priceboard`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`currPB_ID`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางกระดานราคาปัจจุบัน' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_curr_priceboard
@@ -2212,7 +2212,7 @@ CREATE TABLE `tb_distribute_detail`  (
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`disdet_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางรายละเอียดอปุกรณ์ที่ซื้อ' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_distribute_detail
@@ -2241,7 +2241,7 @@ CREATE TABLE `tb_distribute_outstanding`  (
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`disout_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางข้อมูลอุปกรณ์คงเหลือ Out Standing' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_distribute_outstanding
@@ -2262,7 +2262,7 @@ CREATE TABLE `tb_fillingplant`  (
   `FP_ID` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `FP_Name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'ชื่อโรงบรรจุ',
   `FP_StatusActive` enum('Y','N') CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT 'Y'
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางข้อมูลโรงบรรจุ' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_fillingplant
@@ -2290,7 +2290,7 @@ CREATE TABLE `tb_head_distribute`  (
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`dis_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางหัวเอกสารอุปกรณ์' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_head_distribute
@@ -2319,7 +2319,7 @@ CREATE TABLE `tb_head_po_receipt`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`head_pr_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางหัวเอกสารบรรจุแก๊ส (Invoice)' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_head_po_receipt
@@ -2348,7 +2348,7 @@ CREATE TABLE `tb_head_preorder`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`head_po_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางหัวเอกสารบรรจุแก๊ส' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_head_preorder
@@ -2365,7 +2365,7 @@ CREATE TABLE `tb_items_category`  (
   `items_category_textid` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'FK ของ items ',
   `items_category_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'ชื่อประเภทสินค้า',
   PRIMARY KEY (`items_category_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางข้อมูลประเภทสินค้า' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tb_po_itementrance
@@ -2384,7 +2384,7 @@ CREATE TABLE `tb_po_itementrance`  (
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`po_itemEnt_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางรายละเอียดบรรจุแก๊สเข้า' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_po_itementrance
@@ -2407,7 +2407,7 @@ CREATE TABLE `tb_po_itemout`  (
   `created_at` timestamp(0) NOT NULL DEFAULT current_timestamp(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`po_itemOut_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางรายละเอียดส่งบรรจุแก๊ส' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_po_itemout
@@ -2425,7 +2425,7 @@ CREATE TABLE `tb_prefix_header`  (
   `prefixH_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `prefixH_seq` int(255) NULL DEFAULT NULL,
   PRIMARY KEY (`prefixH_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'Prefix' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_prefix_header
@@ -2466,7 +2466,7 @@ CREATE TABLE `tb_priceboard`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`PB_ID`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_unicode_ci COMMENT = 'ตารางประวัติกระดานราคา' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_priceboard
