@@ -110,9 +110,10 @@
             $status       = 'False';
             echo json_encode($status);
         }
-    } elseif ($_POST['parameter'] == 'AccBranchInfo') {
+    } else if ($_POST['parameter'] == 'AccBranchInfo') {
         $fetchdata              = new DB_con();
         $itemid                 = $_POST['itemid'];
         $Accitem                = $fetchdata->AccBranchInfo($itemid);
-        $row                    = mysqli_fetch_array($Accitem);
+        $data                   = mysqli_fetch_array($Accitem);
+        echo json_encode($data);
     }
