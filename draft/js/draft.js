@@ -34,7 +34,7 @@ $(document).on('input', '.adjustItemPO', function () {
     var sizeid      = $(this).data('sizeid');
     var size        = $(this).data('size');
     var cytype      = $(this).data('cytype');
-    var branch      = "BRC1-1";
+    var branch      = "BRC01-2";
     var tritem      = $('#'+brand+'_'+sizeid+'_'+cytype).data('info');
     console.log(brand, sizeid, cytype, tritem);
     $('#divedited').css("display", "block");
@@ -43,7 +43,7 @@ $(document).on('input', '.adjustItemPO', function () {
     $.ajax({
         type: "POST",
         url: "../controller/POController.php",
-        data: {parameter: "aJaxCheckStock", weight: wightsize, brand: brand, amount: qty, branch: branch},
+        data: {parameter: "aJaxCheckStock", weight: wightsize, brand: brand, amount: qty, branch: branch, sizeID: sizeid},
         dataType: "JSON",
         success: function (response) {
             if (parseFloat(qty) > parseFloat(response['qty_balance'])) {
@@ -51,16 +51,6 @@ $(document).on('input', '.adjustItemPO', function () {
                 $('#trItem_'+brand+'_'+sizeid+'_'+cytype).remove();
                 alert('ขออภัย! สินค้าภายในคลังคงเหลือ : '+response['qty_balance']+' ถัง');
             } else {
-                // var currweight = 0;
-                // $('.totalweight').each(function() {
-                //     if(isNaN($(this).text()) || $(this).text() === "") {
-                //         currweight+=0;
-                //     } else {
-                //         currweight+=parseFloat($(this).text());
-                //     }
-                // });
-                // $(".resultWeight").text(parseFloat(currweight).toFixed(2));
-                
                 if (tritem == null && qty > 0) {
                     var wordType = "";
                     if (cytype == 'N') {
@@ -69,7 +59,7 @@ $(document).on('input', '.adjustItemPO', function () {
                         wordType = 'ถังฝากเติม';
                     }
                     $('#itemlist').after('<tr id="trItem_'+brand+'_'+sizeid+'_'+cytype+'">'+
-                        '<td class="text-middle"><input type="text" name="Add_pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'/'+sizeid+'"></td>'+
+                        '<td class="text-middle"><input type="hidden" name="Add_pickitem[]" data-info="'+brand+'_'+sizeid+'_'+cytype+'" id="'+brand+'_'+sizeid+'_'+cytype+'" value="'+brand+'/'+size+'/'+qty+'/'+cytype+'/'+sizeid+'"></td>'+
                         '<td class="text-left text-middle">'+brand+' / ขนาด '+size+' กก.</td>'+
                         '<td class="text-center text-middle">'+wordType+'</td>'+
                         '<td class="text-center text-middle"><span id="qtyIn_'+brand+'_'+sizeid+'_'+cytype+'">'+qty+'</span></td>'+

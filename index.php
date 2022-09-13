@@ -79,17 +79,12 @@
                 <?php //for(1) 
                 foreach ($dataSize as $key => $value) { $stack = null; 
                     foreach ($dataBS as $keyBS => $valueBS) {
-                        if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                        if ($value['rn_itemweight_weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                             <td width="80" height="50">
-                            <input type="number" class="form-control pickitem weightSize_<?=$value['weight_NoID']?>" style="width: 50px;" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N" min="0">
-                                <div class="div-inside">
-                                    
-                                    <!-- <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['weight_NoID']?>" data-weight="<?=$value['wightSize']?>" data-Cytype="N">
-                                        <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                            <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                        <?php } ?>
-                                    </select> -->
-                                </div>
+                            <input type="number" class="form-control pickitem weightSize_<?=$value['rn_itemweight_weight_NoID']?>" 
+                            style="width: 50px;" id="input_<?=$item['ms_product_id']?>_<?=$value['rn_itemweight_weight_NoID']?>_N" 
+                            data-brand="<?=$item['ms_product_id']?>" data-sizeid="<?=$value['rn_itemweight_weight_NoID']?>" 
+                            data-weight="<?=$value['rn_itemweight_wightSize']?>" data-Cytype="N" min="0">
                             </td>
                         <?php $stack = true;}
                     } if (!$stack) { ?>
@@ -111,14 +106,14 @@
             <!-- <tr>
                 <td><b>รวม</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
-                    <td><span class="sumcurrWeight_<?=$value['weight_NoID']?> getcurrWeight"></span></td>
+                    <td><span class="sumcurrWeight_<?=$value['rn_itemweight_weight_NoID']?> getcurrWeight"></span></td>
                 <?php } ?>
                 <td colspan="2"></td>
             </tr> -->
             <tr>
                 <td height="50"><b>น้ำหนักทั้งหมด</b></td>
                 <?php foreach ($dataSize as $key => $value) { ?>
-                    <td><span class="sumWeight_<?=$value['weight_NoID']?> getSumWeight"></span></td>
+                    <td><span class="sumWeight_<?=$value['rn_itemweight_weight_NoID']?> getSumWeight"></span></td>
                 <?php } ?>
                 <td colspan="2"><span class="sumWeightAdv"></span></td>
             </tr>

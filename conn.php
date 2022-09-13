@@ -22,7 +22,9 @@
 
         public function fetchdataSize()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize WHERE active_status = 'Y' ORDER BY order_by_no ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize 
+                                    LEFT JOIN tb_rn_item_gas ON items_gas_weightsize.weightSize_id = tb_rn_item_gas.rn_itemweight_weightSize_id 
+                                    WHERE active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC");
             return $result;
         }
 
@@ -34,7 +36,9 @@
 
         public function fetchdataSizeRelate($brand)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize LEFT JOIN items_gas_weightsize ON tb_brandrelsize.brandRelSize_weight_autoID = items_gas_weightsize.weight_NoID WHERE tb_brandrelsize.brandRelSize_ms_product_id = '$brand' ORDER BY items_gas_weightsize.order_by_no ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize 
+                                                    LEFT JOIN tb_rn_item_gas ON tb_brandrelsize.brandRelSize_weight_autoID = tb_rn_item_gas.rn_itemweight_weight_NoID
+                                                    WHERE tb_brandrelsize.brandRelSize_ms_product_id = '$brand' ");
             return $result;
         }
 
@@ -209,7 +213,7 @@
         public function editCylinderPO($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_po_itemout 
-                                                    LEFT JOIN items_gas_weightsize ON tb_po_itemout.po_itemOut_CySizeWeightID = items_gas_weightsize.weight_NoID 
+                                                    LEFT JOIN tb_rn_item_gas ON tb_po_itemout.po_itemOut_CySizeWeightID = tb_rn_item_gas.rn_itemweight_weight_NoID 
                                                     WHERE tb_po_itemout.po_itemOut_docNo = '$POID' 
                                                     ORDER BY po_itemOut_CyBrand ASC");
             return $result;
@@ -262,10 +266,15 @@
             return $result;
         }
 
-        public function aJaxCheckStock($brand, $weight, $amount, $branch)
+        public function aJaxCheckStock($brand, $weight, $amount, $branch, $sizeid)
         {
-            $itemsCode = "I00-02C-".$brand.$weight;
-            $result = mysqli_query($this->dbcon, "SELECT qty_balance FROM items_inventory_branch WHERE itemsCode = '$itemsCode' AND branchID = '$branch' AND store_area = '00'");
+            $sqlitemsizeid = mysqli_query($this->dbcon, "SELECT rn_itemweight_weightSize_id FROM tb_rn_item_gas 
+                                                    WHERE rn_itemweight_weight_NoID = '$sizeid' ");
+            $itemsizeid = mysqli_fetch_array($sqlitemsizeid);
+
+            $itemsCode = "I00-02C-".$brand.$itemsizeid['rn_itemweight_weightSize_id'];
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch 
+                                                    WHERE itemsCode = '$itemsCode' AND branchID = '$branch' AND store_area = '00' ");
             return $result;
         }
 

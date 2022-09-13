@@ -16,18 +16,15 @@ $dataSizeRelate = $fetchdata->fetchdataSizeRelate($_GET['modal_id']); ?>
                         <tr>
                             <td rowspan="2">ขนาด</td>
                             <?php foreach ($dataSizeRelate as $key => $value) { ?>
-                                <td><?=$value['weightSize_id']?></td>
+                                <td><?=$value['rn_itemweight_weightSize_id']?></td>
                             <?php } ?>
                         </tr>
                         <tr>
                             <?php foreach ($dataSizeRelate as $key => $value) { ?>
                             <td>
-                                <input type="number" min="0" style="width: 50px;" class="form-control pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$_GET['modal_id']?>_<?=$value['weight_NoID']?>_Adv" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>">
-                                <!-- <select name="" class="pickitem weightSize_<?=$value['weight_NoID']?>" id="input_<?=$_GET['modal_id']?>_<?=$value['weight_NoID']?>_Adv" data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['wightSize']?>" data-sizeid="<?=$value['weight_NoID']?>">
-                                    <?php for ($n=0; $n <=20 ; $n++) { ?>
-                                        <option value="<?php echo $n; ?>" <?php echo $n == 0 ? 'selected':'' ?>><?php echo $n; ?></option>
-                                    <?php } ?>
-                                </select> -->
+                                <input type="number" min="0" style="width: 50px;" class="form-control pickitem weightSize_<?=$value['rn_itemweight_weight_NoID']?>" 
+                                id="input_<?=$_GET['modal_id']?>_<?=$value['rn_itemweight_weight_NoID']?>_Adv" 
+                                data-Cytype="Adv" data-brand="<?=$_GET['modal_id'];?>" data-weight="<?=$value['rn_itemweight_wightSize']?>" data-sizeid="<?=$value['rn_itemweight_weight_NoID']?>">
                             </td>
                             <?php } ?>
                         </tr>

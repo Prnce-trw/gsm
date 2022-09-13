@@ -118,8 +118,9 @@
         $weight                 = $_POST['weight'];
         $amount                 = $_POST['amount'];
         $branch                 = $_POST['branch'];
+        $sizeid                 = $_POST['sizeID'];
         $fetchdata              = new DB_con();
-        $resultSize             = $fetchdata->aJaxCheckStock($brand, $weight, $amount, $branch);
+        $resultSize             = $fetchdata->aJaxCheckStock($brand, $weight, $amount, $branch, $sizeid);
         $fetchqty               = mysqli_fetch_array($resultSize);
         echo json_encode($fetchqty);
     }

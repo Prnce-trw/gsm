@@ -54,14 +54,14 @@ $(document).on('input', '.pickitem', function () {
     var sizeID = $(this).attr('data-sizeid');
     var cytype = $(this).attr('data-Cytype');
     var weight = $(this).data('weight');
-    var branch = "BRC1-1";
+    var branch = "BRC01-2";
     var amount = $(this).val();
     var appendItem = $('#'+brand+'_'+sizeID+'_'+cytype).attr('data-info');
-
+    console.log(brand, sizeID, cytype, weight, amount);
     $.ajax({
         type: "POST",
         url: "controller/POController.php",
-        data: {parameter: "aJaxCheckStock", weight: weight, brand: brand, amount: amount, branch: branch},
+        data: {parameter: "aJaxCheckStock", weight: weight, brand: brand, amount: amount, branch: branch, sizeID: sizeID},
         dataType: "JSON",
         success: function (response) {
             if (parseFloat(amount) > parseFloat(response['qty_balance'])) {

@@ -158,7 +158,7 @@
                     <?php foreach ($itemPO as $key => $value) { 
                         $brand = $value['po_itemOut_CyBrand'];
                         $weight = $value['po_itemOut_CySize'];
-                        $weightID = $value['weight_NoID'];
+                        $weightID = $value['rn_itemweight_weight_NoID'];
                         $cytype = $value['po_itemOut_type'];
                         ?>
                         <tr id="trID_<?=$brand?>_<?=$weight?>_<?=$cytype?>">
@@ -176,7 +176,7 @@
                             </td>
                             <td class="text-right text-middle">
                                 <span class="itemWeight" id="calItemWeight_<?=$brand?>_<?=$weightID?>_<?=$cytype?>">
-                                    <?=(float)$value['wightSize'] * $value['po_itemOut_CyAmount']?>
+                                    <?=(float)$value['rn_itemweight_wightSize'] * $value['po_itemOut_CyAmount']?>
                                 </span>
                             </td>
                             <td class="text-center text-middle">
@@ -248,7 +248,7 @@
                                     <tr>
                                         <th width="80" height="30"> ยี่ห้อ\ขนาด</th>
                                         <?php foreach ($dataSize as $key => $value) { ?>
-                                        <th width="80" height="30" class="text-center"><?=$value['weightSize_id']?></th>
+                                        <th width="80" height="30" class="text-center"><?=$value['rn_itemweight_weightSize_id']?></th>
                                         <?php } ?>
                                     </tr>
                                 </thead>
@@ -261,10 +261,10 @@
                                             <?php //for(1) 
                                             foreach ($dataSize as $key => $value) { $stack = null; 
                                                 foreach ($dataBS as $keyBS => $valueBS) {
-                                                    if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                                                    if ($value['rn_itemweight_weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                                                         <td width="80" height="50">
-                                                            <input type="number" name="" id="qtyIn_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_N" class="form-control text-center adjustItems" min="0" 
-                                                            data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['weightSize_id']?>" data-weightid="<?=$value['weight_NoID']?>" data-wightsize="<?=$value['wightSize']?>" data-cytype="N">
+                                                            <input type="number" name="" id="qtyIn_<?=$item['ms_product_id']?>_<?=$value['rn_itemweight_weight_NoID']?>_N" class="form-control text-center adjustItems" min="0" 
+                                                            data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['rn_itemweight_weightSize_id']?>" data-weightid="<?=$value['rn_itemweight_weight_NoID']?>" data-wightsize="<?=$value['rn_itemweight_wightSize']?>" data-cytype="N">
                                                         </td>
                                                 <?php $stack = true; } } if (!$stack) { ?>
                                                     <td width="80" height="50"></td>
@@ -294,7 +294,7 @@
                                     <tr>
                                         <th width="80" height="30"> ยี่ห้อ\ขนาด</th>
                                         <?php foreach ($dataSize as $key => $value) { ?>
-                                        <th width="80" height="30" class="text-center"><?=$value['weightSize_id']?></th>
+                                        <th width="80" height="30" class="text-center"><?=$value['rn_itemweight_weightSize_id']?></th>
                                         <?php } ?>
                                     </tr>
                                 </thead>
@@ -307,10 +307,10 @@
                                             <?php //for(1) 
                                             foreach ($dataSize as $key => $value) { $stack = null; 
                                                 foreach ($dataBS as $keyBS => $valueBS) {
-                                                    if ($value['weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
+                                                    if ($value['rn_itemweight_weight_NoID'] == $valueBS['brandRelSize_weight_autoID'] && $item['ms_product_id'] == $valueBS['brandRelSize_ms_product_id']) { ?>
                                                         <td width="80" height="50">
-                                                            <input type="number" name="" id="qtyIn_<?=$item['ms_product_id']?>_<?=$value['weight_NoID']?>_Adv" class="form-control text-center adjustItems" min="0" 
-                                                            data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['wightSize']?>" data-weightid="<?=$value['weight_NoID']?>" data-wightsize="<?=$value['wightSize']?>" data-cytype="Adv">
+                                                            <input type="number" name="" id="qtyIn_<?=$item['ms_product_id']?>_<?=$value['rn_itemweight_weight_NoID']?>_Adv" class="form-control text-center adjustItems" min="0" 
+                                                            data-brand="<?=$item['ms_product_id']?>" data-size="<?=$value['rn_itemweight_weightSize_id']?>" data-weightid="<?=$value['rn_itemweight_weight_NoID']?>" data-wightsize="<?=$value['rn_itemweight_wightSize']?>" data-cytype="Adv">
                                                         </td>
                                                 <?php $stack = true; } } if (!$stack) { ?>
                                                     <td width="80" height="50"></td>
