@@ -16,7 +16,7 @@
 
         public function fetchdataBrand()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM ms_product WHERE ms_product_active = 'Y' ORDER BY ms_product_orderby_no ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_ui_master_product WHERE ms_product_active = 'Y' ORDER BY ms_product_orderby_no ASC");
             return $result;
         }
 
@@ -280,11 +280,12 @@
         
         public function fetchdataReport($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, product.ms_product_name, product.ms_product_id, size.wightSize
+            $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, 
+                                                    product.ms_product_name, product.ms_product_id, size.wightSize
                                                     FROM tb_head_preorder as po
                                                     LEFT JOIN tb_po_itemout as itemout
                                                     ON po.head_po_docnumber = itemout.po_itemOut_docNo
-                                                    LEFT JOIN ms_product as product
+                                                    LEFT JOIN items_ui_master_product as product
                                                     ON itemout.po_itemOut_CyBrand = product.ms_product_id
                                                     LEFT JOIN tb_fillingplant as fp
                                                     ON po.head_po_fillstation = fp.FP_ID
@@ -298,7 +299,8 @@
 
         public function fetchdataReportHeader($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT po.head_po_docdate, po.head_po_round, pr.head_pr_timeIn, pr.head_pr_timeOut, fp.FP_Name, emp.emp_name, emp.emp_lastname
+            $result = mysqli_query($this->dbcon, "SELECT po.head_po_docdate, po.head_po_round, pr.head_pr_timeIn, 
+                                                    pr.head_pr_timeOut, fp.FP_Name, emp.emp_name, emp.emp_lastname
                                                     FROM tb_head_preorder as po
                                                     LEFT JOIN tb_head_po_receipt as pr
                                                     ON po.head_po_docnumber = pr.head_pr_docnumber_po
@@ -492,7 +494,7 @@
         
         public function fetchdataitemtoBranch()
         {
-            $result = mysqli_query($this->dbcon, "SELECT accbranch_branchID, accbranch_qty, accbranch_status, itemsName, itemsCode, tb_accessories_branch.created_at FROM tb_accessories_branch
+            $result = mysqli_query($this->dbcon, "SELECT accbranch_id, accbranch_branchID, accbranch_qty, accbranch_status, itemsName, itemsCode, tb_accessories_branch.created_at FROM tb_accessories_branch
                                                     LEFT JOIN items ON tb_accessories_branch.accbranch_itemID = items.n_id
                                                     ORDER BY accbranch_id DESC");
             return $result;
@@ -504,19 +506,17 @@
             return $result;
         }
 
-        public function fetchdataBuyProd($branch, $product, $dateStart, $dateEnd) {
+        public function fetchdataBuyProd($branch, $product, $supplier, $dateStart, $dateEnd) {
             $sql = "SELECT * FROM tb_po_itementrance
-                    LEFT JOIN ms_product ON tb_po_itementrance.po_itemEnt_CyBrand = ms_product.ms_product_id";
-            // if($branch || $product || ($dateStart && $dateEnd)) {
-            //     if(isset($branch)) { $whereBranch = "po_itemEnt_branchID = $branch"; }
-            //     if(isset($product)) { $whereProduct = "po_itemEnt_itemsID = $product"; }
-            //     if(isset($dateStart) && isset($dateEnd)) { $whereDate = "created_at BETWEEN $dateStart AND $dateEnd"; }
-            //     if(isset($whereBranch) && isset($whereProduct)) {
-            //         $sql .= "WHERE $whereBranch AND $whereProduct";
-            //     } else if(isset($whereBranch) && isset($whereDate)) {
-            //         $sql .= "WHERE $whereBranch AND $whereDate";
-            //     }
-            // }
+                    LEFT JOIN items ON tb_po_itementrance.po_itemEnt_items_n_id = items.n_id
+                    LEFT JOIN items_ui_master_product ON tb_po_itementrance.po_itemEnt_CyBrand = items_ui_master_product.ms_product_id
+                    LEFT JOIN owner_branch ON tb_po_itementrance.po_itemEnt_branch_n_id = owner_branch.n_id
+                    LEFT JOIN tb_supplier ON tb_po_itementrance.po_itemEnt_supplier_supplierID = tb_supplier.supplier_text_id
+                    WHERE tb_po_itementrance.created_at BETWEEN '$dateStart' AND '$dateEnd'";
+            if (isset($branch) && $branch != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_branch_n_id = '$branch'"; }
+            if (isset($product) && $product != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_items_n_id = '$product'"; }
+            if (isset($supplier) && $supplier != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_supplier_supplierID = '$supplier'"; }
+            $sql .= " ORDER BY tb_po_itementrance.po_itemEnt_id";
             $result = mysqli_query($this->dbcon, $sql);
             return $result;
         }
@@ -569,16 +569,55 @@
     
                 $resultUpdateStockBranchBS = mysqli_query($this->dbcon, "UPDATE items_inventory_branch SET qty_balance = '$Curr_item_bal', movAvgCost = '$NewAvgCost' WHERE itemsCode = '$itemCode' AND branchID = '$branchID'");
                 $resultUpdateAccBranch = mysqli_query($this->dbcon, "UPDATE tb_accessories_branch SET accbranch_status = 'Accept', updated_at=CURRENT_TIMESTAMP WHERE accbranch_id = '$AccBranchID'");
+                $Status = 'Success';
                 $data = array(
                     'Success' => $Status,
                 );
                 return $data;
             } else if ($checkstatus['accbranch_status'] == 'Reject') {
+                $Status = 'Reject';
                 $data = array(
                     'Reject' => $Status,
                 );
                 return $data;
             }
+        }
+
+        public function fetchdataSupplier() {
+            $sql = "SELECT * FROM tb_supplier";
+            $result = mysqli_query($this->dbcon, $sql);
+            return $result;
+        }
+
+        public function fetchdataBranchName($branchID) {
+            $sql = "SELECT branch_name FROM owner_branch 
+                    WHERE n_id = '$branchID' LIMIT 1";
+            $result = mysqli_query($this->dbcon, $sql);
+            return $result;
+        }
+
+        public function fetchdataProductRep($category) {
+            $sql = "SELECT * FROM items";
+            if($category != "all") {
+                $sql .= " WHERE itemsType = '$category'";
+            }
+            $result = mysqli_query($this->dbcon, $sql);
+            return $result;
+        }
+
+        public function UpdateStatusItem($itemid)
+        {
+            $result = mysqli_query($this->dbcon, "UPDATE tb_accessories_branch SET accbranch_status = 'Reject', updated_at=CURRENT_TIMESTAMP WHERE accbranch_id = '$itemid'");
+            return $result;
+        }
+
+        public function AccBranchInfo($itemid)
+        {
+            $result = mysqli_query($this->dbcon, "SELECT branch_name, branch_id, dis_docNo, dis_refNo FROM tb_accessories_branch 
+                                                    LEFT JOIN owner_branch ON tb_accessories_branch.accbranch_branchID = owner_branch.branch_id
+                                                    LEFT JOIN tb_head_distribute ON tb_accessories_branch.accbranch_HdisID = tb_head_distribute.dis_docNo
+                                                    WHERE accbranch_id = '$itemid' ");
+            return $result;
         }
 
 

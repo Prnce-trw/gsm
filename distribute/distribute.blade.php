@@ -231,7 +231,7 @@
                             <th colspan="2">สถานะ</th>
                             <th colspan="2">ข้อมูลอุปกรณ์</th>
                             <th rowspan="2" class="text-middle" style="width: 80px;">วัน / เวลา</th>
-                            <th rowspan="2" class="text-middle" style="width: 80px;">การจัดการ</th>
+                            <th rowspan="2" class="text-middle" style="width: 180px;">การจัดการ</th>
                         </tr>
                         <tr>
                             <th class="text-middle" style="width: 70px;">การยืนยัน</th>
@@ -246,7 +246,9 @@
                                 <td class="text-middle text-center">
                                     <input type="checkbox" name="" id="" style="width: 15px; height: 15px;">
                                 </td>
-                                <td class="text-middle text-center"><?=TransitStatus($value['accbranch_status'])?></td>
+                                <td class="text-middle text-center">
+                                    <span id="badge_status_<?=$value['accbranch_id']?>"><?=TransitStatus($value['accbranch_status'])?></span>
+                                </td>
                                 <td class="text-middle"><?=$value['accbranch_branchID']?></td>
                                 <td class="text-middle" style="width: 200px;">
                                     <?=$value['itemsName']?><br>
@@ -257,8 +259,9 @@
                                 <td class="text-middle text-right"><?=date("d/m/Y H:i:m", strtotime($value['created_at']));?></td>
                                 <td class="text-middle text-center">
                                     <?php if ($value['accbranch_status'] == 'Pending') { ?>
-                                        <button type="button" class="btn btn-danger btn-sm">Reject</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="rejectitem(<?=$value['accbranch_id']?>)">Reject</button>
                                     <?php } ?>
+                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#accbranchinfo" onclick="accbranchinfo(<?=$value['accbranch_id']?>)">ตรวจสอบ</button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -470,6 +473,54 @@
             </div>
         </div>
     </div> 
+
+    <div class="modal fade" id="accbranchinfo" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="accbranchinfoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accbranchinfoLabel">ข้อมูลการกระจายอุปกรณ์</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> 
+                    <h5>ข้อมูลสาขา</h5>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="branch_name">ชื่อสาขา</label>
+                                <input type="text" class="form-control" id="branch_name" aria-describedby="branch_name" placeholder="ชื่อสาขา..." value="" readonly>
+                            </div>
+                            <div class="col-4">
+                                <label for="branch_id">รหัสสาขา</label>
+                                <input type="text" class="form-control" id="branch_id" aria-describedby="branch_id" placeholder="รหัสสาขา..." value="" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5>ข้อมูลเอกสาร</h5>
+                    <hr>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="dis_docNo">เลขที่เอกสาร</label>
+                                <input type="text" class="form-control" id="dis_docNo" aria-describedby="dis_docNo" placeholder="เลขที่เอกสาร..." value="" readonly>
+                            </div>
+                            <div class="col-4">
+                                <label for="dis_refNo">เอกสารอ้างอิง</label>
+                                <input type="text" class="form-control" id="dis_refNo" aria-describedby="dis_refNo" placeholder="เอกสารอ้างอิง..." value="" readonly>
+                            </div>
+                            <div class="col-4">
+                                <label for="dis_refNo">เอกสารอ้างอิง</label>
+                                <input type="text" class="form-control" id="dis_refNo" aria-describedby="dis_refNo" placeholder="เอกสารอ้างอิง..." value="" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Required Jqurey -->
     <script src="../files/bower_components/jquery/js/jquery.min.js"></script>

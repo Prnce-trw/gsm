@@ -99,4 +99,20 @@
             echo "<script>alert('Failed: "+$th->getMessage()+"')</script>";
             echo "<script>window.location.href='../distribute/distribute_branch.blade.php'</script>";
         }
+    } else if ($_POST['parameter'] == 'RejectItem') {
+        try {
+            $fetchdata              = new DB_con();
+            $itemid                 = $_POST['itemid'];
+            $updatestatusitem       = $fetchdata->UpdateStatusItem($itemid);
+            $status       = 'Success';
+            echo json_encode($status);
+        } catch (\Throwable $th) {
+            $status       = 'False';
+            echo json_encode($status);
+        }
+    } elseif ($_POST['parameter'] == 'AccBranchInfo') {
+        $fetchdata              = new DB_con();
+        $itemid                 = $_POST['itemid'];
+        $Accitem                = $fetchdata->AccBranchInfo($itemid);
+        $row                    = mysqli_fetch_array($Accitem);
     }

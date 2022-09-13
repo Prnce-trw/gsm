@@ -371,3 +371,35 @@ $(document).on('input', '.DisitemUP', function () {
     var sum = parseFloat(currup) * parseFloat(currqty);
     $('#branchamount_'+branchid).val(parseFloat(sum).toFixed(2));
 });
+
+function rejectitem(itemid) {
+    $.ajax({
+        type: "POST",
+        url: "../controller/DistributeController.php",
+        data: {parameter: "RejectItem", itemid: itemid},
+        dataType: "JSON",
+        success: function (response) {
+            console.log(response);
+            if (response == 'Success') {
+                $('#badge_status_'+itemid).html('<span class="badge badge-danger badge-sm">Reject</span>');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ขออภัยเกิดข้อผิดพลาด กรุณาตรวจสอบใหม่อีกครั้ง',
+                });
+            }
+        }
+    });
+}
+
+function accbranchinfo(itemid) {
+    $.ajax({
+        type: "GET",
+        url: "../controller/DistributeController.php",
+        data: {parameter: "AccBranchInfo", itemid: itemid},
+        dataType: "HTML",
+        success: function (response) {
+            console.log(response);
+        }
+    });
+}

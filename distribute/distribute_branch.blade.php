@@ -60,7 +60,7 @@
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="text-center">
-                        <th scope="col"><input type="checkbox" name="" id="" style="width: 15px; height: 15px;"></th>
+                        <th scope="col"><input type="checkbox" name="" id="checkall" style="width: 15px; height: 15px;"></th>
                         <th scope="col">หมายเลขเอกสาร</th>
                         <th scope="col" width="100px">วันที่</th>
                         <th scope="col" width="80px">สถานะ</th>
@@ -72,7 +72,7 @@
                 <tbody id="accRow">
                     <?php foreach ($dataItems as $key => $value) { ?>
                         <tr>
-                            <td class="text-middle text-middle">
+                            <td class="text-middle text-center">
                                 <input type="checkbox" name="itemid[<?=$key?>]" class="itemselected" style="width: 15px; height: 15px;" value="<?=$value['itemsCode']?>" data-itemid="<?=$value['n_id']?>">
                             </td>
                             <td class="text-middle">

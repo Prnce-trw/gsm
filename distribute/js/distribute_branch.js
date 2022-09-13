@@ -27,3 +27,11 @@ $(document).on('click', '.itemselected', function () {
         $('#inputitemid_'+itemid).prop('disabled', true);
     }
 });
+
+$(document).on('click', '#checkall', function () {
+    if (this.checked) {
+        $('.itemselected').prop('checked', true);
+    } else {
+        $('.itemselected').prop('checked', false);
+    }
+});
