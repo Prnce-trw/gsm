@@ -62,16 +62,19 @@ if(isset($params)) {
                 $row = $key+6;
                 $timestamp = strtotime($value['created_at']);
                 $date = date("d/m/Y", $timestamp);
+                $branch = !$value['branch_name'] ? "ไม่ระบุ" : $value['branch_name'];
+                // if (!$value['branch_name']) { $branch = "ไม่ระบุ"; } else { $branch = $value['branch_name']; }
                 $sheet  ->setCellValue("A$row", $key+1)
                         ->setCellValue("B$row", "$date")
                         ->setCellValue("C$row", "$value[po_itemEnt_POID]")
-                        ->setCellValue("D$row", "$value[branch_name]")
+                        ->setCellValue("D$row", "$branch")
                         ->setCellValue("E$row", "$value[itemsCode]")
                         ->setCellValue("F$row", "$value[po_itemEnt_CySize]")
                         ->setCellValue("G$row", "$value[supplier_name]")
                         ->setCellValue("H$row", "$value[po_itemEnt_CyAmount]")
                         ->setCellValue("I$row", "$value[po_itemEnt_unitPrice]")
                         ->setCellValue("J$row", "$value[po_itemEnt_AmtPrice]");
+                $sheet  ->getStyle("F$row")->getAlignment()->setHorizontal("right");
                 $sheet  ->getStyle("G$row")->getAlignment()->setHorizontal("left");
                 $sheet  ->getStyle("H$row")->getAlignment()->setHorizontal("right");
                 $styleI2J = $sheet->getStyle("I$row:J$row");

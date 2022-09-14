@@ -123,13 +123,13 @@ $weight = 0;
                                         ?>
                                     </td>
                                     <td style="text-align: right; padding-right: 10px;"><?= $value['po_itemOut_CyAmount'] ?></td>
-                                    <td colspan="2" style="text-align: right; padding-right: 10px;"><?= $value['wightSize'] * $value['po_itemOut_CyAmount'] ?></td>
+                                    <td colspan="2" style="text-align: right; padding-right: 10px;"><?= $value['rn_itemweight_wightSize'] * $value['po_itemOut_CyAmount'] ?></td>
                                 </tr>
                             <?php
                                 // if ((($key + 1) % 22) == 0) {
                                 //     break;
                                 // }
-                                $weight += ($value['wightSize'] * $value['po_itemOut_CyAmount']);
+                                $weight += ($value['rn_itemweight_wightSize'] * $value['po_itemOut_CyAmount']);
                                 $sizecount += $value['po_itemOut_CyAmount'];
                                 // $count++;
                             } ?>

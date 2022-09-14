@@ -104,11 +104,17 @@ $(document).ready(function () {
                     data.data.forEach((value, key) => {
                         var fullDate = new Date(value.created_at);
                         var formatted = `${fullDate.getDate()}/${(fullDate.getMonth() + 1)}/${fullDate.getFullYear()}`;
+                        var branch;
+                        if (value.branch_name == null) {
+                            branch = "ไม่ระบุ";
+                        } else {
+                            branch = value.branch_name;
+                        }
                         // console.log(value);
                         // console.log(value.po_itemEnt_POID);
                         var row = "<tr><td>" + formatted + "</td>" // วันที่ลง
                             + "<td>" + value.po_itemEnt_POID + "</td>" // หมายเลข PO
-                            + "<td class='text-left'>" + value.branch_name + "</td>" // สาขา
+                            + "<td class='text-left'>" + branch + "</td>" // สาขา
                             + "<td>" + value.itemsCode + "</td>"
                             // + "<td class='text-center'>" + value.ms_product_name + "</td>"
                             + "<td class='text-right'>" + value.po_itemEnt_CySize + "</td>"

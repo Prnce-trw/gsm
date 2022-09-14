@@ -1,0 +1,359 @@
+@page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+}
+
+/* @media print {
+
+    html,
+    body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    table.docpage {
+        page-break-inside: auto;
+    }
+
+    table.docpage>thead {
+        display: table-header-group;
+        position: fixed;
+        top: 0;
+    }
+
+    table.docpage>tfoot {
+        display: table-footer-group;
+        position: fixed;
+        bottom: 0;
+        page-break-before: always;
+    }
+
+    table.docpage>tbody {
+        position: relative;
+        page-break-inside: avoid;
+        page-break-after: always;
+    }
+
+    .report tbody {
+        border-bottom: 1px solid black;
+    }
+
+    .report thead {
+        display: table-header-group;
+    }
+
+    .report tfoot {
+        display: table-footer-group;
+        page-break-after: always;
+    }
+
+    .pagebreak {
+        display: table-row;
+        page-break-after: always;
+    }
+} */
+
+@media all {
+    html,
+    body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    body:before {
+        content: 'ห้ามดัดแปลงเอกสาร';
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+
+        color: #000000;
+        font-family: sarabun;
+        font-size: 80px;
+        font-weight: 500px;
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        opacity: 0.3;
+        transform: rotate(-45deg);
+    }
+
+    #tgLogo {
+        grid-area: tgLogo;
+        text-align: center;
+        align-self: center;
+    }
+
+    #tgName {
+        grid-area: tgName;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    #headerDate {
+        grid-area: headerDate;
+    }
+
+    #headerRound {
+        grid-area: headerRound;
+        text-align: right;
+    }
+
+    #outTime {
+        grid-area: outTime;
+    }
+
+    #arrivedTime {
+        grid-area: arrivedTime;
+
+    }
+
+    #fillingPlant {
+        grid-area: fillingPlant;
+        text-align: right;
+    }
+
+    .docHeader {
+        grid-area: docHeader;
+        display: inline-grid;
+        /* position: fixed; */
+        grid-template-areas:
+            'tgLogo tgName tgName tgName'
+            'tgLogo headerDate headerDate headerRound'
+            'tgLogo outTime arrivedTime fillingPlant';
+        grid-template-columns: 150px auto auto auto;
+        grid-auto-flow: column;
+        row-gap: 5px;
+        background: none;
+        padding-bottom: 10px;
+        width: 100%;
+        /* border-spacing: 5px; */
+    }
+
+    #num {
+        grid-area: num;
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid;
+    }
+
+    #brand {
+        grid-area: brand;
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid;
+    }
+
+    #cyType {
+        grid-area: cyType;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #cySize {
+        grid-area: cySize;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #cyCount {
+        grid-area: cyCount;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #cyWeight {
+        grid-area: cyWeight;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #data {
+        grid-area: data;
+        align-self: center;
+        text-align: center;
+    }
+
+    /* .numData {
+        grid-area: numData;
+        text-align: center;
+    }
+    
+    .brandData {
+        grid-area: brandData;
+    }
+
+    .cyTypeData {
+        grid-area: cyTypeData;
+        text-align: center;
+    }
+
+    .cySizeData {
+        grid-area: cySizeData;
+        text-align: right;
+    }
+
+    .cyCountData {
+        grid-area: cyCountData;
+        text-align: right
+    }
+
+    .cyWeightData {
+        grid-area: cyWeightData;
+        text-align: right
+    } */
+
+    .docContent {
+        grid-area: docContent;
+        display: inline-grid;
+        /* grid-template-areas: 
+            'num brand cyType cySize cyCount cyWeight'
+            'data data data data data data'
+            'note note note note totalCount totalCountData'
+            'note note note note totalWeight totalWeightData'; */
+        /* grid-template-columns: 8% 29% 10% 8.5% 6.5% 14% 5%; */
+        width: 100%;
+        /* grid-template-rows: 30px auto auto; */
+        grid-auto-flow: row;
+        align-items: center;
+        align-content: center;
+        /* border: 1px solid; */
+        /* column-gap: ; */
+        /* margin-top: 120px; */
+    }
+
+    .moreInfoHeader {
+        grid-area: moreInfoHeader;
+        font-weight: bold;
+    }
+
+    .toFilling {
+        grid-area: toFilling;
+    }
+
+    .toFixing {
+        grid-area: toFixing;
+    }
+
+    .fixedReturn {
+        grid-area: fixedReturn;
+    }
+
+    .fixedDate {
+        grid-area: fixedDate;
+    }
+
+    .toFillingWrite {
+        grid-area: toFillingWrite;
+    }
+
+    .toFixingWrite {
+        grid-area: toFixingWrite;
+    }
+
+    .fixedReturnWrite {
+        grid-area: fixedReturnWrite;
+    }
+
+    .fixedDateWrite {
+        grid-area: fixedDateWrite;
+    }
+
+    .driver {
+        grid-area: driver;
+        text-align: center;
+        border-right: 1px solid black;
+    }
+
+    .checkOut {
+        grid-area: checkOut;
+        text-align: center;
+        border-right: 1px solid black;
+    }
+
+    .checkIn {
+        grid-area: checkIn;
+        text-align: center;
+    }
+
+    div.signature {
+        grid-area: signature;
+        page-break-before: always;
+    }
+    
+    .updatedAt {
+        grid-area: updatedAt;
+        text-align: right;
+    }
+
+    .docFooter {
+        page-break-before: auto;
+        page-break-inside: avoid;
+        page-break-after: always;
+        grid-area: docFooter;
+        row-gap: 5px;
+        grid-template-areas: 
+        'moreInfoHeader moreInfoHeader moreInfoHeader'
+        'toFilling toFillingWrite toFillingWrite'
+        'toFixing toFixingWrite toFixingWrite'
+        'fixedReturn fixedReturnWrite fixedReturnWrite'
+        'fixedDate fixedDateWrite fixedDateWrite'
+        'signature signature signature'
+        'updatedAt updatedAt updatedAt';
+        display: inline-grid;
+        width: 100%;
+        /* position: fixed; */
+        bottom: 0;
+    }
+
+    .gridPage {
+        display: grid;
+        grid-template-areas:
+            'docHeader'
+            'docContent'
+            'docFooter';
+        /* grid-template-rows: auto auto auto; */
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    table {
+        width: 100%;
+        padding: 1px;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    table.report>thead>tr>th {
+        border-right: 1px solid black;
+        border-bottom: 1px solid black;
+        background: none;
+        height: 25px;
+    }
+
+    table.report>tbody>tr>td {
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        background: none;
+        height: 25px;
+    }
+
+    .signature table {
+        /* table-layout: fixed; */
+        width: 100%;
+    }
+
+    .signature table,
+    .signature tr,
+    .signature td,
+    .signature th {
+        border: none;
+        height: 30px;
+    }
+
+    .signature th {
+        vertical-align: middle;
+    }
+}

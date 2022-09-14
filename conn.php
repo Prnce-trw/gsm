@@ -23,8 +23,10 @@
         public function fetchdataSize()
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize 
-                                    LEFT JOIN tb_rn_item_gas ON items_gas_weightsize.weightSize_id = tb_rn_item_gas.rn_itemweight_weightSize_id 
-                                    WHERE active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC");
+                                                    LEFT JOIN tb_rn_item_gas 
+                                                    ON items_gas_weightsize.weightSize_id = tb_rn_item_gas.rn_itemweight_weightSize_id 
+                                                    WHERE active_status = 'Y' 
+                                                    ORDER BY items_gas_weightsize.order_by_no ASC");
             return $result;
         }
 
@@ -37,7 +39,8 @@
         public function fetchdataSizeRelate($brand)
         {
             $result = mysqli_query($this->dbcon, "SELECT * FROM tb_brandrelsize 
-                                                    LEFT JOIN tb_rn_item_gas ON tb_brandrelsize.brandRelSize_weight_autoID = tb_rn_item_gas.rn_itemweight_weight_NoID
+                                                    LEFT JOIN tb_rn_item_gas 
+                                                    ON tb_brandrelsize.brandRelSize_weight_autoID = tb_rn_item_gas.rn_itemweight_weight_NoID
                                                     WHERE tb_brandrelsize.brandRelSize_ms_product_id = '$brand' ");
             return $result;
         }
@@ -94,13 +97,18 @@
 
         public function infoPO($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder 
+                                                    LEFT JOIN tb_head_po_receipt 
+                                                    ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po 
+                                                    WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
         public function updateHeadPO($POID, $Fillstation, $Round)
         {
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_fillstation = '$Fillstation', head_po_round = '$Round' WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder 
+                                                    SET head_po_fillstation = '$Fillstation', head_po_round = '$Round' 
+                                                    WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
@@ -111,10 +119,14 @@
             if (!isset($valid['head_pr_docnumber_po'])) {
                 $insertdata     = new DB_con();
                 $DocumentNo     = $insertdata->RunningNo("PR");
-                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref, head_pr_fillstation, head_pr_timeIn, head_pr_timeOut)
-                 VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_po_receipt(head_pr_docnumber, head_pr_docnumber_po, head_pr_doc_ref, 
+                                                        head_pr_fillstation, head_pr_timeIn, head_pr_timeOut)
+                                                        VALUES('$DocumentNo', '$POID', '$RefDO', '$Fillstation', '$timeIn', '$timeOut')");
             } else {
-                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt SET head_pr_doc_ref = '$RefDO', head_pr_fillstation = '$Fillstation', head_pr_timeIn = '$timeIn', head_pr_timeOut = '$timeOut' WHERE head_pr_docnumber_po = '$POID'");
+                $result = mysqli_query($this->dbcon, "UPDATE tb_head_po_receipt 
+                                                        SET head_pr_doc_ref = '$RefDO', head_pr_fillstation = '$Fillstation', 
+                                                        head_pr_timeIn = '$timeIn', head_pr_timeOut = '$timeOut' 
+                                                        WHERE head_pr_docnumber_po = '$POID'");
             }
             return $result;
         }
@@ -176,25 +188,35 @@
 
         public function insertItemEntrance($POID, $RefDO, $brand, $size, $amount, $unitprice, $amtprice)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_unitPrice, po_itemEnt_AmtPrice) VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$unitprice', '$amtprice')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itementrance(po_itemEnt_RefDO, po_itemEnt_POID, po_itemEnt_CyBrand, 
+                                                    po_itemEnt_CySize, po_itemEnt_CyAmount, po_itemEnt_unitPrice, po_itemEnt_AmtPrice) 
+                                                    VALUES('$RefDO', '$POID', '$brand', '$size', '$amount', '$unitprice', '$amtprice')");
             return $result;
         }
 
         public function UpdateStatusDraftPO($POID, $FPID, $POStatus, $car, $driver)
         {
             $currdate = date('Y-m-d');
-            $countPO = mysqli_query($this->dbcon, "SELECT COUNT(head_po_stock_status) AS POround FROM tb_head_preorder WHERE head_po_docdate = '$currdate' AND head_po_stock_status = 'Confirm'");
+            $countPO = mysqli_query($this->dbcon, "SELECT COUNT(head_po_stock_status) AS POround 
+                                                    FROM tb_head_preorder 
+                                                    WHERE head_po_docdate = '$currdate' AND head_po_stock_status = 'Confirm'");
             $resultPOround = mysqli_fetch_array($countPO);
             $PORound = $resultPOround['POround']+1;
 
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', head_po_round = '$PORound', head_po_carID = '$car', head_po_driverID = '$driver' WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder 
+                                                    SET head_po_stock_status = '$POStatus', head_po_fillstation = '$FPID', 
+                                                    head_po_round = '$PORound', head_po_carID = '$car', head_po_driverID = '$driver' 
+                                                    WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
         public function insertPO($DocumentNo, $gas_filling, $comment, $POStatus, $CarID, $DriverID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, head_po_comment, head_po_stock_status, head_po_docdate, head_po_carID, head_po_driverID, active_status) 
-                                                    VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', '$POStatus', CURRENT_TIMESTAMP, '$CarID', '$DriverID', 'Y')");
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_preorder(head_po_docnumber, head_po_fillstation, head_po_status, 
+                                                    head_po_comment, head_po_stock_status, head_po_docdate, head_po_carID, 
+                                                    head_po_driverID, active_status) 
+                                                    VALUES('$DocumentNo', '$gas_filling', 'Pending', '$comment', 
+                                                    '$POStatus', CURRENT_TIMESTAMP, '$CarID', '$DriverID', 'Y')");
             return $result;
         }
 
@@ -206,7 +228,11 @@
 
         public function fetchdataItem($FPID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_gas_weightsize LEFT JOIN tb_curr_priceboard ON items_gas_weightsize.weight_NoID = tb_curr_priceboard.currPB_itemCode WHERE items_gas_weightsize.active_status = 'Y' ORDER BY items_gas_weightsize.order_by_no ASC;");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_rn_item_gas
+                                                    LEFT JOIN tb_curr_priceboard 
+                                                    ON tb_rn_item_gas.rn_itemweight_weight_NoID = tb_curr_priceboard.currPB_itemCode 
+                                                    WHERE items_gas_weightsize.active_status = 'Y' 
+                                                    ORDER BY items_gas_weightsize.order_by_no ASC;");
             return $result;
         }
 
@@ -227,41 +253,58 @@
 
         public function CheckPriceHistory($branchID, $sizeID, $FPID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_priceboard LEFT JOIN items_gas_weightsize ON tb_priceboard.PB_itemCode = items_gas_weightsize.weight_NoID WHERE tb_priceboard.PB_FPID = '$FPID' AND tb_priceboard.PB_itemCode = '$sizeID' AND tb_priceboard.PB_BranchID = '$branchID' ORDER BY PB_ID DESC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_priceboard 
+                                                    LEFT JOIN tb_rn_item_gas 
+                                                    ON tb_priceboard.PB_itemCode = tb_rn_item_gas.rn_itemweight_weight_NoID 
+                                                    WHERE tb_priceboard.PB_FPID = '$FPID' AND tb_priceboard.PB_itemCode = '$sizeID' 
+                                                    AND tb_priceboard.PB_BranchID = '$branchID' 
+                                                    ORDER BY PB_ID DESC");
             return $result;
         }
 
         public function fetchPriceUnit($sizeID, $branchID, $FPID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice AS currPB_itemPrice FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+            $result = mysqli_query($this->dbcon, "SELECT currPB_itemPrice AS currPB_itemPrice 
+                                                    FROM tb_curr_priceboard 
+                                                    WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' 
+                                                    AND currPB_itemCode = '$sizeID'");
             return $result;
         }
 
         public function insertPriceBoard($branchID, $FPID, $sizeID, $unitPrice)
         {
-            $resultWeight = mysqli_query($this->dbcon, "SELECT * FROM tb_curr_priceboard WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+            $resultWeight = mysqli_query($this->dbcon, "SELECT * FROM tb_curr_priceboard 
+                                                        WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' 
+                                                        AND currPB_itemCode = '$sizeID'");
             $weightRow = mysqli_fetch_array($resultWeight);
             // var_dump($branchID, $FPID, $sizeID, $unitPrice);
             if ($weightRow) {
                 // echo 1;
                 // exit();
-                $result = mysqli_query($this->dbcon, "UPDATE tb_curr_priceboard SET currPB_itemPrice = '$unitPrice', updated_at = CURRENT_TIMESTAMP WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' AND currPB_itemCode = '$sizeID'");
+                $result = mysqli_query($this->dbcon, "UPDATE tb_curr_priceboard 
+                                                        SET currPB_itemPrice = '$unitPrice', updated_at = CURRENT_TIMESTAMP 
+                                                        WHERE currPB_FPID = '$FPID' AND currPB_BranchID = '$branchID' 
+                                                        AND currPB_itemCode = '$sizeID'");
                 $resultmaxPBId = mysqli_query($this->dbcon, "SELECT PB_ID FROM tb_priceboard");
                 $MaxPBId = mysqli_num_rows($resultmaxPBId);
                 $PBPBId = $MaxPBId+1;
-                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) 
+                                                    VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
             } else {
                 // echo 2;
                 // exit();
                 $resultmaxID = mysqli_query($this->dbcon, "SELECT currPB_ID FROM tb_curr_priceboard");
                 $MaxID = mysqli_num_rows($resultmaxID);
                 $currPBId = $MaxID+1;
-                $result = mysqli_query($this->dbcon, "INSERT INTO tb_curr_priceboard (currPB_ID, currPB_FPID, currPB_itemCode, currPB_BranchID, currPB_itemPrice, created_at) VALUES ('CPB$currPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+                $result = mysqli_query($this->dbcon, "INSERT INTO tb_curr_priceboard (currPB_ID, currPB_FPID, currPB_itemCode, 
+                                                        currPB_BranchID, currPB_itemPrice, created_at) 
+                                                        VALUES ('CPB$currPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
                 
                 $resultmaxPBId = mysqli_query($this->dbcon, "SELECT PB_ID FROM tb_priceboard");
                 $MaxPBId = mysqli_num_rows($resultmaxID);
                 $PBPBId = $MaxPBId+1;
-                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
+                $sql = mysqli_query($this->dbcon, "INSERT INTO tb_priceboard (PB_ID, PB_FPID, PB_itemCode, PB_BranchID, PB_itemPrice, created_at) 
+                                                    VALUES ('PB$PBPBId', '$FPID', '$sizeID', '$branchID', '$unitPrice', CURRENT_TIMESTAMP)");
             }
             return $result;
         }
@@ -269,7 +312,7 @@
         public function aJaxCheckStock($brand, $weight, $amount, $branch, $sizeid)
         {
             $sqlitemsizeid = mysqli_query($this->dbcon, "SELECT rn_itemweight_weightSize_id FROM tb_rn_item_gas 
-                                                    WHERE rn_itemweight_weight_NoID = '$sizeid' ");
+                                                            WHERE rn_itemweight_weight_NoID = '$sizeid' ");
             $itemsizeid = mysqli_fetch_array($sqlitemsizeid);
 
             $itemsCode = "I00-02C-".$brand.$itemsizeid['rn_itemweight_weightSize_id'];
@@ -290,7 +333,7 @@
         public function fetchdataReport($POID)
         {
             $result = mysqli_query($this->dbcon, "SELECT itemout.po_itemOut_CySize, itemout.po_itemOut_CyAmount, itemout.po_itemOut_type, 
-                                                    product.ms_product_name, product.ms_product_id, size.wightSize
+                                                    product.ms_product_name, product.ms_product_id, size.rn_itemweight_wightSize
                                                     FROM tb_head_preorder as po
                                                     LEFT JOIN tb_po_itemout as itemout
                                                     ON po.head_po_docnumber = itemout.po_itemOut_docNo
@@ -298,10 +341,11 @@
                                                     ON itemout.po_itemOut_CyBrand = product.ms_product_id
                                                     LEFT JOIN tb_fillingplant as fp
                                                     ON po.head_po_fillstation = fp.FP_ID
-                                                    LEFT JOIN items_gas_weightsize as size
-                                                    ON po_itemOut_CySizeWeightID = size.weight_NoID
+                                                    LEFT JOIN tb_rn_item_gas as size
+                                                    ON po_itemOut_CySizeWeightID = size.rn_itemweight_weight_NoID
                                                     WHERE po.head_po_docnumber = '$POID' AND po.active_status = 'Y'
-                                                    ORDER BY FIELD(itemout.po_itemOut_Type, 'N', 'Adv'), size.order_by_no ASC, product.ms_product_orderby_no ASC");
+                                                    ORDER BY FIELD(itemout.po_itemOut_Type, 'N', 'Adv'), size.rn_itemweight_weight_NoID ASC, 
+                                                    product.ms_product_orderby_no ASC");
             return $result;
 
         }
@@ -364,7 +408,8 @@
 
         public function searchAssets($assetID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT n_id, itemsCode, itemsName FROM items WHERE itemsCode LIKE '%$assetID%' AND itemsType = '03A' LIMIT 20");
+            $result = mysqli_query($this->dbcon, "SELECT n_id, itemsCode, itemsName FROM items 
+                                                    WHERE itemsCode LIKE '%$assetID%' AND itemsType = '03A' LIMIT 20");
             // foreach (mysqli_fetch_array($result) as $key => $value) {
             //     $data[] = $value;
             // }
@@ -384,7 +429,8 @@
 
         public function insertHeadDis($DisID, $supplier, $date_received, $refNo, $price, $vatSelect, $vat_percentage, $totalPrice)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_distribute (dis_docNo, dis_supplierID, dis_date_received, dis_refNo, dis_price, dis_totalPrice, dis_vat, dis_vat_percentage) 
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_head_distribute (dis_docNo, dis_supplierID, dis_date_received, 
+                                                    dis_refNo, dis_price, dis_totalPrice, dis_vat, dis_vat_percentage) 
                                                     VALUES ('HD$DisID', '$supplier', '$date_received', '$refNo', '$price', '$totalPrice', '$vatSelect', '$vat_percentage')");
             return $result;
         }
@@ -394,7 +440,8 @@
             $detail = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_detail (disdet_HdisID, disdet_itemID, disdet_unitPrice, disdet_amount, disdet_qty) 
                                                     VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty')");
 
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, disout_amount, disout_qty, disout_bal) 
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_distribute_outstanding (disout_HdisID, disout_itemID, disout_unitPrice, 
+                                                    disout_amount, disout_qty, disout_bal) 
                                                     VALUES ('HD$DisID', '$itemID', '$unitprice', '$totalitemprice', '$qty', '$qty')");
             return $result;
         }
@@ -435,33 +482,40 @@
 
         public function fetchdataInventoryOut()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-02C-%' AND branchID = 'BRC01-2' ORDER BY qty_balance ASC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch 
+                                                    WHERE itemsCode LIKE 'I00-02C-%' AND branchID = 'BRC01-2' 
+                                                    ORDER BY qty_balance ASC");
             return $result;
         }
 
         public function fetchdataInventoryIn()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch WHERE itemsCode LIKE 'I00-01G-%' AND branchID = 'BRC01-2' ORDER BY qty_balance DESC");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM items_inventory_branch 
+                                                    WHERE itemsCode LIKE 'I00-01G-%' AND branchID = 'BRC01-2' 
+                                                    ORDER BY qty_balance DESC");
             return $result;
         }
 
         public function DistributetoBranch($headdocid, $itemID, $qty, $unitprice, $amount, $branchID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_branch(accbranch_HdisID, accbranch_itemID, accbranch_unitPrice, accbranch_amount, accbranch_qty, accbranch_branchID) 
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_branch(accbranch_HdisID, accbranch_itemID, accbranch_unitPrice, 
+                                                    accbranch_amount, accbranch_qty, accbranch_branchID) 
                                                     VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty', '$branchID')");
             return $result;
         }
 
         public function DistributeMovement($headdocid, $itemID, $qty, $unitprice, $amount, $branchID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_movement(accmov_HdisID, accmov_itemID, accmov_unitPrice, accmov_amount, accmov_qty, accmov_branchID) 
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_accessories_movement(accmov_HdisID, accmov_itemID, accmov_unitPrice, 
+                                                    accmov_amount, accmov_qty, accmov_branchID) 
                                                     VALUES('$headdocid', '$itemID', '$unitprice', '$amount', '$qty', '$branchID')");
             return $result;
         }
 
         public function DistributeUpdateOST($headdocid, $itemid, $totalItem)
         {
-            $SQLcurrentBal = mysqli_query($this->dbcon, "SELECT disout_bal, disout_id FROM tb_distribute_outstanding WHERE disout_HdisID = '$headdocid' AND disout_itemID = '$itemid'");
+            $SQLcurrentBal = mysqli_query($this->dbcon, "SELECT disout_bal, disout_id FROM tb_distribute_outstanding 
+                                                            WHERE disout_HdisID = '$headdocid' AND disout_itemID = '$itemid'");
             $currentBal = mysqli_fetch_array($SQLcurrentBal);
             $currBal = $currentBal['disout_bal'];
             $sum = $currBal - $totalItem;
@@ -474,7 +528,9 @@
                 );
                 return $data;
             } elseif ($sum >= 0) {
-                $updatebal = mysqli_query($this->dbcon, "UPDATE tb_distribute_outstanding SET disout_bal = '$sum', disout_last_bal = '$currBal', updated_at=CURRENT_TIMESTAMP WHERE disout_id = '$disout_id'");
+                $updatebal = mysqli_query($this->dbcon, "UPDATE tb_distribute_outstanding 
+                                                            SET disout_bal = '$sum', disout_last_bal = '$currBal', updated_at=CURRENT_TIMESTAMP 
+                                                            WHERE disout_id = '$disout_id'");
                 $data = array(
                     'status' => true,
                     'updatebal' => $updatebal, 
@@ -503,7 +559,9 @@
         
         public function fetchdataitemtoBranch()
         {
-            $result = mysqli_query($this->dbcon, "SELECT accbranch_id, accbranch_branchID, accbranch_qty, accbranch_status, itemsName, itemsCode, tb_accessories_branch.created_at FROM tb_accessories_branch
+            $result = mysqli_query($this->dbcon, "SELECT accbranch_id, accbranch_branchID, accbranch_qty, accbranch_status, 
+                                                    itemsName, itemsCode, tb_accessories_branch.created_at 
+                                                    FROM tb_accessories_branch
                                                     LEFT JOIN items ON tb_accessories_branch.accbranch_itemID = items.n_id
                                                     ORDER BY accbranch_id DESC");
             return $result;
@@ -516,16 +574,21 @@
         }
 
         public function fetchdataBuyProd($branch, $product, $supplier, $dateStart, $dateEnd) {
-            $sql = "SELECT * FROM tb_po_itementrance
-                    LEFT JOIN items ON tb_po_itementrance.po_itemEnt_items_n_id = items.n_id
-                    LEFT JOIN items_ui_master_product ON tb_po_itementrance.po_itemEnt_CyBrand = items_ui_master_product.ms_product_id
-                    LEFT JOIN owner_branch ON tb_po_itementrance.po_itemEnt_branch_n_id = owner_branch.n_id
-                    LEFT JOIN tb_supplier ON tb_po_itementrance.po_itemEnt_supplier_supplierID = tb_supplier.supplier_text_id
-                    WHERE tb_po_itementrance.created_at BETWEEN '$dateStart' AND '$dateEnd'";
-            if (isset($branch) && $branch != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_branch_n_id = '$branch'"; }
-            if (isset($product) && $product != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_items_n_id = '$product'"; }
-            if (isset($supplier) && $supplier != "all") { $sql .= " AND tb_po_itementrance.po_itemEnt_supplier_supplierID = '$supplier'"; }
-            $sql .= " ORDER BY tb_po_itementrance.po_itemEnt_id";
+            $sql = "SELECT itemIn.po_itemEnt_POID, itemIn.po_itemEnt_CySize, itemIn.po_itemEnt_CyAmount, itemIn.po_itemEnt_type, 
+                    itemIn.po_itemEnt_unitPrice, itemIn.po_itemEnt_AmtPrice, po_receipt.created_at, items.itemsCode, 
+                    branch.branch_name, supplier.supplier_name
+                    FROM tb_po_itementrance AS itemIn
+                    LEFT JOIN tb_head_po_receipt AS po_receipt ON itemIn.po_itemEnt_POID = po_receipt.head_pr_docnumber_po
+                    LEFT JOIN tb_head_preorder AS po ON itemIn.po_itemEnt_POID = po.head_po_docnumber
+                    LEFT JOIN items ON itemIn.po_itemEnt_items_n_id = items.n_id
+                    LEFT JOIN items_ui_master_product AS product ON itemIn.po_itemEnt_CyBrand = product.ms_product_id
+                    LEFT JOIN owner_branch as branch ON po.head_po_creator = branch.owner_id
+                    LEFT JOIN tb_supplier AS supplier ON po_receipt.head_pr_fillstation = supplier.supplier_text_id
+                    WHERE po_receipt.created_at BETWEEN '$dateStart' AND '$dateEnd'";
+            if (isset($branch) && $branch != "all") { $sql .= " AND itemIn.po_itemEnt_branch_n_id = '$branch'"; }
+            if (isset($product) && $product != "all") { $sql .= " AND itemIn.po_itemEnt_items_n_id = '$product'"; }
+            if (isset($supplier) && $supplier != "all") { $sql .= " AND po_receipt.head_pr_fillstation = '$supplier'"; }
+            $sql .= "\n ORDER BY itemIn.po_itemEnt_id";
             $result = mysqli_query($this->dbcon, $sql);
             return $result;
         }
@@ -606,7 +669,7 @@
         }
 
         public function fetchdataProductRep($category) {
-            $sql = "SELECT * FROM items";
+            $sql = "SELECT n_id, itemsCode, itemsName FROM items";
             if($category != "all") {
                 $sql .= " WHERE itemsType = '$category'";
             }
@@ -616,7 +679,9 @@
 
         public function UpdateStatusItem($itemid)
         {
-            $result = mysqli_query($this->dbcon, "UPDATE tb_accessories_branch SET accbranch_status = 'Reject', updated_at=CURRENT_TIMESTAMP WHERE accbranch_id = '$itemid'");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_accessories_branch 
+                                                    SET accbranch_status = 'Reject', updated_at=CURRENT_TIMESTAMP 
+                                                    WHERE accbranch_id = '$itemid'");
             return $result;
         }
 
@@ -650,7 +715,10 @@
 
         public function fetchdataPO()
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE active_status='Y'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder 
+                                                    LEFT JOIN tb_head_po_receipt 
+                                                    ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po 
+                                                    WHERE active_status='Y'");
             return $result;
         }
 
@@ -658,7 +726,9 @@
 
         public function deletePO($POID)
         {
-            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder SET active_status = 'N', deleted_at=CURRENT_TIMESTAMP WHERE head_po_id = '$POID'");
+            $result = mysqli_query($this->dbcon, "UPDATE tb_head_preorder 
+                                                    SET active_status = 'N', deleted_at=CURRENT_TIMESTAMP 
+                                                    WHERE head_po_id = '$POID'");
             return $result;
         }
 
@@ -684,26 +754,32 @@
 
         public function insertItem($DocumentNo, $brand, $size, $amount, $cytype, $sizeID)
         {
-            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itemout(po_itemOut_docNo, po_itemOut_CyBrand, po_itemOut_CySize, po_itemOut_CySizeWeightID, po_itemOut_CyAmount, po_itemOut_type) 
+            $result = mysqli_query($this->dbcon, "INSERT INTO tb_po_itemout(po_itemOut_docNo, po_itemOut_CyBrand, po_itemOut_CySize, 
+                                                    po_itemOut_CySizeWeightID, po_itemOut_CyAmount, po_itemOut_type) 
                                                     VALUES('$DocumentNo', '$brand', '$size', '$sizeID', '$amount', '$cytype')");
             return $result;
         }
 
         public function CylinderCountSize($POID, $size, $type)
         {
-            $result = mysqli_query($this->dbcon, "SELECT SUM(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' AND po_itemOut_CySize = '$size' AND po_itemOut_type = '$type'");
+            $result = mysqli_query($this->dbcon, "SELECT SUM(po_itemOut_CyAmount) FROM tb_po_itemout 
+                                                    WHERE po_itemOut_docNo = '$POID' AND po_itemOut_CySize = '$size' AND po_itemOut_type = '$type'");
             return $result;
         }
 
         public function findAdv($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT COUNT(po_itemOut_CyAmount) FROM tb_po_itemout WHERE po_itemOut_docNo = '$POID' AND po_itemOut_type = 'Adv'");
+            $result = mysqli_query($this->dbcon, "SELECT COUNT(po_itemOut_CyAmount) FROM tb_po_itemout 
+                                                    WHERE po_itemOut_docNo = '$POID' AND po_itemOut_type = 'Adv'");
             return $result;
         }
 
         public function editPO($POID)
         {
-            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder LEFT JOIN tb_head_po_receipt ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po WHERE head_po_docnumber = '$POID'");
+            $result = mysqli_query($this->dbcon, "SELECT * FROM tb_head_preorder 
+                                                    LEFT JOIN tb_head_po_receipt 
+                                                    ON tb_head_preorder.head_po_docnumber = tb_head_po_receipt.head_pr_docnumber_po 
+                                                    WHERE head_po_docnumber = '$POID'");
             return $result;
         }
 
@@ -711,7 +787,9 @@
 
         public function fetchitemEntrance($refPO, $brand, $size, $type)
         {
-            $result = mysqli_query($this->dbcon, "SELECT po_itemEnt_CyAmount FROM tb_po_itementrance WHERE po_itemEnt_RefDO = '$refPO' AND po_itemEnt_CyBrand = '$brand' AND po_itemEnt_CySize = '$size' AND po_itemEnt_type = '$type'");
+            $result = mysqli_query($this->dbcon, "SELECT po_itemEnt_CyAmount FROM tb_po_itementrance 
+                                                    WHERE po_itemEnt_RefDO = '$refPO' AND po_itemEnt_CyBrand = '$brand' 
+                                                    AND po_itemEnt_CySize = '$size' AND po_itemEnt_type = '$type'");
             return $result;
         }
 
